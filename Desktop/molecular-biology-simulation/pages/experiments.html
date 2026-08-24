@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Practicals | MoleBio Lab</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            color: #173f5f;
+        }
+
+        /* =========================
+           LAYOUT
+        ========================= */
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+
+        /* =========================
+           SIDEBAR
+        ========================= */
+
+        .sidebar {
+            width: 250px;
+            background: #123b5a;
+            color: white;
+            min-height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+        }
+
+
+        .logo {
+            height: 82px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 25px;
+            font-size: 24px;
+            font-weight: bold;
+            border-bottom: 1px solid rgba(255,255,255,0.12);
+        }
+
+
+        .logo-icon {
+            font-size: 28px;
+        }
+
+
+        .menu {
+            padding: 25px 12px;
+        }
+
+
+        .menu a {
+            display: block;
+            text-decoration: none;
+            color: white;
+            padding: 15px 18px;
+            margin-bottom: 8px;
+            border-radius: 9px;
+            font-size: 16px;
+        }
+
+
+        .menu a:hover,
+        .menu a.active {
+            background: #2079b9;
+        }
+
+
+        .bottom-menu {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            padding: 12px;
+        }
+
+
+        /* =========================
+           MAIN
+        ========================= */
+
+        .main {
+            margin-left: 250px;
+            width: calc(100% - 250px);
+            padding: 40px;
+        }
+
+
+        .top-title {
+            color: #658096;
+            font-size: 14px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+
+        h1 {
+            font-size: 38px;
+            margin-bottom: 10px;
+        }
+
+
+        .subtitle {
+            color: #65788a;
+            font-size: 17px;
+            margin-bottom: 35px;
+        }
+
+
+        /* =========================
+           PRACTICAL GRID
+        ========================= */
+
+        .practical-grid {
+            display: grid;
+            grid-template-columns:
+                repeat(3, 1fr);
+            gap: 25px;
+        }
+
+
+        /* =========================
+           CARD
+        ========================= */
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow:
+                0 5px 20px rgba(0,0,0,0.08);
+
+            min-height: 360px;
+
+            display: flex;
+            flex-direction: column;
+
+            transition: 0.25s;
+        }
+
+
+        .card:hover {
+            transform: translateY(-5px);
+
+            box-shadow:
+                0 12px 30px rgba(0,0,0,0.12);
+        }
+
+
+        .icon {
+            width: 65px;
+            height: 65px;
+
+            background: #e8f4fc;
+
+            border-radius: 12px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 35px;
+
+            margin-bottom: 20px;
+        }
+
+
+        .category {
+            color: #2080bd;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+
+            margin-bottom: 8px;
+        }
+
+
+        .card h2 {
+            font-size: 21px;
+            margin-bottom: 12px;
+        }
+
+
+        .description {
+            color: #687b8d;
+            line-height: 1.6;
+            font-size: 14px;
+
+            flex: 1;
+        }
+
+
+        .info {
+            display: flex;
+            justify-content: space-between;
+
+            border-top: 1px solid #e8edf2;
+
+            padding-top: 15px;
+            margin-top: 20px;
+
+            color: #66798b;
+            font-size: 13px;
+        }
+
+
+        .view-btn {
+            display: block;
+
+            text-align: center;
+
+            text-decoration: none;
+
+            background: #1976b9;
+            color: white;
+
+            padding: 13px;
+
+            border-radius: 9px;
+
+            margin-top: 20px;
+
+            font-weight: bold;
+
+            transition: 0.2s;
+        }
+
+
+        .view-btn:hover {
+            background: #125b8d;
+        }
+
+
+        /* =========================
+           MOBILE
+        ========================= */
+
+        @media (max-width: 900px) {
+
+            .sidebar {
+                width: 210px;
+            }
+
+            .main {
+                margin-left: 210px;
+                width: calc(100% - 210px);
+                padding: 25px;
+            }
+
+            .practical-grid {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+    <!-- =========================
+         SIDEBAR
+    ========================= -->
+
+    <aside class="sidebar">
+
+
+        <div class="logo">
+
+            <span class="logo-icon">
+                🧬
+            </span>
+
+            <span>
+                MoleBio
+            </span>
+
+        </div>
+
+
+        <nav class="menu">
+
+
+            <a href="student-dashboard.html">
+
+                ▣ &nbsp; Dashboard
+
+            </a>
+
+
+            <a href="experiments.html"
+               class="active">
+
+                🧪 &nbsp; Practicals
+
+            </a>
+
+
+            <a href="#">
+
+                📊 &nbsp; My Progress
+
+            </a>
+
+
+            <a href="#">
+
+                🔬 &nbsp; Equipment
+
+            </a>
+
+
+            <a href="#">
+
+                📖 &nbsp; Instructions
+
+            </a>
+
+
+        </nav>
+
+
+        <div class="bottom-menu">
+
+            <a href="../index.html">
+
+                ← Exit Laboratory
+
+            </a>
+
+        </div>
+
+
+    </aside>
+
+
+
+    <!-- =========================
+         MAIN CONTENT
+    ========================= -->
+
+    <main class="main">
+
+
+        <div class="top-title">
+
+            MOLECULAR BIOLOGY LABORATORY
+
+        </div>
+
+
+        <h1>
+
+            Available Practicals
+
+        </h1>
+
+
+        <p class="subtitle">
+
+            Select one practical below to view
+            instructions and start the simulation.
+
+        </p>
+
+
+
+        <!-- =========================
+             PRACTICAL CARDS
+        ========================= -->
+
+        <div class="practical-grid">
+
+
+            <!-- DNA EXTRACTION -->
+
+            <div class="card">
+
+
+                <div class="icon">
+
+                    🧬
+
+                </div>
+
+
+                <div class="category">
+
+                    DNA EXTRACTION
+
+                </div>
+
+
+                <h2>
+
+                    DNA / RNA Extraction
+
+                </h2>
+
+
+                <p class="description">
+
+                    Extraction and purification of DNA
+                    or RNA from biological samples using
+                    virtual laboratory procedures.
+
+                </p>
+
+
+                <div class="info">
+
+                    <span>
+                        Intermediate
+                    </span>
+
+                    <span>
+                        ⏱ 20–30 min
+                    </span>
+
+                </div>
+
+
+                <a href="practical-overview.html?id=dna-extraction"
+                   class="view-btn">
+
+                    View Practical →
+
+                </a>
+
+
+            </div>
+
+
+
+            <!-- BACTERIAL PCR -->
+
+            <div class="card">
+
+
+                <div class="icon">
+
+                    🦠
+
+                </div>
+
+
+                <div class="category">
+
+                    PCR
+
+                </div>
+
+
+                <h2>
+
+                    Bacterial DNA Detection
+
+                </h2>
+
+
+                <p class="description">
+
+                    Detect bacterial DNA using PCR
+                    amplification followed by agarose
+                    gel electrophoresis.
+
+                </p>
+
+
+                <div class="info">
+
+                    <span>
+                        Advanced
+                    </span>
+
+                    <span>
+                        ⏱ 30–40 min
+                    </span>
+
+                </div>
+
+
+                <a href="practical-overview.html?id=bacterial-pcr"
+                   class="view-btn">
+
+                    View Practical →
+
+                </a>
+
+
+            </div>
+
+
+
+            <!-- FUNGAL PCR -->
+
+            <div class="card">
+
+
+                <div class="icon">
+
+                    🍄
+
+                </div>
+
+
+                <div class="category">
+
+                    PCR
+
+                </div>
+
+
+                <h2>
+
+                    Fungal DNA Detection
+
+                </h2>
+
+
+                <p class="description">
+
+                    Detect fungal DNA through DNA
+                    extraction, PCR amplification and
+                    gel electrophoresis.
+
+                </p>
+
+
+                <div class="info">
+
+                    <span>
+                        Advanced
+                    </span>
+
+                    <span>
+                        ⏱ 30–40 min
+                    </span>
+
+                </div>
+
+
+                <a href="practical-overview.html?id=fungal-pcr"
+                   class="view-btn">
+
+                    View Practical →
+
+                </a>
+
+
+            </div>
+
+
+        </div>
+
+
+    </main>
+
+
+</div>
+
+
+</body>
+
+</html>

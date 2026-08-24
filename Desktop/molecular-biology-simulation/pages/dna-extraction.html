@@ -1,0 +1,1839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DNA Extraction Simulation</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #e8f0f5;
+            color: #1a3a4a;
+            overflow-x: hidden;
+        }
+
+        .app {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 220px;
+            background: #0d2b3e;
+            color: white;
+            padding: 20px 0;
+            position: fixed;
+            height: 100vh;
+        }
+
+        .sidebar .logo {
+            font-size: 22px;
+            font-weight: bold;
+            padding: 0 20px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .sidebar .logo span {
+            color: #4fc3f7;
+        }
+
+        .sidebar a {
+            display: block;
+            color: #b0c4d9;
+            text-decoration: none;
+            padding: 12px 20px;
+            transition: 0.3s;
+        }
+
+        .sidebar a:hover,
+        .sidebar a.active {
+            background: #1a4058;
+            color: white;
+        }
+
+        .main {
+            margin-left: 220px;
+            flex: 1;
+            padding: 25px 30px;
+        }
+
+        .header {
+            background: white;
+            padding: 20px 25px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            color: #5a7a8a;
+        }
+
+        .progress-area {
+            margin-top: 15px;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: #3a5a6a;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #dce6ed;
+            border-radius: 10px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #1a8bc0, #4fc3f7);
+            transition: width 0.8s ease;
+        }
+
+        .lab-grid {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 20px;
+        }
+
+        .laboratory {
+            background: linear-gradient(180deg, #d5e3ec, #bccfd9);
+            border-radius: 16px;
+            min-height: 650px;
+            position: relative;
+            border: 2px solid #a8bcc8;
+            padding: 15px;
+            overflow: hidden;
+        }
+
+        .lab-label {
+            font-size: 11px;
+            font-weight: bold;
+            color: #4a6a7a;
+            letter-spacing: 1px;
+        }
+
+        .bench {
+            position: absolute;
+            bottom: 15px;
+            left: 15px;
+            right: 15px;
+            height: 110px;
+            background: #a8bcc8;
+            border-radius: 8px;
+            border-bottom: 10px solid #8aa2ae;
+        }
+
+        .equipment {
+            position: absolute;
+            cursor: grab;
+            transition: transform 0.3s ease, opacity 0.5s ease;
+        }
+
+        .equipment:hover {
+            transform: scale(1.05);
+            z-index: 10;
+        }
+
+        .equipment.dragging {
+            opacity: 0.4;
+            cursor: grabbing;
+            transform: scale(0.95);
+        }
+
+        .equipment.placed {
+            opacity: 0.3;
+            transform: scale(0.9);
+            pointer-events: none;
+        }
+
+        .equipment-name {
+            text-align: center;
+            font-size: 10px;
+            font-weight: bold;
+            color: #1a3a4a;
+            margin-top: 5px;
+            pointer-events: none;
+        }
+
+        .drop-zone {
+            position: absolute;
+            border: 3px dashed rgba(33, 150, 243, 0);
+            border-radius: 12px;
+            transition: all 0.3s;
+            pointer-events: none;
+        }
+
+        .drop-zone.active {
+            border-color: rgba(33, 150, 243, 0.7);
+            background: rgba(33, 150, 243, 0.08);
+            animation: pulse-zone 1.5s ease-in-out infinite;
+        }
+
+        .drop-zone.highlight {
+            border-color: #4CAF50;
+            background: rgba(76, 175, 80, 0.2);
+            box-shadow: 0 0 30px rgba(76, 175, 80, 0.3);
+            transform: scale(1.02);
+        }
+
+        @keyframes pulse-zone {
+            0%,
+            100% {
+                opacity: 0.6;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
+
+        .drop-zone .label {
+            position: absolute;
+            bottom: -28px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 10px;
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            padding: 3px 14px;
+            border-radius: 12px;
+            white-space: nowrap;
+            display: none;
+            font-weight: bold;
+        }
+
+        .drop-zone.active .label {
+            display: block;
+        }
+
+        /* ===== SAMPLE TUBE - BIGGER & VISIBLE ===== */
+        .sample-tube {
+            width: 60px;
+            height: 130px;
+            border: 3px solid #4a6a7a;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 10px 10px 22px 22px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.05), 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .sample-tube::before {
+            content: "";
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            height: 10px;
+            background: #4a6a7a;
+            border-radius: 4px;
+        }
+
+        .sample-tube .tube-label {
+            position: absolute;
+            top: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 7px;
+            font-weight: bold;
+            color: #2a4a5a;
+            z-index: 5;
+            background: rgba(255, 255, 255, 0.5);
+            padding: 1px 6px;
+            border-radius: 3px;
+            display: none;
+        }
+
+        .sample-tube.has-sample .tube-label {
+            display: block;
+        }
+
+        .tube-liquid {
+            position: absolute;
+            bottom: 4px;
+            left: 4px;
+            right: 4px;
+            height: 5px;
+            background: #d0dce6;
+            border-radius: 0 0 18px 18px;
+            transition: height 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+                background 0.8s ease,
+                box-shadow 0.8s ease;
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Tube states - VISIBLE */
+        .tube-liquid.empty {
+            height: 5px;
+            background: #d0dce6;
+        }
+
+        .tube-liquid.sample-loaded {
+            height: 35px;
+            background: linear-gradient(180deg, #e8d5b5, #d4b896);
+            box-shadow: inset 0 0 20px rgba(200, 180, 150, 0.3);
+        }
+
+        .tube-liquid.lysis-added {
+            height: 60px;
+            background: linear-gradient(180deg, #7a9bc9, #5a7aaa);
+            box-shadow: inset 0 0 25px rgba(26, 100, 150, 0.3);
+        }
+
+        .tube-liquid.lysis-protein {
+            height: 75px;
+            background: linear-gradient(180deg, #8aab99, #6a8b79);
+            box-shadow: inset 0 0 25px rgba(100, 150, 120, 0.3);
+        }
+
+        .tube-liquid.heating {
+            height: 75px;
+            background: linear-gradient(180deg, #9abbc9, #7a9baa);
+            animation: bubble-effect 0.5s ease-in-out infinite alternate;
+            box-shadow: inset 0 0 30px rgba(255, 150, 50, 0.3);
+        }
+
+        @keyframes bubble-effect {
+            0% {
+                background: linear-gradient(180deg, #9abbc9, #7a9baa);
+            }
+            100% {
+                background: linear-gradient(180deg, #aacbd9, #8aabb9);
+            }
+        }
+
+        .tube-liquid.heating-done {
+            height: 70px;
+            background: linear-gradient(180deg, #8aabb9, #6a8b99);
+            box-shadow: inset 0 0 25px rgba(100, 150, 170, 0.3);
+        }
+
+        .tube-liquid.protein-removed {
+            height: 60px;
+            background: linear-gradient(180deg, #9ab8a8, #7a9888);
+            box-shadow: inset 0 0 25px rgba(100, 150, 130, 0.3);
+        }
+
+        .tube-liquid.pellet-formed {
+            height: 20px;
+            background: linear-gradient(180deg, #8bc34a, #558b2f);
+            box-shadow: inset 0 0 30px rgba(139, 195, 74, 0.4), 0 0 20px rgba(139, 195, 74, 0.2);
+        }
+
+        .tube-liquid.washed {
+            height: 15px;
+            background: linear-gradient(180deg, #a0b8c8, #80a0b0);
+            box-shadow: inset 0 0 20px rgba(100, 150, 180, 0.2);
+        }
+
+        .tube-liquid.dna-final {
+            height: 45px;
+            background: linear-gradient(180deg, #43a047, #1b5e20);
+            box-shadow: inset 0 0 40px rgba(67, 160, 71, 0.5), 0 0 30px rgba(67, 160, 71, 0.3);
+            animation: dna-glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes dna-glow {
+            0% {
+                box-shadow: inset 0 0 40px rgba(67, 160, 71, 0.3), 0 0 20px rgba(67, 160, 71, 0.2);
+            }
+            100% {
+                box-shadow: inset 0 0 60px rgba(67, 160, 71, 0.6), 0 0 40px rgba(67, 160, 71, 0.4);
+            }
+        }
+
+        /* ===== TUBE RACK ===== */
+        .tube-rack {
+            width: 180px;
+            height: 80px;
+            background: #5a7a8a;
+            border-radius: 8px;
+            padding: 15px;
+            display: flex;
+            justify-content: space-around;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            position: relative;
+        }
+
+        .rack-hole {
+            width: 40px;
+            height: 40px;
+            background: #2a4a5a;
+            border-radius: 50%;
+            box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.3);
+            transition: all 0.5s ease;
+            position: relative;
+        }
+
+        .rack-hole.has-sample {
+            background: #e8d5b5;
+            box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.2), 0 0 30px rgba(232, 213, 181, 0.4);
+        }
+
+        .rack-hole.has-sample::after {
+            content: "🧪";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 18px;
+        }
+
+        /* ===== REAGENT BOTTLES ===== */
+        .reagent-bottle {
+            width: 75px;
+            height: 105px;
+            background: white;
+            border: 2px solid #8aa2ae;
+            border-radius: 8px;
+            text-align: center;
+            padding-top: 30px;
+            position: relative;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .reagent-bottle:hover {
+            transform: translateY(-5px);
+        }
+
+        .reagent-bottle::before {
+            content: "";
+            position: absolute;
+            top: -12px;
+            left: 20px;
+            right: 20px;
+            height: 12px;
+            background: #4a6a7a;
+            border-radius: 4px 4px 0 0;
+        }
+
+        .reagent-liquid {
+            position: absolute;
+            bottom: 5px;
+            left: 5px;
+            right: 5px;
+            height: 50px;
+            border-radius: 4px;
+            opacity: 0.85;
+            transition: all 0.5s ease;
+        }
+
+        .reagent-label {
+            position: relative;
+            z-index: 2;
+            font-size: 9px;
+            font-weight: bold;
+            background: rgba(255, 255, 255, 0.85);
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+
+        .reagent-bottle.used {
+            opacity: 0.4;
+            transform: scale(0.9);
+            pointer-events: none;
+        }
+
+        .reagent-bottle.used::after {
+            content: "✓";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 30px;
+            color: #4CAF50;
+            z-index: 10;
+        }
+
+        .liquid-lysis {
+            background: linear-gradient(180deg, #7a9bc9, #5a7aaa);
+        }
+        .liquid-protein {
+            background: linear-gradient(180deg, #e8c87a, #d4a84a);
+        }
+        .liquid-alcohol {
+            background: linear-gradient(180deg, #b0d8e8, #80b8d0);
+        }
+        .liquid-ethanol {
+            background: linear-gradient(180deg, #c8dce8, #a0bcc8);
+        }
+        .liquid-elution {
+            background: linear-gradient(180deg, #90c8e0, #60a8c0);
+        }
+
+        /* ===== POSITIONS ===== */
+        #sampleStation {
+            left: 80px;
+            bottom: 190px;
+            transition: all 0.5s ease;
+            z-index: 5;
+        }
+
+        #sampleStation.placed {
+            opacity: 0;
+            transform: scale(0.3);
+            pointer-events: none;
+        }
+
+        #rackStation {
+            left: 55px;
+            bottom: 65px;
+        }
+
+        #lysisBottle {
+            left: 310px;
+            top: 95px;
+        }
+
+        #proteinBottle {
+            left: 410px;
+            top: 95px;
+        }
+
+        #alcoholBottle {
+            right: 190px;
+            top: 100px;
+        }
+
+        #ethanolBottle {
+            right: 90px;
+            top: 100px;
+        }
+
+        #elutionBottle {
+            right: 75px;
+            bottom: 200px;
+        }
+
+        #heaterStation {
+            right: 260px;
+            bottom: 75px;
+        }
+
+        #centrifugeStation {
+            right: 45px;
+            bottom: 70px;
+        }
+
+        /* ===== HEATING BLOCK ===== */
+        .heating-block {
+            width: 155px;
+            height: 85px;
+            background: #4a5a62;
+            border: 4px solid #3a4a52;
+            border-radius: 10px;
+            position: relative;
+            transition: all 0.5s ease;
+        }
+
+        .heating-block .heat-waves {
+            display: none;
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 35px;
+            opacity: 0.6;
+            animation: waves 0.8s ease-in-out infinite alternate;
+        }
+
+        .heating-block.hot .heat-waves {
+            display: block;
+        }
+
+        @keyframes waves {
+            0% {
+                transform: translateX(-50%) scale(0.8) rotate(-5deg);
+                opacity: 0.3;
+            }
+            100% {
+                transform: translateX(-50%) scale(1.2) rotate(5deg);
+                opacity: 0.8;
+            }
+        }
+
+        .heater-display {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: #0a1a22;
+            color: #8ff0ae;
+            padding: 4px 12px;
+            font-family: monospace;
+            font-size: 16px;
+            border-radius: 4px;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        .heating-block.hot {
+            box-shadow: 0 0 40px rgba(255, 100, 0, 0.6), inset 0 0 20px rgba(255, 100, 0, 0.2);
+            animation: heat-glow 1s ease-in-out infinite alternate;
+        }
+
+        @keyframes heat-glow {
+            0% {
+                box-shadow: 0 0 30px rgba(255, 100, 0, 0.4);
+            }
+            100% {
+                box-shadow: 0 0 50px rgba(255, 100, 0, 0.7), 0 0 80px rgba(255, 50, 0, 0.2);
+            }
+        }
+
+        /* ===== CENTRIFUGE ===== */
+        .centrifuge {
+            width: 190px;
+            height: 135px;
+            background: #e8eef0;
+            border: 3px solid #7a9aaa;
+            border-radius: 16px;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .centrifuge-lid {
+            position: absolute;
+            top: 15px;
+            left: 48px;
+            width: 85px;
+            height: 85px;
+            border-radius: 50%;
+            border: 6px solid #5a7a8a;
+            background: linear-gradient(180deg, #c8d8e0, #b0c8d0);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        .centrifuge.spinning .centrifuge-lid {
+            animation: spin 0.4s linear infinite;
+        }
+
+        .centrifuge.spinning {
+            box-shadow: 0 0 40px rgba(33, 150, 243, 0.3);
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ===== CONTROL PANEL ===== */
+        .panel {
+            background: white;
+            padding: 22px;
+            border-radius: 14px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+            max-height: 650px;
+            overflow-y: auto;
+        }
+
+        .step-badge {
+            display: inline-block;
+            background: #e1eef7;
+            color: #1a6a8a;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .panel h2 {
+            margin: 10px 0 8px;
+            font-size: 20px;
+        }
+
+        .instruction-box {
+            background: #f5f9fc;
+            padding: 14px;
+            border-radius: 8px;
+            border-left: 4px solid #1a8bc0;
+            line-height: 2.2;
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+
+        .instruction-box .highlight {
+            display: inline-block;
+            background: #e1eef7;
+            padding: 2px 14px;
+            border-radius: 4px;
+            font-weight: bold;
+            color: #1a6a8a;
+            border: 1px solid #b8d4e8;
+            font-size: 13px;
+        }
+
+        .instruction-box .highlight-green {
+            display: inline-block;
+            background: #e8f5e9;
+            padding: 2px 14px;
+            border-radius: 4px;
+            font-weight: bold;
+            color: #2e7d32;
+            border: 1px solid #a5d6a7;
+            font-size: 13px;
+        }
+
+        .instruction-box .step-num {
+            display: inline-block;
+            background: #1a8bc0;
+            color: white;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 22px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-right: 6px;
+        }
+
+        .instruction-box .hint {
+            display: block;
+            font-size: 12px;
+            color: #5a7a8a;
+            margin-top: 6px;
+            border-top: 1px dashed #d0dce6;
+            padding-top: 6px;
+        }
+
+        .equipment-list {
+            background: #f5f9fc;
+            padding: 12px 14px;
+            border-radius: 8px;
+            border: 1px solid #dce6ed;
+            font-size: 13px;
+            line-height: 2.2;
+            margin-bottom: 15px;
+        }
+
+        .equipment-list .arrow {
+            color: #1a8bc0;
+            font-weight: bold;
+            margin: 0 4px;
+        }
+
+        .next-btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            background: #1a8bc0;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .next-btn:disabled {
+            background: #aab8c1;
+            cursor: not-allowed;
+        }
+
+        .next-btn:hover:not(:disabled) {
+            background: #0f6f9a;
+            transform: translateY(-2px);
+        }
+
+        .status-box {
+            margin-top: 14px;
+            padding: 12px 14px;
+            background: #f0f5f8;
+            border-radius: 8px;
+            border-left: 4px solid #8aa2ae;
+            font-size: 14px;
+            min-height: 48px;
+            line-height: 1.8;
+            transition: all 0.3s;
+        }
+
+        .status-box.success {
+            background: #e8f5e9;
+            border-left-color: #43a047;
+            color: #1e5a2a;
+        }
+
+        .status-box.error {
+            background: #fde8e8;
+            border-left-color: #e53935;
+            color: #8a2a2a;
+        }
+
+        /* ===== RESULT ===== */
+        .result {
+            display: none;
+            background: white;
+            padding: 40px;
+            text-align: center;
+            border-radius: 16px;
+            margin-top: 20px;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .result.show {
+            display: block;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-icon {
+            font-size: 60px;
+            animation: bounce 1s ease infinite;
+        }
+
+        @keyframes bounce {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-15px);
+            }
+        }
+
+        .result h2 {
+            margin: 12px 0;
+        }
+
+        .result p {
+            color: #5a7a8a;
+            margin-bottom: 16px;
+        }
+
+        .finish-btn {
+            display: inline-block;
+            background: #1a8bc0;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .finish-btn:hover {
+            background: #0f6f9a;
+            transform: translateY(-2px);
+        }
+
+        /* ===== SUCCESS FLASH ===== */
+        .success-flash {
+            animation: flash 0.6s ease;
+        }
+
+        @keyframes flash {
+            0%,
+            100% {
+                box-shadow: 0 0 0 rgba(76, 175, 80, 0);
+            }
+            50% {
+                box-shadow: 0 0 50px rgba(76, 175, 80, 0.6);
+            }
+        }
+
+        /* ===== BUBBLES ===== */
+        .bubble {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: bubble-rise 1.5s ease-in-out infinite;
+        }
+
+        @keyframes bubble-rise {
+            0% {
+                transform: translateY(0) scale(0);
+                opacity: 0;
+            }
+            30% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-50px) scale(1);
+                opacity: 0;
+            }
+        }
+
+        /* ===== TEST TUBE STATUS INDICATOR ===== */
+        .tube-status {
+            position: absolute;
+            bottom: -35px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 9px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 2px 10px;
+            border-radius: 10px;
+            white-space: nowrap;
+            display: none;
+            font-weight: bold;
+        }
+
+        .sample-tube.has-sample .tube-status {
+            display: block;
+        }
+
+        @media (max-width: 1000px) {
+            .lab-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+            .main {
+                margin-left: 0;
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="app">
+
+        <div class="sidebar">
+            <div class="logo">🧬 <span>MoleBio</span></div>
+            <a href="#" class="active">🧪 Practicals</a>
+            <a href="#">📊 Progress</a>
+            <a href="#">🔬 Equipment</a>
+            <a href="#">📖 Instructions</a>
+        </div>
+
+        <div class="main">
+
+            <div class="header">
+                <h1>🧬 DNA Extraction Simulation</h1>
+                <p>Watch the test tube change - Realistic visuals!</p>
+
+                <div class="progress-area">
+                    <div class="progress-info">
+                        <span id="stepLabel">Step 1 of 6</span>
+                        <span id="progressPercent">0%</span>
+                        <span id="mistakesDisplay">❌ Mistakes: 0</span>
+                        <span id="scoreDisplay">⭐ Score: 100%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lab-grid">
+
+                <div class="laboratory" id="laboratory">
+
+                    <div class="lab-label">🧪 VIRTUAL LABORATORY - WATCH THE TEST TUBE</div>
+
+                    <div class="drop-zone" id="dropZoneRack" style="left:50px;bottom:55px;width:190px;height:100px;">
+                        <span class="label">📥 Drop Sample Here</span>
+                    </div>
+                    <div class="drop-zone" id="dropZoneTube" style="left:70px;bottom:170px;width:80px;height:140px;">
+                        <span class="label">📥 Drop Chemical Here</span>
+                    </div>
+
+                    <!-- SAMPLE TUBE - BIG & VISIBLE -->
+                    <div class="equipment" id="sampleStation" data-type="sample" draggable="true">
+                        <div class="sample-tube" id="sampleTube">
+                            <div class="tube-label">SAMPLE</div>
+                            <div class="tube-liquid empty" id="tubeLiquid"></div>
+                            <div class="tube-status" id="tubeStatus">⚪ Empty</div>
+                        </div>
+                        <div class="equipment-name">🧪 Sample Tube</div>
+                    </div>
+
+                    <!-- TUBE RACK -->
+                    <div class="equipment" id="rackStation" data-type="rack">
+                        <div class="tube-rack">
+                            <div class="rack-hole" id="rackHole1"></div>
+                            <div class="rack-hole" id="rackHole2"></div>
+                            <div class="rack-hole" id="rackHole3"></div>
+                        </div>
+                        <div class="equipment-name">🧫 Tube Rack</div>
+                    </div>
+
+                    <!-- REAGENTS -->
+                    <div class="equipment" id="lysisBottle" data-type="lysis" draggable="true">
+                        <div class="reagent-bottle" id="lysisBottleInner">
+                            <div class="reagent-label">🧪 Lysis Buffer</div>
+                            <div class="reagent-liquid liquid-lysis"></div>
+                        </div>
+                        <div class="equipment-name">Lysis Buffer</div>
+                    </div>
+
+                    <div class="equipment" id="proteinBottle" data-type="protein" draggable="true">
+                        <div class="reagent-bottle" id="proteinBottleInner">
+                            <div class="reagent-label">🧬 Proteinase K</div>
+                            <div class="reagent-liquid liquid-protein"></div>
+                        </div>
+                        <div class="equipment-name">Proteinase K</div>
+                    </div>
+
+                    <div class="equipment" id="alcoholBottle" data-type="alcohol" draggable="true">
+                        <div class="reagent-bottle" id="alcoholBottleInner">
+                            <div class="reagent-label">🧴 Isopropanol</div>
+                            <div class="reagent-liquid liquid-alcohol"></div>
+                        </div>
+                        <div class="equipment-name">Isopropanol</div>
+                    </div>
+
+                    <div class="equipment" id="ethanolBottle" data-type="ethanol" draggable="true">
+                        <div class="reagent-bottle" id="ethanolBottleInner">
+                            <div class="reagent-label">🧴 70% Ethanol</div>
+                            <div class="reagent-liquid liquid-ethanol"></div>
+                        </div>
+                        <div class="equipment-name">70% Ethanol</div>
+                    </div>
+
+                    <div class="equipment" id="elutionBottle" data-type="elution" draggable="true">
+                        <div class="reagent-bottle" id="elutionBottleInner">
+                            <div class="reagent-label">💧 Elution Buffer</div>
+                            <div class="reagent-liquid liquid-elution"></div>
+                        </div>
+                        <div class="equipment-name">Elution Buffer</div>
+                    </div>
+
+                    <!-- HEATING BLOCK -->
+                    <div class="equipment" id="heaterStation" data-type="heater">
+                        <div class="heating-block" id="heater">
+                            <div class="heat-waves">🔥</div>
+                            <div class="heater-display" id="temperature">25°C</div>
+                        </div>
+                        <div class="equipment-name">🔥 Heating Block</div>
+                    </div>
+
+                    <!-- CENTRIFUGE -->
+                    <div class="equipment" id="centrifugeStation" data-type="centrifuge">
+                        <div class="centrifuge" id="centrifuge">
+                            <div class="centrifuge-lid">⚙️</div>
+                        </div>
+                        <div class="equipment-name">⚡ Microcentrifuge</div>
+                    </div>
+
+                    <div class="bench"></div>
+                </div>
+
+                <!-- CONTROL PANEL -->
+                <div class="panel">
+                    <span class="step-badge" id="stepBadge">STEP 1</span>
+                    <h2 id="stepTitle">Sample Preparation</h2>
+
+                    <div class="instruction-box" id="instructionBox"></div>
+
+                    <div class="equipment-list" id="equipmentList"></div>
+
+                    <button class="next-btn" id="nextBtn" disabled>➜ Next Step</button>
+
+                    <div class="status-box" id="statusBox">💡 Follow the instructions above</div>
+                </div>
+
+            </div>
+
+            <div class="result" id="result">
+                <div class="result-icon">🧬</div>
+                <h2>✅ DNA Extraction Complete!</h2>
+                <p>Congratulations! Purified DNA is ready!</p>
+                <p>Score: <strong id="finalScore">100%</strong> &nbsp;|&nbsp; Mistakes: <strong id="finalMistakes">0</strong></p>
+                <a href="#" class="finish-btn">🏠 Return to Dashboard</a>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        // STATE
+        // ============================================================
+        let currentStep = 1;
+        let actionDone = false;
+        let score = 100;
+        let mistakes = 0;
+
+        let samplePlaced = false;
+        let lysisAdded = false;
+        let proteinAdded = false;
+        let heatingDone = false;
+        let proteinRemovalDone = false;
+        let precipitationDone = false;
+        let washingDone = false;
+        let elutionDone = false;
+        let isSpinning = false;
+        let isHeating = false;
+
+        // ============================================================
+        // DOM REFS
+        // ============================================================
+        const stepLabel = document.getElementById('stepLabel');
+        const progressPercent = document.getElementById('progressPercent');
+        const progressFill = document.getElementById('progressFill');
+        const stepBadge = document.getElementById('stepBadge');
+        const stepTitle = document.getElementById('stepTitle');
+        const instructionBox = document.getElementById('instructionBox');
+        const equipmentList = document.getElementById('equipmentList');
+        const nextBtn = document.getElementById('nextBtn');
+        const statusBox = document.getElementById('statusBox');
+        const mistakesDisplay = document.getElementById('mistakesDisplay');
+        const scoreDisplay = document.getElementById('scoreDisplay');
+        const tubeLiquid = document.getElementById('tubeLiquid');
+        const tubeStatus = document.getElementById('tubeStatus');
+        const sampleTube = document.getElementById('sampleTube');
+        const heater = document.getElementById('heater');
+        const temperature = document.getElementById('temperature');
+        const centrifuge = document.getElementById('centrifuge');
+        const rackHole1 = document.getElementById('rackHole1');
+        const sampleStation = document.getElementById('sampleStation');
+
+        // ============================================================
+        // UPDATE TUBE VISUAL
+        // ============================================================
+        function updateTubeVisual(state, message) {
+            // Remove all classes
+            tubeLiquid.className = 'tube-liquid';
+
+            // Add state class
+            if (state) {
+                tubeLiquid.classList.add(state);
+            }
+
+            // Update status text
+            if (message) {
+                tubeStatus.textContent = message;
+                sampleTube.classList.add('has-sample');
+            }
+
+            // Update tube class
+            if (state && state !== 'empty') {
+                sampleTube.classList.add('has-sample');
+            } else if (state === 'empty') {
+                sampleTube.classList.remove('has-sample');
+            }
+        }
+
+        // ============================================================
+        // STEP DATA
+        // ============================================================
+        const steps = [{
+            title: 'Sample Preparation',
+            instruction: `
+                <span class="step-num">1</span> Drag <span class="highlight">🧪 Sample Tube</span> to the <span class="highlight-green">🧫 Tube Rack</span><br>
+                <span class="hint">💡 Watch the test tube fill with sample!</span>
+            `,
+            equipment: '🧪 Sample Tube <span class="arrow">→</span> 🧫 Tube Rack',
+            action: 'sample'
+        }, {
+            title: 'Cell Lysis',
+            instruction: `
+                <span class="step-num">1</span> Drag <span class="highlight">🧪 Lysis Buffer</span> to Sample Tube<br>
+                <span class="step-num">2</span> Drag <span class="highlight">🧬 Proteinase K</span> to Sample Tube<br>
+                <span class="step-num">3</span> Click <span class="highlight">🔥 Heating Block</span> (60°C)<br>
+                <span class="hint">💡 Watch the tube change color!</span>
+            `,
+            equipment: 'Lysis Buffer <span class="arrow">+</span> Proteinase K <span class="arrow">→</span> Sample Tube <span class="arrow">→</span> Heat',
+            action: 'lysis'
+        }, {
+            title: 'Protein Removal',
+            instruction: `
+                <span class="step-num">1</span> Drag <span class="highlight">🧬 Proteinase K</span> to Sample Tube<br>
+                <span class="step-num">2</span> Click <span class="highlight">⚡ Microcentrifuge</span><br>
+                <span class="hint">💡 Centrifuge will separate proteins!</span>
+            `,
+            equipment: 'Proteinase K <span class="arrow">→</span> Sample Tube <span class="arrow">→</span> Centrifuge',
+            action: 'protein'
+        }, {
+            title: 'DNA Precipitation',
+            instruction: `
+                <span class="step-num">1</span> Drag <span class="highlight">🧴 Isopropanol</span> to Sample Tube<br>
+                <span class="step-num">2</span> Click <span class="highlight">⚡ Microcentrifuge</span><br>
+                <span class="hint">💡 Watch the DNA pellet form at the bottom!</span>
+            `,
+            equipment: 'Isopropanol <span class="arrow">→</span> Sample Tube <span class="arrow">→</span> Centrifuge',
+            action: 'precipitation'
+        }, {
+            title: 'DNA Washing',
+            instruction: `
+                <span class="step-num">1</span> Drag <span class="highlight">🧴 70% Ethanol</span> to Sample Tube<br>
+                <span class="step-num">2</span> Click <span class="highlight">⚡ Microcentrifuge</span><br>
+                <span class="hint">💡 Ethanol washes away remaining contaminants!</span>
+            `,
+            equipment: '70% Ethanol <span class="arrow">→</span> Sample Tube <span class="arrow">→</span> Centrifuge',
+            action: 'washing'
+        }, {
+            title: 'DNA Recovery',
+            instruction: `
+                <span class="step-num">1</span> Drag <span class="highlight">💧 Elution Buffer</span> to Sample Tube<br>
+                <span class="hint">🧬 DNA glows in the test tube!</span>
+            `,
+            equipment: 'Elution Buffer <span class="arrow">→</span> Sample Tube',
+            action: 'elution'
+        }];
+
+        // ============================================================
+        // UPDATE STEP
+        // ============================================================
+        function updateStep() {
+            const data = steps[currentStep - 1];
+            actionDone = false;
+
+            stepLabel.textContent = `Step ${currentStep} of 6`;
+            const pct = Math.round(((currentStep - 1) / 6) * 100);
+            progressPercent.textContent = pct + '%';
+            progressFill.style.width = pct + '%';
+            stepBadge.textContent = `STEP ${currentStep}`;
+            stepTitle.textContent = data.title;
+            instructionBox.innerHTML = data.instruction;
+            equipmentList.innerHTML = `<strong>🔧 Equipment:</strong><br>${data.equipment}`;
+            nextBtn.disabled = true;
+            statusBox.className = 'status-box';
+            statusBox.innerHTML = `💡 ${data.equipment}`;
+            mistakesDisplay.textContent = `❌ Mistakes: ${mistakes}`;
+            scoreDisplay.textContent = `⭐ Score: ${score}%`;
+
+            resetStepStates();
+            highlightDropZones();
+            initDragDrop();
+        }
+
+        function resetStepStates() {
+            if (currentStep === 1) samplePlaced = false;
+            else if (currentStep === 2) { lysisAdded = false;
+                proteinAdded = false;
+                heatingDone = false; } else if (currentStep === 3) proteinRemovalDone = false;
+            else if (currentStep === 4) precipitationDone = false;
+            else if (currentStep === 5) washingDone = false;
+            else if (currentStep === 6) elutionDone = false;
+        }
+
+        function highlightDropZones() {
+            document.querySelectorAll('.drop-zone').forEach(z => z.classList.remove('active'));
+            if (currentStep === 1) {
+                document.getElementById('dropZoneRack').classList.add('active');
+            } else {
+                document.getElementById('dropZoneTube').classList.add('active');
+            }
+        }
+
+        // ============================================================
+        // DRAG & DROP
+        // ============================================================
+        function initDragDrop() {
+            const draggables = document.querySelectorAll('[draggable="true"]');
+
+            draggables.forEach(el => {
+                const clone = el.cloneNode(true);
+                el.parentNode.replaceChild(clone, el);
+            });
+
+            const newDraggables = document.querySelectorAll('[draggable="true"]');
+            newDraggables.forEach(el => {
+                el.addEventListener('dragstart', onDragStart);
+                el.addEventListener('dragend', onDragEnd);
+                el.style.cursor = 'grab';
+            });
+
+            const dropZones = document.querySelectorAll('.drop-zone');
+            dropZones.forEach(zone => {
+                zone.addEventListener('dragover', onDragOver);
+                zone.addEventListener('dragenter', onDragEnter);
+                zone.addEventListener('dragleave', onDragLeave);
+                zone.addEventListener('drop', onDrop);
+            });
+
+            document.getElementById('sampleStation').addEventListener('dragover', onDragOver);
+            document.getElementById('sampleStation').addEventListener('dragenter', onDragEnter);
+            document.getElementById('sampleStation').addEventListener('dragleave', onDragLeave);
+            document.getElementById('sampleStation').addEventListener('drop', onDrop);
+
+            document.getElementById('rackStation').addEventListener('dragover', onDragOver);
+            document.getElementById('rackStation').addEventListener('dragenter', onDragEnter);
+            document.getElementById('rackStation').addEventListener('dragleave', onDragLeave);
+            document.getElementById('rackStation').addEventListener('drop', onDrop);
+
+            document.getElementById('heaterStation').addEventListener('click', function() {
+                if (currentStep === 2 && lysisAdded && proteinAdded && !heatingDone) {
+                    startHeating();
+                } else if (currentStep === 2 && (!lysisAdded || !proteinAdded)) {
+                    showError('Add Lysis Buffer and Proteinase K first!');
+                } else {
+                    showError('Heating not needed at this step.');
+                }
+            });
+
+            document.getElementById('centrifugeStation').addEventListener('click', function() {
+                runCentrifuge();
+            });
+        }
+
+        function onDragStart(e) {
+            const type = this.dataset.type;
+            if (!type) return;
+
+            const valid = getValidItems();
+            if (!valid.includes(type)) {
+                e.preventDefault();
+                const name = this.querySelector('.equipment-name')?.textContent || type;
+                showError(`"${name}" is not needed at this step.`);
+                return;
+            }
+
+            this.classList.add('dragging');
+            e.dataTransfer.setData('text/plain', this.id);
+            e.dataTransfer.effectAllowed = 'move';
+            document.querySelectorAll('.drop-zone').forEach(z => z.classList.add('active'));
+        }
+
+        function onDragEnd(e) {
+            this.classList.remove('dragging');
+            document.querySelectorAll('.drop-zone').forEach(z => {
+                z.classList.remove('active', 'highlight');
+            });
+        }
+
+        function onDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            this.classList.add('highlight');
+        }
+
+        function onDragEnter(e) {
+            e.preventDefault();
+            this.classList.add('highlight');
+        }
+
+        function onDragLeave(e) {
+            this.classList.remove('highlight');
+        }
+
+        function onDrop(e) {
+            e.preventDefault();
+            this.classList.remove('highlight');
+            document.querySelectorAll('.drop-zone').forEach(z => {
+                z.classList.remove('active', 'highlight');
+            });
+
+            const id = e.dataTransfer.getData('text/plain');
+            if (!id) return;
+
+            const dragged = document.getElementById(id);
+            if (!dragged) return;
+
+            const sourceType = dragged.dataset.type;
+
+            const target = this;
+            const targetId = target.id;
+            let targetType = '';
+
+            if (targetId === 'dropZoneRack' || target.closest('#rackStation') || targetId === 'rackStation') {
+                targetType = 'rack';
+            } else if (targetId === 'dropZoneTube' || target.closest('#sampleStation') || targetId === 'sampleStation') {
+                targetType = 'tube';
+            }
+
+            processDrop(sourceType, targetType, dragged);
+        }
+
+        function getValidItems() {
+            if (currentStep === 1) return ['sample'];
+            if (currentStep === 2) return ['lysis', 'protein'];
+            if (currentStep === 3) return ['protein'];
+            if (currentStep === 4) return ['alcohol'];
+            if (currentStep === 5) return ['ethanol'];
+            if (currentStep === 6) return ['elution'];
+            return [];
+        }
+
+        // ============================================================
+        // PROCESS DROP - WITH TUBE VISUALS
+        // ============================================================
+        function processDrop(sourceType, targetType, draggedEl) {
+            console.log(`Drop: ${sourceType} → ${targetType}`);
+
+            // STEP 1: Sample → Rack
+            if (currentStep === 1) {
+                if (sourceType === 'sample' && targetType === 'rack') {
+                    if (!samplePlaced) {
+                        samplePlaced = true;
+
+                        // VISUAL: Sample loaded in tube
+                        updateTubeVisual('sample-loaded', '🧬 Sample loaded');
+
+                        // Sample disappears
+                        sampleStation.classList.add('placed');
+
+                        // Rack shows sample
+                        rackHole1.classList.add('has-sample');
+
+                        setTimeout(() => {
+                            completeAction('✅ Sample placed in rack!');
+                            statusBox.className = 'status-box success';
+                            statusBox.innerHTML = '✅ Sample placed! Look at the test tube 📊';
+                            statusBox.classList.add('success-flash');
+                            setTimeout(() => statusBox.classList.remove('success-flash'), 500);
+                        }, 300);
+                    }
+                } else {
+                    showError('Place Sample Tube on the Tube Rack (below).');
+                }
+                return;
+            }
+
+            // STEP 2: Lysis + Protein → Tube
+            if (currentStep === 2) {
+                if (sourceType === 'lysis' && targetType === 'tube') {
+                    if (!lysisAdded) {
+                        lysisAdded = true;
+
+                        // VISUAL: Lysis added
+                        updateTubeVisual('lysis-added', '🧪 Lysis Buffer added');
+
+                        document.getElementById('lysisBottleInner').classList.add('used');
+
+                        statusBox.className = 'status-box success';
+                        statusBox.innerHTML = '✅ Lysis Buffer added! (blue) Now add Proteinase K.';
+                        statusBox.classList.add('success-flash');
+                        setTimeout(() => statusBox.classList.remove('success-flash'), 500);
+                    } else {
+                        showError('Lysis Buffer already added.');
+                    }
+                    checkLysisStep2();
+                } else if (sourceType === 'protein' && targetType === 'tube') {
+                    if (!proteinAdded) {
+                        proteinAdded = true;
+
+                        // VISUAL: Protein added
+                        updateTubeVisual('lysis-protein', '🧬 Lysis + Proteinase K');
+
+                        document.getElementById('proteinBottleInner').classList.add('used');
+
+                        statusBox.className = 'status-box success';
+                        statusBox.innerHTML = '✅ Proteinase K added! Now heat the sample 🔥';
+                        statusBox.classList.add('success-flash');
+                        setTimeout(() => statusBox.classList.remove('success-flash'), 500);
+                    } else {
+                        showError('Proteinase K already added.');
+                    }
+                    checkLysisStep2();
+                } else {
+                    showError('Drag Lysis Buffer or Proteinase K to the Sample Tube.');
+                }
+                return;
+            }
+
+            // STEP 3: Protein → Tube (Protein Removal)
+            if (currentStep === 3) {
+                if (sourceType === 'protein' && targetType === 'tube') {
+                    if (!proteinRemovalDone) {
+                        proteinRemovalDone = true;
+
+                        // VISUAL: Protein removal
+                        updateTubeVisual('protein-removed', '🧬 Protein removed');
+
+                        document.getElementById('proteinBottleInner').classList.add('used');
+
+                        statusBox.className = 'status-box success';
+                        statusBox.innerHTML = '✅ Proteinase K added! Now centrifuge ⚡';
+                        statusBox.classList.add('success-flash');
+                        setTimeout(() => statusBox.classList.remove('success-flash'), 500);
+                    } else {
+                        showError('Protein removal already done.');
+                    }
+                } else {
+                    showError('Drag Proteinase K to the Sample Tube.');
+                }
+                return;
+            }
+
+            // STEP 4: Alcohol → Tube (Precipitation)
+            if (currentStep === 4) {
+                if (sourceType === 'alcohol' && targetType === 'tube') {
+                    if (!precipitationDone) {
+                        precipitationDone = true;
+
+                        // VISUAL: Precipitation
+                        updateTubeVisual('pellet-formed', '🧬 DNA Pellet forming');
+
+                        document.getElementById('alcoholBottleInner').classList.add('used');
+
+                        statusBox.className = 'status-box success';
+                        statusBox.innerHTML = '✅ Isopropanol added! Now centrifuge ⚡';
+                        statusBox.classList.add('success-flash');
+                        setTimeout(() => statusBox.classList.remove('success-flash'), 500);
+                    } else {
+                        showError('Isopropanol already added.');
+                    }
+                } else {
+                    showError('Drag Isopropanol to the Sample Tube.');
+                }
+                return;
+            }
+
+            // STEP 5: Ethanol → Tube (Washing)
+            if (currentStep === 5) {
+                if (sourceType === 'ethanol' && targetType === 'tube') {
+                    if (!washingDone) {
+                        washingDone = true;
+
+                        // VISUAL: Washing
+                        updateTubeVisual('washed', '🧼 DNA washed');
+
+                        document.getElementById('ethanolBottleInner').classList.add('used');
+
+                        statusBox.className = 'status-box success';
+                        statusBox.innerHTML = '✅ 70% Ethanol added! Now centrifuge ⚡';
+                        statusBox.classList.add('success-flash');
+                        setTimeout(() => statusBox.classList.remove('success-flash'), 500);
+                    } else {
+                        showError('Ethanol already added.');
+                    }
+                } else {
+                    showError('Drag 70% Ethanol to the Sample Tube.');
+                }
+                return;
+            }
+
+            // STEP 6: Elution → Tube (DNA Recovery)
+            if (currentStep === 6) {
+                if (sourceType === 'elution' && targetType === 'tube') {
+                    if (!elutionDone) {
+                        elutionDone = true;
+
+                        // VISUAL: DNA Final - GLOWING!
+                        updateTubeVisual('dna-final', '🧬 PURE DNA! ✨');
+
+                        document.getElementById('elutionBottleInner').classList.add('used');
+
+                        // DNA glow effect on tube
+                        document.getElementById('sampleTube').style.boxShadow = '0 0 40px rgba(67, 160, 71, 0.5)';
+
+                        statusBox.className = 'status-box success';
+                        statusBox.innerHTML = '🧬 Purified DNA recovered! 🧬 ✨';
+                        statusBox.classList.add('success-flash');
+                        setTimeout(() => statusBox.classList.remove('success-flash'), 500);
+
+                        // Celebration animation
+                        createCelebration();
+
+                        completeAction('🧬 DNA extraction complete! ✨');
+                    } else {
+                        showError('Elution already done.');
+                    }
+                } else {
+                    showError('Drag Elution Buffer to the Sample Tube.');
+                }
+                return;
+            }
+        }
+
+        // ============================================================
+        // CHECK LYSIS STEP 2
+        // ============================================================
+        function checkLysisStep2() {
+            if (lysisAdded && proteinAdded) {
+                statusBox.className = 'status-box success';
+                statusBox.innerHTML = '✅ Lysis Buffer and Proteinase K added! Click Heating Block 🔥';
+                document.getElementById('heaterStation').style.cursor = 'pointer';
+                document.getElementById('heaterStation').style.filter = 'brightness(1.05)';
+                statusBox.classList.add('success-flash');
+                setTimeout(() => statusBox.classList.remove('success-flash'), 500);
+            }
+        }
+
+        // ============================================================
+        // HEATING - REALISTIC
+        // ============================================================
+        function startHeating() {
+            if (isHeating) return;
+
+            isHeating = true;
+            heater.classList.add('hot');
+
+            // Start heating animation on tube
+            updateTubeVisual('heating', '🔥 Heating...');
+
+            statusBox.className = 'status-box';
+            statusBox.innerHTML = '🔥 Heating sample... 25°C';
+
+            let temp = 25;
+            const timer = setInterval(() => {
+                temp += 5;
+                temperature.textContent = temp + '°C';
+                statusBox.innerHTML = `🔥 Heating sample... ${temp}°C`;
+
+                // Bubbles effect during heating
+                if (temp % 10 === 0) {
+                    for (let i = 0; i < 5; i++) {
+                        const bubble = document.createElement('div');
+                        bubble.className = 'bubble';
+                        bubble.style.left = (20 + Math.random() * 60) + '%';
+                        bubble.style.top = (30 + Math.random() * 40) + '%';
+                        document.getElementById('heaterStation').appendChild(bubble);
+                        setTimeout(() => bubble.remove(), 2000);
+                    }
+                }
+
+                if (temp >= 60) {
+                    clearInterval(timer);
+                    temperature.textContent = '60°C ✓';
+                    isHeating = false;
+                    heatingDone = true;
+
+                    // Heating done visual
+                    updateTubeVisual('heating-done', '✅ Lysis complete!');
+
+                    statusBox.className = 'status-box success';
+                    statusBox.innerHTML = '✅ Cell lysis complete at 60°C! 🔥';
+                    statusBox.classList.add('success-flash');
+                    setTimeout(() => statusBox.classList.remove('success-flash'), 500);
+                    completeAction('Cell lysis complete after heating to 60°C.');
+                }
+            }, 400);
+        }
+
+        // ============================================================
+        // CENTRIFUGE - REALISTIC
+        // ============================================================
+        function runCentrifuge() {
+            if (isSpinning) {
+                showError('Centrifuge is already spinning.');
+                return;
+            }
+
+            if (currentStep === 1 || currentStep === 2 || currentStep === 6) {
+                if (currentStep === 2) {
+                    showError('Complete lysis and heating first.');
+                } else {
+                    showError('Centrifuge not needed at this step.');
+                }
+                return;
+            }
+
+            if (currentStep === 3 && !proteinRemovalDone) {
+                showError('Add Proteinase K to the sample first.');
+                return;
+            }
+            if (currentStep === 4 && !precipitationDone) {
+                showError('Add Isopropanol to the sample first.');
+                return;
+            }
+            if (currentStep === 5 && !washingDone) {
+                showError('Add 70% Ethanol to the sample first.');
+                return;
+            }
+
+            isSpinning = true;
+            centrifuge.classList.add('spinning');
+
+            // Update tube status during centrifuge
+            let spinStatus = '⚡ Centrifuging...';
+            if (currentStep === 3) spinStatus = '⚡ Removing proteins...';
+            else if (currentStep === 4) spinStatus = '⚡ Forming pellet...';
+            else if (currentStep === 5) spinStatus = '⚡ Washing...';
+
+            statusBox.className = 'status-box';
+            statusBox.innerHTML = spinStatus;
+
+            // Spinning particles
+            for (let i = 0; i < 15; i++) {
+                setTimeout(() => {
+                    const particle = document.createElement('div');
+                    particle.style.cssText = `
+                        position: absolute;
+                        width: ${4 + Math.random() * 8}px;
+                        height: ${4 + Math.random() * 8}px;
+                        background: rgba(33, 150, 243, ${0.1 + Math.random() * 0.2});
+                        border-radius: 50%;
+                        top: ${10 + Math.random() * 80}%;
+                        left: ${10 + Math.random() * 80}%;
+                        pointer-events: none;
+                        animation: spin 0.3s linear infinite;
+                    `;
+                    document.getElementById('centrifugeStation').appendChild(particle);
+                    setTimeout(() => particle.remove(), 2800);
+                }, i * 150);
+            }
+
+            setTimeout(() => {
+                centrifuge.classList.remove('spinning');
+                isSpinning = false;
+
+                if (currentStep === 3) {
+                    updateTubeVisual('protein-removed', '🧬 Proteins removed');
+                    proteinRemovalDone = true;
+                    statusBox.className = 'status-box success';
+                    statusBox.innerHTML = '✅ Proteins separated! ⚡';
+                    statusBox.classList.add('success-flash');
+                    setTimeout(() => statusBox.classList.remove('success-flash'), 500);
+                    completeAction('✅ Proteins separated.');
+                } else if (currentStep === 4) {
+                    updateTubeVisual('pellet-formed', '🧬 DNA Pellet!');
+                    precipitationDone = true;
+                    statusBox.className = 'status-box success';
+                    statusBox.innerHTML = '✅ DNA pellet formed! ⚡';
+                    statusBox.classList.add('success-flash');
+                    setTimeout(() => statusBox.classList.remove('success-flash'), 500);
+                    completeAction('✅ DNA pellet formed.');
+                } else if (currentStep === 5) {
+                    updateTubeVisual('washed', '🧼 DNA washed');
+                    washingDone = true;
+                    statusBox.className = 'status-box success';
+                    statusBox.innerHTML = '✅ DNA pellet washed! ⚡';
+                    statusBox.classList.add('success-flash');
+                    setTimeout(() => statusBox.classList.remove('success-flash'), 500);
+                    completeAction('✅ DNA pellet washed.');
+                }
+            }, 3000);
+        }
+
+        // ============================================================
+        // CELEBRATION EFFECT
+        // ============================================================
+        function createCelebration() {
+            const lab = document.getElementById('laboratory');
+            const colors = ['#4CAF50', '#2196F3', '#FFC107', '#E91E63', '#9C27B0', '#FF5722'];
+
+            for (let i = 0; i < 30; i++) {
+                setTimeout(() => {
+                    const star = document.createElement('div');
+                    const size = 6 + Math.random() * 14;
+                    star.style.cssText = `
+                        position: absolute;
+                        width: ${size}px;
+                        height: ${size}px;
+                        background: ${colors[Math.floor(Math.random() * colors.length)]};
+                        border-radius: ${Math.random() > 0.5 ? '50%' : '3px'};
+                        top: ${10 + Math.random() * 80}%;
+                        left: ${10 + Math.random() * 80}%;
+                        pointer-events: none;
+                        z-index: 1000;
+                        animation: celebration-float ${1 + Math.random() * 2}s ease-out forwards;
+                        box-shadow: 0 0 20px rgba(255,255,255,0.3);
+                    `;
+                    lab.appendChild(star);
+                    setTimeout(() => star.remove(), 3000);
+                }, i * 80);
+            }
+
+            // Add celebration style
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes celebration-float {
+                    0% {
+                        transform: translate(0, 0) scale(0) rotate(0deg);
+                        opacity: 1;
+                    }
+                    100% {
+                        transform: translate(${-50 + Math.random() * 100}px, ${-100 - Math.random() * 200}px) scale(1.5) rotate(${360 * Math.random()}deg);
+                        opacity: 0;
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+
+        // ============================================================
+        // HELPERS
+        // ============================================================
+        function completeAction(msg) {
+            actionDone = true;
+            nextBtn.disabled = false;
+            statusBox.className = 'status-box success';
+            statusBox.innerHTML = msg + ' ✅';
+            const pct = Math.round((currentStep / 6) * 100);
+            progressFill.style.width = pct + '%';
+            progressPercent.textContent = pct + '%';
+        }
+
+        function showError(msg) {
+            mistakes++;
+            score = Math.max(0, score - 5);
+            mistakesDisplay.textContent = `❌ Mistakes: ${mistakes}`;
+            scoreDisplay.textContent = `⭐ Score: ${score}%`;
+            statusBox.className = 'status-box error';
+            statusBox.innerHTML = `❌ ${msg}`;
+            statusBox.classList.add('success-flash');
+            setTimeout(() => statusBox.classList.remove('success-flash'), 500);
+        }
+
+        // ============================================================
+        // NEXT STEP
+        // ============================================================
+        function nextStep() {
+            if (!actionDone) {
+                showError('Complete the required action first!');
+                return;
+            }
+
+            if (currentStep >= 6) {
+                progressFill.style.width = '100%';
+                progressPercent.textContent = '100%';
+                stepLabel.textContent = '✅ Complete';
+                document.getElementById('finalScore').textContent = score + '%';
+                document.getElementById('finalMistakes').textContent = mistakes;
+                document.getElementById('result').classList.add('show');
+                document.querySelector('.lab-grid').style.display = 'none';
+                return;
+            }
+
+            currentStep++;
+            updateStep();
+        }
+
+        // ============================================================
+        // INIT
+        // ============================================================
+        // Set initial tube state
+        updateTubeVisual('empty', '⚪ Empty');
+
+        updateStep();
+        document.getElementById('nextBtn').addEventListener('click', nextStep);
+
+        console.log('🧬 DNA Extraction Simulation Loaded!');
+        console.log('📌 Watch the test tube change at every step!');
+        console.log('💡 Sample added - tube fills up!');
+        console.log('💡 Heating - see bubbles and temperature!');
+        console.log('💡 Centrifuge - watch pellet form!');
+        console.log('💡 DNA Final - it glows! ✨');
+    </script>
+
+</body>
+</html>

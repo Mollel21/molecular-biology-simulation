@@ -1,0 +1,487 @@
+/* ==========================================
+   SIMULATION
+========================================== */
+
+body {
+
+    margin: 0;
+
+    background: #eef3f7;
+
+    font-family:
+        Arial,
+        sans-serif;
+
+}
+
+
+.simulation-layout {
+
+    min-height: 100vh;
+
+}
+
+
+/* ==========================================
+   HEADER
+========================================== */
+
+.simulation-header {
+
+    height: 70px;
+
+    background: #123957;
+
+    color: white;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 0 30px;
+
+}
+
+
+.simulation-logo {
+
+    font-size: 21px;
+
+    font-weight: bold;
+
+}
+
+
+.simulation-header span {
+
+    font-size: 13px;
+
+    letter-spacing: 1px;
+
+}
+
+
+.simulation-header a {
+
+    color: white;
+
+    text-decoration: none;
+
+}
+
+
+/* ==========================================
+   MAIN
+========================================== */
+
+.simulation-main {
+
+    max-width: 1400px;
+
+    margin: auto;
+
+    padding: 35px;
+
+}
+
+
+.simulation-title {
+
+    margin-bottom: 25px;
+
+}
+
+
+.simulation-title p {
+
+    color: #1976b8;
+
+    font-weight: bold;
+
+    font-size: 13px;
+
+}
+
+
+.simulation-title h1 {
+
+    font-size: 34px;
+
+    color: #173b59;
+
+    margin: 10px 0;
+
+}
+
+
+/* ==========================================
+   PROGRESS
+========================================== */
+
+.simulation-progress {
+
+    background: white;
+
+    padding: 20px;
+
+    border-radius: 12px;
+
+    margin-bottom: 25px;
+
+}
+
+
+.progress-info {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    margin-bottom: 10px;
+
+}
+
+
+.progress-bar {
+
+    height: 10px;
+
+    background: #dce5eb;
+
+    border-radius: 10px;
+
+    overflow: hidden;
+
+}
+
+
+.progress-fill {
+
+    height: 100%;
+
+    width: 0%;
+
+    background: #198754;
+
+    transition: width 0.4s;
+
+}
+
+
+/* ==========================================
+   LABORATORY
+========================================== */
+
+.laboratory {
+
+    display: grid;
+
+    grid-template-columns:
+        250px
+        1fr
+        300px;
+
+    gap: 20px;
+
+}
+
+
+/* ==========================================
+   PANELS
+========================================== */
+
+.equipment-panel,
+.instruction-panel,
+.simulation-workspace {
+
+    background: white;
+
+    border-radius: 15px;
+
+    padding: 25px;
+
+}
+
+
+.equipment-panel h2,
+.instruction-panel h2,
+.simulation-workspace h2 {
+
+    color: #173b59;
+
+}
+
+
+/* ==========================================
+   EQUIPMENT
+========================================== */
+
+.equipment-item {
+
+    padding: 13px;
+
+    border-bottom: 1px solid #edf1f4;
+
+    color: #596b79;
+
+}
+
+
+.equipment-item span {
+
+    margin-right: 8px;
+
+}
+
+
+/* ==========================================
+   WORKSPACE
+========================================== */
+
+.workspace-header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+}
+
+
+.workspace-header span {
+
+    background: #e8f4ff;
+
+    color: #1976b8;
+
+    padding: 7px 12px;
+
+    border-radius: 20px;
+
+    font-size: 13px;
+
+}
+
+
+.simulation-object {
+
+    height: 260px;
+
+    margin: 25px 0;
+
+    background: #f3f8fb;
+
+    border: 2px dashed #c9d8e2;
+
+    border-radius: 15px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 100px;
+
+}
+
+
+#stepInstruction {
+
+    color: #637381;
+
+    line-height: 1.7;
+
+}
+
+
+/* ==========================================
+   BUTTON
+========================================== */
+
+.perform-button {
+
+    width: 100%;
+
+    padding: 15px;
+
+    background: #1976b8;
+
+    color: white;
+
+    border: none;
+
+    border-radius: 9px;
+
+    font-size: 16px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+}
+
+
+.perform-button:hover {
+
+    background: #125a8d;
+
+}
+
+
+/* ==========================================
+   STEPS
+========================================== */
+
+.simulation-step {
+
+    display: flex;
+
+    gap: 10px;
+
+    padding: 12px;
+
+    margin-bottom: 8px;
+
+    border-radius: 8px;
+
+}
+
+
+.simulation-step span {
+
+    width: 28px;
+
+    height: 28px;
+
+    border-radius: 50%;
+
+    background: #dce5eb;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 12px;
+
+}
+
+
+.simulation-step p {
+
+    margin: 0;
+
+    color: #687887;
+
+    font-size: 13px;
+
+}
+
+
+.simulation-step.active {
+
+    background: #e8f4ff;
+
+}
+
+
+.simulation-step.active span {
+
+    background: #1976b8;
+
+    color: white;
+
+}
+
+
+.simulation-step.completed {
+
+    background: #eaf7f0;
+
+}
+
+
+.simulation-step.completed span {
+
+    background: #198754;
+
+    color: white;
+
+}
+
+
+/* ==========================================
+   COMPLETION
+========================================== */
+
+.completion-panel {
+
+    margin-top: 25px;
+
+    background: white;
+
+    padding: 40px;
+
+    text-align: center;
+
+    border-radius: 15px;
+
+}
+
+
+.completion-panel > div {
+
+    font-size: 60px;
+
+}
+
+
+.completion-panel h2 {
+
+    color: #198754;
+
+}
+
+
+.completion-actions button {
+
+    padding: 13px 25px;
+
+    border: none;
+
+    border-radius: 8px;
+
+    background: #1976b8;
+
+    color: white;
+
+    cursor: pointer;
+
+}
+
+
+.hidden {
+
+    display: none;
+
+}
+
+
+/* ==========================================
+   RESPONSIVE
+========================================== */
+
+@media(max-width: 1000px) {
+
+    .laboratory {
+
+        grid-template-columns: 1fr;
+
+    }
+
+}

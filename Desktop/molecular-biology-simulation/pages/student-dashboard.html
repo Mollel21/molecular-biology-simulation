@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>Student Dashboard | MoleBio Lab</title>
+
+    <link
+        rel="stylesheet"
+        href="../css/style.css">
+
+    <link
+        rel="stylesheet"
+        href="../css/dashboard.css">
+
+</head>
+
+<body>
+
+<div class="dashboard-container">
+
+    <!-- ================= SIDEBAR ================= -->
+
+    <aside class="sidebar">
+
+        <div class="dashboard-logo">
+
+            🧬
+
+            <span>
+                MoleBio
+            </span>
+
+        </div>
+
+
+        <nav class="sidebar-menu">
+
+            <!-- Dashboard -->
+            <a
+                href="student-dashboard.html"
+                class="active">
+
+                <span>▣</span>
+
+                Dashboard
+
+            </a>
+
+
+            <!-- Practicals -->
+
+            <a href="experiments.html">
+
+                <span>🧪</span>
+
+                Practicals
+
+            </a>
+
+
+            <!-- Progress -->
+
+            <a href="#">
+
+                <span>📊</span>
+
+                My Progress
+
+            </a>
+
+
+            <!-- Equipment -->
+
+            <a href="#">
+
+                <span>🔬</span>
+
+                Equipment
+
+            </a>
+
+
+            <!-- Instructions -->
+
+            <a href="#">
+
+                <span>📖</span>
+
+                Instructions
+
+            </a>
+
+        </nav>
+
+
+        <div class="sidebar-bottom">
+
+            <a href="#">
+
+                ⚙ Settings
+
+            </a>
+
+
+            <a href="../index.html">
+
+                ← Exit Laboratory
+
+            </a>
+
+        </div>
+
+    </aside>
+
+
+    <!-- ================= MAIN CONTENT ================= -->
+
+    <main class="dashboard-main">
+
+
+        <!-- HEADER -->
+
+        <header class="dashboard-header">
+
+            <div>
+
+                <p class="small-title">
+
+                    STUDENT DASHBOARD
+
+                </p>
+
+
+                <h1>
+
+                    Welcome to the Virtual Laboratory
+
+                </h1>
+
+            </div>
+
+
+            <div class="student-profile">
+
+                <div class="student-avatar">
+
+                    S
+
+                </div>
+
+
+                <div>
+
+                    <strong>
+
+                        Student
+
+                    </strong>
+
+
+                    <small>
+
+                        Molecular Biology
+
+                    </small>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- ================= WELCOME ================= -->
+
+        <section class="welcome-card">
+
+            <div>
+
+                <span>
+
+                    🧬 MOLECULAR BIOLOGY
+
+                </span>
+
+
+                <h2>
+
+                    Learn. Simulate. Experiment.
+
+                </h2>
+
+
+                <p>
+
+                    Perform molecular biology practicals
+                    using an interactive virtual laboratory.
+
+                </p>
+
+
+                <a
+                    href="practicals.html"
+                    class="start-btn">
+
+                    Explore Practicals →
+
+                </a>
+
+            </div>
+
+
+            <div class="welcome-dna">
+
+                🧬
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= STATISTICS ================= -->
+
+        <section class="stats-grid">
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+
+                    🧪
+
+                </div>
+
+                <div>
+
+                    <span>
+
+                        Available Practicals
+
+                    </span>
+
+                    <strong>
+
+                        3
+
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+
+                    ✓
+
+                </div>
+
+                <div>
+
+                    <span>
+
+                        Completed
+
+                    </span>
+
+                    <strong>
+
+                        0
+
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+
+                    📈
+
+                </div>
+
+                <div>
+
+                    <span>
+
+                        Progress
+
+                    </span>
+
+                    <strong>
+
+                        0%
+
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+
+                    🏆
+
+                </div>
+
+                <div>
+
+                    <span>
+
+                        Average Score
+
+                    </span>
+
+                    <strong>
+
+                        —
+
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= PRACTICALS ================= -->
+
+        <section
+            class="practicals-section"
+            id="practicals">
+
+
+            <div class="section-heading">
+
+                <div>
+
+                    <p>
+
+                        PRACTICALS
+
+                    </p>
+
+
+                    <h2>
+
+                        Available Experiments
+
+                    </h2>
+
+                </div>
+
+
+                <a href="practicals.html">
+
+                    View All →
+
+                </a>
+
+            </div>
+
+
+            <div
+                class="practical-grid"
+                id="practicalGrid">
+
+            </div>
+
+
+        </section>
+
+
+    </main>
+
+</div>
+
+
+<script src="../data/experiments.js"></script>
+
+<script src="../js/dashboard.js"></script>
+
+</body>
+
+</html>
