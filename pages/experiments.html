@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Practicals | MoleBio Lab</title>
+
+    <!-- Google Font for modern look -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+
+    <style>
+        /* ============================================================
+           CSS VARIABLES & RESET
+        ============================================================ */
+        :root {
+            --primary: #0f2b44;
+            --primary-light: #1a4058;
+            --primary-dark: #091e30;
+            --accent-blue: #4a90e2;
+            --accent-blue-light: #e3f0fa;
+            --accent-purple: #9b59b6;
+            --accent-purple-light: #f3e8fc;
+            --text-dark: #173f5f;
+            --text-muted: #5a7a8a;
+            --bg-body: #f0f4f8;
+            --bg-white: #ffffff;
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 8px 30px rgba(0, 0, 0, 0.06);
+            --shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.10);
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-body);
+            color: var(--text-dark);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* ============================================================
+           LAYOUT
+        ============================================================ */
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ============================================================
+           SIDEBAR (PROFESSIONAL)
+        ============================================================ */
+        .sidebar {
+            width: 280px;
+            background: var(--primary);
+            color: #ffffff;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 2px 0 12px rgba(0, 0, 0, 0.06);
+            transition: transform 0.3s ease;
+            z-index: 100;
+        }
+
+        .logo {
+            height: 84px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 28px;
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            flex-shrink: 0;
+        }
+
+        .logo-icon {
+            font-size: 28px;
+            color: #4fc3f7;
+        }
+
+        .logo span {
+            background: linear-gradient(135deg, #ffffff 60%, #4fc3f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .menu {
+            padding: 20px 16px;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .menu .section-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: rgba(255, 255, 255, 0.3);
+            padding: 12px 12px 6px;
+            font-weight: 600;
+        }
+
+        .menu a {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 16px;
+            border-radius: var(--radius-sm);
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-size: 14.5px;
+            font-weight: 500;
+            transition: var(--transition);
+            margin-bottom: 2px;
+            border-left: 3px solid transparent;
+        }
+
+        .menu a:hover {
+            background: rgba(255, 255, 255, 0.06);
+            color: #ffffff;
+        }
+
+        .menu a.active {
+            background: rgba(79, 195, 247, 0.12);
+            color: #ffffff;
+            border-left-color: #4fc3f7;
+        }
+
+        .menu a .icon {
+            font-size: 18px;
+            width: 24px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .menu .divider {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.06);
+            margin: 12px 16px;
+        }
+
+        .bottom-menu {
+            padding: 16px 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            flex-shrink: 0;
+        }
+
+        .bottom-menu a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: rgba(255, 255, 255, 0.5);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 8px 4px;
+            transition: var(--transition);
+        }
+
+        .bottom-menu a:hover {
+            color: #ffffff;
+        }
+
+        /* ============================================================
+           MAIN CONTENT
+        ============================================================ */
+        .main {
+            margin-left: 280px;
+            width: calc(100% - 280px);
+            padding: 40px 48px 60px;
+            max-width: 1400px;
+        }
+
+        /* ----- Header Area ----- */
+        .page-header {
+            margin-bottom: 40px;
+        }
+
+        .page-header .top-tag {
+            display: inline-block;
+            background: var(--accent-blue-light);
+            color: var(--accent-blue);
+            padding: 4px 16px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .page-header h1 {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: -1px;
+            margin-bottom: 6px;
+        }
+
+        .page-header .subtitle {
+            font-size: 17px;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        .page-header .header-line {
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-blue), #4fc3f7);
+            border-radius: 4px;
+            margin-top: 14px;
+        }
+
+        /* ============================================================
+           PRACTICAL GRID
+        ============================================================ */
+        .practical-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 28px;
+        }
+
+        /* ============================================================
+           CARD (PROFESSIONAL)
+        ============================================================ */
+        .card {
+            background: var(--bg-white);
+            border-radius: var(--radius-lg);
+            padding: 28px 26px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid rgba(0, 0, 0, 0.04);
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--accent-blue);
+            opacity: 0.6;
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-hover);
+            border-color: rgba(74, 144, 226, 0.15);
+        }
+
+        .card:hover::before {
+            opacity: 1;
+            height: 5px;
+        }
+
+        .card .icon-wrap {
+            width: 58px;
+            height: 58px;
+            background: var(--accent-blue-light);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 18px;
+            transition: var(--transition);
+        }
+
+        .card:hover .icon-wrap {
+            transform: scale(1.05) rotate(-2deg);
+            background: #d0e8f8;
+        }
+
+        .card .category {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--accent-blue);
+            margin-bottom: 6px;
+        }
+
+        .card h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 10px;
+            line-height: 1.3;
+        }
+
+        .card .description {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.7;
+            flex: 1;
+            margin-bottom: 20px;
+        }
+
+        .card .info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 16px;
+            border-top: 1px solid #eef2f6;
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 18px;
+        }
+
+        .card .view-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 20px;
+            background: var(--accent-blue);
+            color: #ffffff;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            transition: var(--transition);
+            width: 100%;
+            text-decoration: none;
+            font-family: inherit;
+        }
+
+        .card .view-btn:hover {
+            background: #357abd;
+            transform: scale(1.02);
+            box-shadow: 0 6px 20px rgba(74, 144, 226, 0.25);
+        }
+
+        /* ----- GEL CARD (PURPLE ACCENT) ----- */
+        .card.gel-card::before {
+            background: var(--accent-purple);
+        }
+
+        .card.gel-card .icon-wrap {
+            background: var(--accent-purple-light);
+        }
+
+        .card.gel-card .category {
+            color: var(--accent-purple);
+        }
+
+        .card.gel-card .view-btn {
+            background: var(--accent-purple);
+        }
+
+        .card.gel-card .view-btn:hover {
+            background: #7d3c98;
+            box-shadow: 0 6px 20px rgba(155, 89, 182, 0.3);
+        }
+
+        /* ============================================================
+           MOBILE & RESPONSIVE
+        ============================================================ */
+        @media (max-width: 1024px) {
+            .main {
+                padding: 30px 24px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 250px;
+                transform: translateX(-100%);
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            .main {
+                margin-left: 0;
+                width: 100%;
+                padding: 20px 16px;
+            }
+            .page-header h1 {
+                font-size: 28px;
+            }
+            .practical-grid {
+                grid-template-columns: 1fr;
+            }
+            /* Mobile Toggle */
+            .menu-toggle {
+                display: flex !important;
+            }
+            .sidebar-overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.3);
+                z-index: 99;
+            }
+            .sidebar-overlay.active {
+                display: block;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main {
+                padding: 16px 12px;
+            }
+            .card {
+                padding: 20px 18px;
+            }
+        }
+
+        /* Mobile Toggle Button */
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 26px;
+            color: var(--primary);
+            cursor: pointer;
+            padding: 4px 8px;
+        }
+
+        /* ============================================================
+           SIDEBAR OVERLAY
+        ============================================================ */
+        .sidebar-overlay {
+            display: none;
+        }
+
+        .sidebar-overlay.active {
+            display: block;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <!-- ============================================================
+         SIDEBAR OVERLAY (MOBILE)
+    ============================================================ -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <div class="container">
+
+        <!-- ============================================================
+             SIDEBAR
+        ============================================================ -->
+        <aside class="sidebar" id="sidebar">
+
+            <div class="logo">
+                <span class="logo-icon">🧬</span>
+                <span>MoleBio</span>
+            </div>
+
+            <nav class="menu">
+
+                <!-- Main -->
+                <a href="student-dashboard.html">
+                    <span class="icon">▣</span> Dashboard
+                </a>
+                <a href="experiments.html" class="active">
+                    <span class="icon">🧪</span> Practicals
+                </a>
+                <a href="student-dashboard.html#progress">
+                    <span class="icon">📊</span> My Progress
+                </a>
+
+                <div class="divider"></div>
+
+                <!-- Reference -->
+                <div class="section-label">Reference</div>
+                <a href="safety-rules.html">
+                    <span class="icon">🛡️</span> Safety Rules
+                </a>
+                <a href="equipment-reference.html">
+                    <span class="icon">🔬</span> Equipment
+                </a>
+                <a href="reagents-reference.html">
+                    <span class="icon">🧪</span> Reagents
+                </a>
+
+                <div class="divider"></div>
+
+                <!-- Theory -->
+                <div class="section-label">Theory</div>
+                <a href="../theory/index.html">
+                    <span class="icon">📚</span> Theory Library
+                </a>
+                <a href="../theory/pcr-theory.html">
+                    <span class="icon">🧬</span> PCR Theory
+                </a>
+                <a href="../theory/gel-theory.html">
+                    <span class="icon">🧫</span> Gel Theory
+                </a>
+                <a href="../theory/extraction-theory.html">
+                    <span class="icon">🧪</span> Extraction Theory
+                </a>
+
+                <div class="divider"></div>
+
+                <a href="#">
+                    <span class="icon">📖</span> Instructions
+                </a>
+
+            </nav>
+
+            <div class="bottom-menu">
+                <a href="../index.html">← Exit Laboratory</a>
+            </div>
+
+        </aside>
+
+        <!-- ============================================================
+             MAIN CONTENT
+        ============================================================ -->
+        <main class="main">
+
+            <!-- Mobile Header with Toggle -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <button class="menu-toggle" onclick="toggleSidebar()" aria-label="Toggle sidebar">
+                    ☰
+                </button>
+            </div>
+
+            <!-- Page Header -->
+            <div class="page-header">
+                <div class="top-tag">🧬 Molecular Biology Laboratory</div>
+                <h1>Available Practicals</h1>
+                <p class="subtitle">Select a practical below to view instructions and start the simulation.</p>
+                <div class="header-line"></div>
+            </div>
+
+            <!-- Practical Cards Grid -->
+            <div class="practical-grid" id="practicalGrid">
+                <!-- Cards will be dynamically loaded here -->
+            </div>
+
+        </main>
+
+    </div>
+
+    <!-- ============================================================
+         JAVASCRIPT
+    =========================================================== -->
+    <script src="../data/experiments.js"></script>
+
+    <script>
+        // ============================================================
+        // SIDEBAR TOGGLE (MOBILE)
+        // ============================================================
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('active');
+        }
+
+        // Close sidebar when clicking links on mobile
+        document.querySelectorAll('.menu a, .bottom-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth <= 768) {
+                    toggleSidebar();
+                }
+            });
+        });
+
+        // ============================================================
+        // EXPERIMENTS DATA (FALLBACK)
+        // ============================================================
+        const fallbackExperiments = [{
+            id: "dna-extraction",
+            title: "DNA / RNA Extraction",
+            icon: "🧬",
+            description: "Extraction and purification of DNA or RNA from biological samples using virtual laboratory procedures.",
+            category: "DNA EXTRACTION",
+            difficulty: "Intermediate",
+            duration: "20–30 min",
+            simulationPage: null
+        }, {
+            id: "bacterial-pcr",
+            title: "Bacterial DNA Detection",
+            icon: "🦠",
+            description: "Detect bacterial DNA using PCR amplification followed by agarose gel electrophoresis.",
+            category: "PCR",
+            difficulty: "Advanced",
+            duration: "30–40 min",
+            simulationPage: null
+        }, {
+            id: "fungal-pcr",
+            title: "Fungal DNA Detection",
+            icon: "🍄",
+            description: "Detect fungal DNA through DNA extraction, PCR amplification and gel electrophoresis.",
+            category: "PCR",
+            difficulty: "Advanced",
+            duration: "30–40 min",
+            simulationPage: null
+        }, {
+            id: "gel-electrophoresis",
+            title: "Gel Electrophoresis",
+            icon: "🧫",
+            description: "Separate and visualize DNA fragments using agarose gel electrophoresis. Interactive simulation with real-time band migration.",
+            category: "DNA ANALYSIS",
+            difficulty: "Intermediate",
+            duration: "25–35 min",
+            simulationPage: "gel-electrophoresis.html"
+        }];
+
+        // ============================================================
+        // START SIMULATION
+        // ============================================================
+        function startSimulation(experimentId) {
+            const expData = window.experiments || fallbackExperiments;
+            const experiment = expData.find(item => item.id === experimentId);
+
+            if (!experiment) {
+                alert('Experiment not found!');
+                return;
+            }
+
+            if (experiment.simulationPage) {
+                window.location.href = experiment.simulationPage + '?id=' + experimentId;
+            } else {
+                window.location.href = 'practical-overview.html?id=' + experimentId;
+            }
+        }
+
+        // ============================================================
+        // RENDER CARDS
+        // ============================================================
+        function renderExperiments() {
+            const grid = document.getElementById('practicalGrid');
+            const expData = window.experiments || fallbackExperiments;
+
+            if (!expData || expData.length === 0) {
+                grid.innerHTML = '<p style="grid-column:1/-1; text-align:center; padding:40px; color:var(--text-muted);">No experiments available.</p>';
+                return;
+            }
+
+            const gelExperiments = ['gel-electrophoresis'];
+            let html = '';
+
+            expData.forEach(exp => {
+                const isGel = gelExperiments.includes(exp.id);
+                const cardClass = isGel ? 'card gel-card' : 'card';
+                const icon = exp.icon || '🔬';
+                const category = exp.category || 'LABORATORY';
+                const difficulty = exp.difficulty || exp.level || 'Intermediate';
+                const duration = exp.duration || '20–30 min';
+                const buttonText = exp.simulationPage ? 'Start Simulation →' : 'View Practical →';
+
+                html += `
+                    <div class="${cardClass}">
+                        <div class="icon-wrap">${icon}</div>
+                        <div class="category">${category}</div>
+                        <h2>${exp.title}</h2>
+                        <p class="description">${exp.description}</p>
+                        <div class="info">
+                            <span>${difficulty}</span>
+                            <span>⏱ ${duration}</span>
+                        </div>
+                        <button class="view-btn" onclick="startSimulation('${exp.id}')">
+                            ${buttonText}
+                        </button>
+                    </div>
+                `;
+            });
+
+            grid.innerHTML = html;
+        }
+
+        // ============================================================
+        // INIT
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', renderExperiments);
+        window.startSimulation = startSimulation;
+        window.toggleSidebar = toggleSidebar;
+
+        console.log('🧪 Professional Experiments Page Loaded!');
+    </script>
+
+</body>
+
+</html>

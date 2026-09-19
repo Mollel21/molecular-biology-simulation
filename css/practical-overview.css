@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>Practical Overview | MoleBio Lab</title>
+
+    <link
+        rel="stylesheet"
+        href="../css/style.css">
+
+    <link
+        rel="stylesheet"
+        href="../css/laboratory.css">
+
+    <style>
+
+        .overview-container {
+            min-height: 100vh;
+            background: #f4f7f9;
+        }
+
+        .overview-header {
+            background: #0b1f33;
+            color: white;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .overview-logo {
+            font-size: 21px;
+            font-weight: bold;
+        }
+
+        .back-button {
+            color: white;
+            text-decoration: none;
+            padding: 10px 16px;
+            border: 1px solid #ffffff55;
+            border-radius: 7px;
+        }
+
+        .overview-main {
+            max-width: 1200px;
+            margin: auto;
+            padding: 45px 25px;
+        }
+
+        .overview-hero {
+            background: white;
+            border-radius: 16px;
+            padding: 35px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 30px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.06);
+        }
+
+        .overview-icon {
+            font-size: 80px;
+        }
+
+        .overview-category {
+            color: #1c8c6c;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        .overview-hero h1 {
+            margin: 10px 0;
+            font-size: 35px;
+            color: #0b1f33;
+        }
+
+        .overview-hero p {
+            color: #59656d;
+            line-height: 1.7;
+        }
+
+        .overview-meta {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            background: #eef4f1;
+            padding: 9px 14px;
+            border-radius: 7px;
+            font-size: 14px;
+        }
+
+        .overview-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-top: 25px;
+        }
+
+        .overview-card {
+            background: white;
+            padding: 28px;
+            border-radius: 14px;
+            box-shadow: 0 5px 18px rgba(0,0,0,0.05);
+        }
+
+        .overview-card h2 {
+            color: #0b1f33;
+            margin-top: 0;
+        }
+
+        .overview-card p {
+            line-height: 1.7;
+            color: #59656d;
+        }
+
+        .overview-card ul,
+        .overview-card ol {
+            padding-left: 22px;
+            line-height: 1.8;
+            color: #59656d;
+        }
+
+        .start-section {
+            margin-top: 30px;
+            background: #0b1f33;
+            color: white;
+            padding: 30px;
+            border-radius: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .start-section h2 {
+            margin: 0 0 8px;
+        }
+
+        .start-section p {
+            margin: 0;
+            opacity: 0.8;
+        }
+
+        .start-simulation {
+            border: none;
+            background: #1c8c6c;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .start-simulation:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        @media (max-width: 800px) {
+
+            .overview-hero {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .overview-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .start-section {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="overview-container">
+
+
+    <!-- HEADER -->
+
+    <header class="overview-header">
+
+        <div class="overview-logo">
+            🧬 MoleBio Lab
+        </div>
+
+        <a
+            href="student-dashboard.html"
+            class="back-button">
+
+            ← Back to Dashboard
+
+        </a>
+
+    </header>
+
+
+
+    <!-- MAIN -->
+
+    <main class="overview-main">
+
+
+        <!-- HERO -->
+
+        <section class="overview-hero">
+
+            <div>
+
+                <span
+                    class="overview-category"
+                    id="category">
+
+                    MOLECULAR BIOLOGY
+
+                </span>
+
+
+                <h1 id="title">
+                    Loading Practical...
+                </h1>
+
+
+                <p id="description">
+                    Loading practical information...
+                </p>
+
+
+                <div class="overview-meta">
+
+                    <span
+                        class="meta-item"
+                        id="difficulty">
+
+                        Difficulty
+
+                    </span>
+
+                    <span
+                        class="meta-item"
+                        id="duration">
+
+                        Duration
+
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div
+                class="overview-icon"
+                id="icon">
+
+                🧬
+
+            </div>
+
+        </section>
+
+
+
+        <!-- INFORMATION -->
+
+        <section class="overview-grid">
+
+
+            <!-- AIM -->
+
+            <div class="overview-card">
+
+                <h2>
+                    🎯 Aim
+                </h2>
+
+                <p id="aim">
+                    Loading...
+                </p>
+
+            </div>
+
+
+
+            <!-- PRINCIPLE -->
+
+            <div class="overview-card">
+
+                <h2>
+                    🔬 Principle
+                </h2>
+
+                <p id="principle">
+                    Loading...
+                </p>
+
+            </div>
+
+
+
+            <!-- OBJECTIVES -->
+
+            <div class="overview-card">
+
+                <h2>
+                    📚 Learning Objectives
+                </h2>
+
+                <ul id="objectives">
+                </ul>
+
+            </div>
+
+
+
+            <!-- EQUIPMENT -->
+
+            <div class="overview-card">
+
+                <h2>
+                    🧪 Equipment
+                </h2>
+
+                <ul id="equipment">
+                </ul>
+
+            </div>
+
+
+
+            <!-- MATERIALS -->
+
+            <div class="overview-card">
+
+                <h2>
+                    ⚗️ Materials
+                </h2>
+
+                <ul id="materials">
+                </ul>
+
+            </div>
+
+
+
+            <!-- PROCEDURE -->
+
+            <div class="overview-card">
+
+                <h2>
+                    📋 Procedure
+                </h2>
+
+                <ol id="procedure">
+                </ol>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- START SIMULATION -->
+
+        <section class="start-section">
+
+            <div>
+
+                <h2>
+                    Ready to Enter the Virtual Laboratory?
+                </h2>
+
+                <p>
+                    Follow the practical procedure through
+                    an interactive simulation.
+                </p>
+
+            </div>
+
+
+            <button
+                class="start-simulation"
+                id="startSimulation">
+
+                Start Simulation →
+
+            </button>
+
+        </section>
+
+
+    </main>
+
+</div>
+
+
+<script src="../data/experiments.js"></script>
+
+<script src="../js/practical-overview.js"></script>
+
+</body>
+
+</html>

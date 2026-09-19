@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>Simulation | MoleBio Lab</title>
+
+    <link
+        rel="stylesheet"
+        href="../css/style.css">
+
+    <link
+        rel="stylesheet"
+        href="../css/simulation.css">
+
+</head>
+
+
+<body>
+
+
+<div class="simulation-layout">
+
+
+    <!-- ================= HEADER ================= -->
+
+    <header class="simulation-header">
+
+        <div class="simulation-logo">
+
+            🧬 MoleBio Lab
+
+        </div>
+
+
+        <div>
+
+            <span>
+
+                VIRTUAL PRACTICAL SIMULATION
+
+            </span>
+
+        </div>
+
+
+        <a href="practicals.html">
+
+            ← Exit Simulation
+
+        </a>
+
+    </header>
+
+
+
+    <!-- ================= MAIN ================= -->
+
+    <main class="simulation-main">
+
+
+        <!-- PRACTICAL INFORMATION -->
+
+        <section class="simulation-title">
+
+            <p>
+
+                MOLECULAR BIOLOGY PRACTICAL
+
+            </p>
+
+
+            <h1 id="simulationTitle">
+
+                Loading...
+
+            </h1>
+
+
+            <p id="simulationDescription">
+
+            </p>
+
+        </section>
+
+
+
+        <!-- ================= PROGRESS ================= -->
+
+        <section class="simulation-progress">
+
+            <div class="progress-info">
+
+                <span>
+
+                    Practical Progress
+
+                </span>
+
+
+                <strong id="progressText">
+
+                    0%
+
+                </strong>
+
+            </div>
+
+
+            <div class="progress-bar">
+
+                <div
+                    id="progressFill"
+                    class="progress-fill">
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ================= LAB AREA ================= -->
+
+        <section class="laboratory">
+
+
+            <!-- LEFT -->
+
+            <div class="equipment-panel">
+
+                <h2>
+
+                    🔬 Laboratory Equipment
+
+                </h2>
+
+
+                <div
+                    id="equipmentContainer"
+                    class="equipment-list">
+
+                </div>
+
+            </div>
+
+
+
+            <!-- CENTER -->
+
+            <div class="simulation-workspace">
+
+
+                <div class="workspace-header">
+
+                    <h2>
+
+                        🧪 Simulation Workspace
+
+                    </h2>
+
+
+                    <span id="stepCounter">
+
+                        Step 1
+
+                    </span>
+
+                </div>
+
+
+                <div
+                    id="simulationObject"
+                    class="simulation-object">
+
+                    🧬
+
+                </div>
+
+
+                <h2 id="stepTitle">
+
+                    Prepare the practical
+
+                </h2>
+
+
+                <p id="stepInstruction">
+
+                    Follow the instructions carefully
+                    to perform this step.
+
+                </p>
+
+
+                <button
+                    id="performStep"
+                    class="perform-button">
+
+                    Perform Step →
+
+                </button>
+
+
+            </div>
+
+
+
+            <!-- RIGHT -->
+
+            <div class="instruction-panel">
+
+                <h2>
+
+                    📋 Instructions
+
+                </h2>
+
+
+                <div id="stepList">
+
+                </div>
+
+            </div>
+
+
+        </section>
+
+
+        <!-- ================= RESULT ================= -->
+
+        <section
+            id="completionPanel"
+            class="completion-panel hidden">
+
+            <div>
+
+                🎉
+
+            </div>
+
+
+            <h2>
+
+                Practical Completed!
+
+            </h2>
+
+
+            <p>
+
+                You have successfully completed
+                the virtual practical.
+
+            </p>
+
+
+            <div class="completion-actions">
+
+                <button
+                    onclick="window.location.href='practicals.html'">
+
+                    Back to Practicals
+
+                </button>
+
+            </div>
+
+        </section>
+
+
+    </main>
+
+</div>
+
+
+<script src="../data/experiments.js"></script>
+
+<script src="../js/simulation.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gel Electrophoresis Theory | MoleBio Lab</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f0f4f8;
+            color: #173f5f;
+            min-height: 100vh;
+        }
+
+        .theory-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        .theory-header {
+            background: white;
+            border-radius: 12px;
+            padding: 25px 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .theory-header h1 {
+            font-size: 28px;
+            color: #173f5f;
+        }
+
+        .theory-header .subtitle {
+            color: #65788a;
+            font-size: 15px;
+        }
+
+        .back-btn {
+            text-decoration: none;
+            color: #4a90e2;
+            font-weight: 600;
+            padding: 8px 20px;
+            border-radius: 8px;
+            background: #e8f4fc;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: #d0e8f8;
+            transform: translateX(-3px);
+        }
+
+        .theory-body {
+            background: white;
+            border-radius: 12px;
+            padding: 35px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        .theory-body h2 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: #173f5f;
+            border-bottom: 2px solid #e8f4fc;
+            padding-bottom: 10px;
+        }
+
+        .theory-body h3 {
+            font-size: 19px;
+            margin: 25px 0 12px;
+            color: #1a6a8a;
+        }
+
+        .theory-body p {
+            font-size: 15px;
+            line-height: 1.8;
+            color: #2c3e50;
+            margin-bottom: 12px;
+        }
+
+        .theory-body ul, .theory-body ol {
+            padding-left: 25px;
+            margin-bottom: 15px;
+        }
+
+        .theory-body li {
+            font-size: 15px;
+            line-height: 1.8;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .theory-body .highlight-box {
+            background: #f5f9fc;
+            border-left: 4px solid #4a90e2;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .theory-body .highlight-box.warning {
+            border-left-color: #f39c12;
+            background: #fef9e7;
+        }
+
+        .theory-body .highlight-box.danger {
+            border-left-color: #e74c3c;
+            background: #fde8e8;
+        }
+
+        .theory-body .highlight-box.success {
+            border-left-color: #27ae60;
+            background: #e8f5e9;
+        }
+
+        .theory-body table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0 25px;
+            font-size: 14px;
+        }
+
+        .theory-body th {
+            background: #4a90e2;
+            color: white;
+            padding: 12px 15px;
+            text-align: left;
+        }
+
+        .theory-body td {
+            padding: 10px 15px;
+            border-bottom: 1px solid #e8edf2;
+        }
+
+        .theory-body tr:hover {
+            background: #f5f9fc;
+        }
+
+        .theory-body .tag {
+            display: inline-block;
+            padding: 3px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .theory-body .tag.blue {
+            background: #e8f4fc;
+            color: #4a90e2;
+        }
+
+        .theory-body .tag.green {
+            background: #e8f5e9;
+            color: #27ae60;
+        }
+
+        .theory-body .tag.orange {
+            background: #fef9e7;
+            color: #f39c12;
+        }
+
+        .theory-body .tag.red {
+            background: #fde8e8;
+            color: #e74c3c;
+        }
+
+        .theory-body .diagram-box {
+            background: #f8fafc;
+            border: 2px solid #e8edf2;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .theory-body .diagram-box .diagram {
+            font-family: monospace;
+            font-size: 14px;
+            line-height: 2;
+            color: #173f5f;
+            white-space: pre;
+            text-align: left;
+            display: inline-block;
+        }
+
+        .theory-body .steps-list {
+            counter-reset: step-counter;
+            list-style: none;
+            padding: 0;
+        }
+
+        .theory-body .steps-list li {
+            counter-increment: step-counter;
+            padding: 12px 15px 12px 55px;
+            position: relative;
+            border-bottom: 1px solid #f0f4f8;
+        }
+
+        .theory-body .steps-list li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 0;
+            top: 10px;
+            background: #4a90e2;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 32px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .theory-body .steps-list li:last-child {
+            border-bottom: none;
+        }
+
+        @media (max-width: 768px) {
+            .theory-container {
+                padding: 15px 10px;
+            }
+
+            .theory-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .theory-body {
+                padding: 20px;
+            }
+
+            .theory-body table {
+                font-size: 12px;
+            }
+
+            .theory-body th,
+            .theory-body td {
+                padding: 6px 10px;
+            }
+
+            .theory-body .diagram-box .diagram {
+                font-size: 11px;
+            }
+        }
+
+        @media print {
+            .back-btn {
+                display: none !important;
+            }
+
+            .theory-body {
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="theory-container">
+
+    <header class="theory-header">
+        <div>
+            <h1>🧫 Agarose Gel Electrophoresis</h1>
+            <p class="subtitle">Understanding the principle, factors, and visualization of DNA separation</p>
+        </div>
+        <a href="index.html" class="back-btn">← Back to Theory Library</a>
+    </header>
+
+    <div class="theory-body">
+
+        <!-- ==========================================
+             INTRODUCTION
+        ========================================== -->
+        <h2>📖 Introduction</h2>
+
+        <p>
+            <strong>Agarose Gel Electrophoresis</strong> is a technique used to separate DNA, RNA, or protein 
+            molecules based on their size and charge. Nucleic acid molecules are negatively charged and migrate 
+            toward the anode (positive electrode) when an electric field is applied.
+        </p>
+
+        <div class="highlight-box success">
+            <strong>🧬 Key Principle:</strong> DNA fragments migrate through the agarose matrix at rates 
+            inversely proportional to the log<sub>10</sub> of their molecular weight. Smaller fragments 
+            migrate faster than larger ones.
+        </div>
+
+        <!-- ==========================================
+             EQUIPMENT
+        ========================================== -->
+        <h2>🔬 Equipment Required</h2>
+
+        <ol>
+            <li><strong>Electrophoresis Chamber</strong> - Contains buffer and gel</li>
+            <li><strong>Power Supply</strong> - Provides electrical current</li>
+            <li><strong>Gel Casting Trays</strong> - Hold the gel while it solidifies</li>
+            <li><strong>Sample Combs</strong> - Form wells in the gel for sample loading</li>
+            <li><strong>UV Transilluminator</strong> - Visualizes stained DNA bands</li>
+            <li><strong>Pipettes</strong> - For loading samples (1-100 µL range)</li>
+        </ol>
+
+        <div class="highlight-box warning">
+            <strong>⚠️ Safety Note:</strong> Always wear protective eyewear when observing DNA on a 
+            transilluminator to prevent eye damage from UV light.
+        </div>
+
+        <!-- ==========================================
+             REAGENTS
+        ========================================== -->
+        <h2>🧪 Reagents Required</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Reagent</th>
+                    <th>Function</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Agarose</strong></td>
+                    <td>Forms the gel matrix for separation</td>
+                </tr>
+                <tr>
+                    <td><strong>TAE or TBE Buffer</strong></td>
+                    <td>Maintains pH and provides ions for conductivity</td>
+                </tr>
+                <tr>
+                    <td><strong>DNA Ladder (Marker)</strong></td>
+                    <td>Reference for estimating fragment sizes</td>
+                </tr>
+                <tr>
+                    <td><strong>Loading Buffer</strong></td>
+                    <td>Contains glycerol (for density) and tracking dyes</td>
+                </tr>
+                <tr>
+                    <td><strong>Ethidium Bromide / SYBR Safe</strong></td>
+                    <td>Stains DNA for visualization under UV light</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="highlight-box danger">
+            <strong>⚠️ Ethidium Bromide Warning:</strong> Ethidium bromide is a known mutagen. 
+            Always wear gloves when handling and dispose of properly in hazardous waste containers.
+        </div>
+
+        <!-- ==========================================
+             PROCEDURE
+        ========================================== -->
+        <h2>📋 Procedure</h2>
+
+        <ol class="steps-list">
+            <li>
+                <strong>Prepare the Gel:</strong> Mix agarose powder with electrophoresis buffer 
+                (0.5-2% agarose depending on fragment size). Heat in a microwave until completely melted.
+            </li>
+            <li>
+                <strong>Add Stain:</strong> Add ethidium bromide (final concentration 0.5 µg/mL) 
+                or SYBR Safe to the gel solution before pouring.
+            </li>
+            <li>
+                <strong>Pour the Gel:</strong> Cool the solution to ~60°C, pour into a casting tray 
+                with a comb, and allow to solidify at room temperature (about 20 minutes).
+            </li>
+            <li>
+                <strong>Remove Comb:</strong> Carefully remove the comb without tearing the well bottoms.
+            </li>
+            <li>
+                <strong>Set Up the Apparatus:</strong> Place the gel in the electrophoresis chamber 
+                and cover with buffer.
+            </li>
+            <li>
+                <strong>Load Samples:</strong> Mix DNA samples with loading buffer and pipette into the wells.
+            </li>
+            <li>
+                <strong>Run the Gel:</strong> Apply current (typically 100V for 20-40 minutes). 
+                DNA migrates toward the positive (red) electrode.
+            </li>
+            <li>
+                <strong>Visualize:</strong> Place the gel on a UV transilluminator to view DNA bands.
+            </li>
+        </ol>
+
+        <div class="highlight-box">
+            <strong>💡 Tracking Dyes:</strong>
+            <ul>
+                <li><strong>Bromophenol Blue:</strong> Migrates at ~300 bp</li>
+                <li><strong>Xylene Cyanol:</strong> Migrates at ~4000 bp</li>
+            </ul>
+        </div>
+
+        <!-- ==========================================
+             FACTORS AFFECTING MIGRATION
+        ========================================== -->
+        <h2>📊 Factors Affecting DNA Migration</h2>
+
+        <h3>1. Agarose Concentration</h3>
+        <p>
+            Different agarose concentrations resolve different DNA fragment sizes:
+        </p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Agarose Concentration</th>
+                    <th>Optimal DNA Size Range</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>0.5%</td>
+                    <td>1,000 - 10,000 bp</td>
+                </tr>
+                <tr>
+                    <td>0.8%</td>
+                    <td>800 - 8,000 bp</td>
+                </tr>
+                <tr>
+                    <td>1.0%</td>
+                    <td>500 - 5,000 bp</td>
+                </tr>
+                <tr>
+                    <td>1.5%</td>
+                    <td>200 - 2,000 bp</td>
+                </tr>
+                <tr>
+                    <td>2.0%</td>
+                    <td>100 - 1,000 bp</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>2. Voltage</h3>
+        <p>
+            As voltage increases, larger fragments migrate proportionally faster than smaller fragments. 
+            <strong>Best resolution for fragments >2 kb:</strong> ≤5 volts per cm (distance between electrodes).
+        </p>
+
+        <h3>3. Buffer Choice</h3>
+        <div class="highlight-box">
+            <p><strong>TAE (Tris-acetate-EDTA):</strong> Lower ionic strength, good for large DNA, less heat generation</p>
+            <p><strong>TBE (Tris-borate-EDTA):</strong> Higher ionic strength, better for small DNA, more heat generation</p>
+            <p><strong>⚠️ Important:</strong> Using water instead of buffer results in NO DNA migration. Using concentrated buffer can melt the gel.</p>
+        </div>
+
+        <h3>4. Ethidium Bromide Effect</h3>
+        <p>
+            Ethidium bromide binds to DNA by intercalating between bases, which alters the DNA's mass, 
+            rigidity, and therefore its mobility.
+        </p>
+
+        <!-- ==========================================
+             DNA BAND PATTERNS
+        ========================================== -->
+        <h2>🧬 DNA Band Patterns</h2>
+
+        <div class="diagram-box">
+            <div class="diagram">
+                ┌─────────────────────────────────────────────────────────────┐
+                │              GEL ELECTROPHORESIS BAND PATTERNS            │
+                ├─────────────────────────────────────────────────────────────┤
+                │                                                             │
+                │   ┌─────┐  ┌─────┐  ┌─────┐  ┌─────┐  ┌─────┐            │
+                │   │     │  │     │  │     │  │     │  │     │            │
+                │   │  ██ │  │  ██ │  │  ██ │  │  ██ │  │  ██ │   ← Wells │
+                │   │  ██ │  │  ██ │  │  ██ │  │  ██ │  │  ██ │            │
+                │   │  ██ │  │  ██ │  │  ██ │  │  ██ │  │  ██ │            │
+                │   │     │  │     │  │     │  │     │  │     │            │
+                │   │  ██ │  │  ██ │  │  ██ │  │  ██ │  │  ██ │            │
+                │   │  ██ │  │  ██ │  │  ██ │  │  ██ │  │  ██ │            │
+                │   │  ██ │  │     │  │  ██ │  │     │  │     │            │
+                │   │     │  │     │  │  ██ │  │     │  │     │            │
+                │   │  ██ │  │     │  │     │  │     │  │     │            │
+                │   └─────┘  └─────┘  └─────┘  └─────┘  └─────┘            │
+                │      L        +        S1       S2       -               │
+                │   (Ladder)  (Positive) (Sample) (Sample) (Negative)      │
+                │                                                             │
+                │   🔵 Ladder   🟢 Positive   🟡 Sample 1   🟠 Sample 2   🔴 Negative│
+                └─────────────────────────────────────────────────────────────┘
+            </div>
+        </div>
+
+        <div class="highlight-box success">
+            <strong>✅ Interpretation:</strong>
+            <ul>
+                <li><strong>Ladder:</strong> Reference bands for size estimation</li>
+                <li><strong>Positive Control:</strong> Expected bands indicate PCR worked</li>
+                <li><strong>Samples:</strong> Bands at expected size = DNA detected</li>
+                <li><strong>Negative Control:</strong> No bands = No contamination</li>
+            </ul>
+        </div>
+
+        <!-- ==========================================
+             REFERENCES
+        ========================================== -->
+        <h2>📚 References</h2>
+
+        <div class="highlight-box">
+            <p>Sambrook, J. &amp; Russell, D.W. (2001). <em>Molecular Cloning: A Laboratory Manual</em>. 3rd ed. Cold Spring Harbor Laboratory Press.</p>
+            <p>Sharp, P.A., Sugden, B. &amp; Sambrook, J. (1973). Detection of two restriction endonuclease activities in Haemophilus parainfluenzae using analytical agarose-ethidium bromide electrophoresis. <em>Biochemistry</em>, 12(16), 3055-3063.</p>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+    console.log('🧫 Gel Electrophoresis Theory Page Loaded!');
+</script>
+
+</body>
+</html>

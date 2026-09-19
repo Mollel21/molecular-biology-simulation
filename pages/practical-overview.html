@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Practical Overview | MoleBio Lab</title>
+
+
+    <style>
+
+        /* =================================
+           RESET
+        ================================= */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+
+        body {
+
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            background: #f4f7fb;
+
+            color: #173f5f;
+
+        }
+
+
+        /* =================================
+           LAYOUT
+        ================================= */
+
+        .container {
+
+            display: flex;
+
+            min-height: 100vh;
+
+        }
+
+
+        /* =================================
+           SIDEBAR
+        ================================= */
+
+        .sidebar {
+
+            width: 250px;
+
+            background: #123b5a;
+
+            color: white;
+
+            position: fixed;
+
+            top: 0;
+
+            left: 0;
+
+            bottom: 0;
+
+            min-height: 100vh;
+
+        }
+
+
+        .logo {
+
+            height: 82px;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+
+            padding: 0 25px;
+
+            font-size: 24px;
+
+            font-weight: bold;
+
+            border-bottom:
+                1px solid
+                rgba(255,255,255,0.12);
+
+        }
+
+
+        .logo-icon {
+
+            font-size: 28px;
+
+        }
+
+
+        .menu {
+
+            padding: 25px 12px;
+
+        }
+
+
+        .menu a {
+
+            display: block;
+
+            text-decoration: none;
+
+            color: white;
+
+            padding: 15px 18px;
+
+            margin-bottom: 8px;
+
+            border-radius: 9px;
+
+            font-size: 16px;
+
+        }
+
+
+        .menu a:hover {
+
+            background: #2079b9;
+
+        }
+
+
+        .menu a.active {
+
+            background: #2079b9;
+
+        }
+
+
+        .bottom-menu {
+
+            position: absolute;
+
+            bottom: 20px;
+
+            width: 100%;
+
+            padding: 12px;
+
+        }
+
+
+        .bottom-menu a {
+
+            color: white;
+
+            text-decoration: none;
+
+            padding: 12px;
+
+            display: block;
+
+        }
+
+
+        /* =================================
+           MAIN
+        ================================= */
+
+        .main {
+
+            margin-left: 250px;
+
+            width:
+                calc(100% - 250px);
+
+            padding: 40px;
+
+        }
+
+
+        /* =================================
+           TOP NAV
+        ================================= */
+
+        .back-link {
+
+            display: inline-block;
+
+            color: #1976b9;
+
+            text-decoration: none;
+
+            font-size: 15px;
+
+            margin-bottom: 25px;
+
+        }
+
+
+        .back-link:hover {
+
+            text-decoration: underline;
+
+        }
+
+
+        /* =================================
+           HEADER
+        ================================= */
+
+        .practical-header {
+
+            background: white;
+
+            border-radius: 18px;
+
+            padding: 30px;
+
+            margin-bottom: 25px;
+
+            box-shadow:
+                0 5px 20px
+                rgba(0,0,0,0.06);
+
+        }
+
+
+        .icon {
+
+            width: 75px;
+
+            height: 75px;
+
+            background: #e8f4fc;
+
+            border-radius: 15px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 40px;
+
+            margin-bottom: 20px;
+
+        }
+
+
+        .category {
+
+            color: #1976b9;
+
+            font-size: 13px;
+
+            font-weight: bold;
+
+            letter-spacing: 1px;
+
+            margin-bottom: 8px;
+
+        }
+
+
+        h1 {
+
+            font-size: 36px;
+
+            margin-bottom: 12px;
+
+            color: #173f5f;
+
+        }
+
+
+        .description {
+
+            color: #66798b;
+
+            font-size: 16px;
+
+            line-height: 1.7;
+
+            max-width: 900px;
+
+        }
+
+
+        .meta {
+
+            display: flex;
+
+            gap: 15px;
+
+            margin-top: 20px;
+
+            flex-wrap: wrap;
+
+        }
+
+
+        .meta span {
+
+            background: #f0f5f9;
+
+            padding: 8px 14px;
+
+            border-radius: 20px;
+
+            font-size: 13px;
+
+            color: #52697c;
+
+        }
+
+
+        /* =================================
+           CONTENT GRID
+        ================================= */
+
+        .content-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                1fr 1fr;
+
+            gap: 25px;
+
+        }
+
+
+        .section {
+
+            background: white;
+
+            border-radius: 16px;
+
+            padding: 25px;
+
+            box-shadow:
+                0 5px 20px
+                rgba(0,0,0,0.05);
+
+        }
+
+
+        .section h2 {
+
+            font-size: 21px;
+
+            margin-bottom: 15px;
+
+            color: #173f5f;
+
+        }
+
+
+        .section p {
+
+            color: #637789;
+
+            line-height: 1.7;
+
+            font-size: 15px;
+
+        }
+
+
+        /* =================================
+           LISTS
+        ================================= */
+
+        .section ul {
+
+            padding-left: 20px;
+
+        }
+
+
+        .section li {
+
+            margin-bottom: 10px;
+
+            color: #637789;
+
+            line-height: 1.5;
+
+        }
+
+
+        /* =================================
+           PROCEDURE
+        ================================= */
+
+        .procedure {
+
+            grid-column:
+                1 / -1;
+
+        }
+
+
+        .step {
+
+            display: flex;
+
+            gap: 15px;
+
+            padding: 15px;
+
+            border: 1px solid #e5edf3;
+
+            border-radius: 10px;
+
+            margin-bottom: 12px;
+
+        }
+
+
+        .step-number {
+
+            width: 35px;
+
+            height: 35px;
+
+            min-width: 35px;
+
+            background: #1976b9;
+
+            color: white;
+
+            border-radius: 50%;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-weight: bold;
+
+        }
+
+
+        .step-content strong {
+
+            display: block;
+
+            color: #173f5f;
+
+            margin-bottom: 5px;
+
+        }
+
+
+        .step-content p {
+
+            margin-top: 5px;
+
+        }
+
+
+        /* =================================
+           START SIMULATION
+        ================================= */
+
+        .simulation-box {
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #123b5a,
+                    #1976b9
+                );
+
+            color: white;
+
+            border-radius: 18px;
+
+            padding: 30px;
+
+            margin-top: 25px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 25px;
+
+        }
+
+
+        .simulation-box h2 {
+
+            color: white;
+
+            margin-bottom: 8px;
+
+        }
+
+
+        .simulation-box p {
+
+            color: #e5f2fa;
+
+        }
+
+
+        .start-button {
+
+            background: white;
+
+            color: #176ea8;
+
+            border: none;
+
+            padding: 14px 25px;
+
+            border-radius: 9px;
+
+            font-size: 16px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            text-decoration: none;
+
+            white-space: nowrap;
+
+        }
+
+
+        .start-button:hover {
+
+            background: #eaf5fc;
+
+        }
+
+
+        /* =================================
+           ERROR MESSAGE
+        ================================= */
+
+        .error-message {
+
+            background: #fff1f1;
+
+            border: 1px solid #f1b5b5;
+
+            color: #b42318;
+
+            padding: 20px;
+
+            border-radius: 12px;
+
+            margin-bottom: 25px;
+
+            display: none;
+
+        }
+
+
+        /* =================================
+           MOBILE
+        ================================= */
+
+        @media (max-width: 900px) {
+
+            .sidebar {
+
+                width: 210px;
+
+            }
+
+
+            .main {
+
+                margin-left: 210px;
+
+                width:
+                    calc(100% - 210px);
+
+                padding: 25px;
+
+            }
+
+
+            .content-grid {
+
+                grid-template-columns: 1fr;
+
+            }
+
+        }
+
+
+        @media (max-width: 650px) {
+
+            .sidebar {
+
+                position: relative;
+
+                width: 100%;
+
+                min-height: auto;
+
+            }
+
+
+            .container {
+
+                display: block;
+
+            }
+
+
+            .main {
+
+                margin-left: 0;
+
+                width: 100%;
+
+                padding: 20px;
+
+            }
+
+
+            .bottom-menu {
+
+                position: relative;
+
+                bottom: auto;
+
+            }
+
+
+            .simulation-box {
+
+                flex-direction: column;
+
+                align-items: flex-start;
+
+            }
+
+
+            .start-button {
+
+                width: 100%;
+
+                text-align: center;
+
+            }
+
+
+            h1 {
+
+                font-size: 28px;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+    <!-- =================================
+         SIDEBAR
+    ================================= -->
+
+    <aside class="sidebar">
+
+
+        <div class="logo">
+
+            <span class="logo-icon">
+                🧬
+            </span>
+
+            <span>
+                MoleBio
+            </span>
+
+        </div>
+
+
+        <nav class="menu">
+
+
+            <a href="student-dashboard.html">
+
+                ▣ &nbsp; Dashboard
+
+            </a>
+
+
+            <a href="experiments.html"
+               class="active">
+
+                🧪 &nbsp; Practicals
+
+            </a>
+
+
+            <a href="#">
+
+                📊 &nbsp; My Progress
+
+            </a>
+
+
+            <a href="#">
+
+                🔬 &nbsp; Equipment
+
+            </a>
+
+
+            <a href="#">
+
+                📖 &nbsp; Instructions
+
+            </a>
+
+        </nav>
+
+
+        <div class="bottom-menu">
+
+            <a href="../index.html">
+
+                ← Exit Laboratory
+
+            </a>
+
+        </div>
+
+    </aside>
+
+
+
+    <!-- =================================
+         MAIN CONTENT
+    ================================= -->
+
+    <main class="main">
+
+
+        <a href="experiments.html"
+           class="back-link">
+
+            ← Back to Practicals
+
+        </a>
+
+
+        <!-- ERROR -->
+
+        <div id="errorMessage"
+             class="error-message">
+
+            Practical could not be loaded.
+
+        </div>
+
+
+
+        <!-- =================================
+             PRACTICAL HEADER
+        ================================= -->
+
+        <section class="practical-header">
+
+
+            <div id="practicalIcon"
+                 class="icon">
+
+                🧬
+
+            </div>
+
+
+            <div id="practicalCategory"
+                 class="category">
+
+                DNA EXTRACTION
+
+            </div>
+
+
+            <h1 id="practicalTitle">
+
+                Loading practical...
+
+            </h1>
+
+
+            <p id="practicalDescription"
+               class="description">
+
+                Loading practical description...
+
+            </p>
+
+
+            <div class="meta">
+
+
+                <span id="practicalDifficulty">
+
+                    Loading...
+
+                </span>
+
+
+                <span id="practicalDuration">
+
+                    ⏱ Loading...
+
+                </span>
+
+
+                <span>
+
+                    🧪 Virtual Laboratory
+
+                </span>
+
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================
+             INFORMATION
+        ================================= -->
+
+        <div class="content-grid">
+
+
+            <!-- AIM -->
+
+            <section class="section">
+
+                <h2>
+
+                    🎯 Aim
+
+                </h2>
+
+
+                <p id="practicalAim">
+
+                    Loading...
+
+                </p>
+
+            </section>
+
+
+
+            <!-- PRINCIPLE -->
+
+            <section class="section">
+
+                <h2>
+
+                    🔬 Principle
+
+                </h2>
+
+
+                <p id="practicalPrinciple">
+
+                    Loading...
+
+                </p>
+
+            </section>
+
+
+
+            <!-- OBJECTIVES -->
+
+            <section class="section">
+
+                <h2>
+
+                    📋 Objectives
+
+                </h2>
+
+
+                <ul id="objectivesList">
+
+                </ul>
+
+            </section>
+
+
+
+            <!-- EQUIPMENT -->
+
+            <section class="section">
+
+                <h2>
+
+                    🔧 Equipment
+
+                </h2>
+
+
+                <ul id="equipmentList">
+
+                </ul>
+
+            </section>
+
+
+
+            <!-- MATERIALS -->
+
+            <section class="section">
+
+                <h2>
+
+                    🧪 Materials
+
+                </h2>
+
+
+                <ul id="materialsList">
+
+                </ul>
+
+            </section>
+
+
+
+            <!-- =================================
+                 PROCEDURE
+            ================================= -->
+
+            <section class="section procedure">
+
+                <h2>
+
+                    📝 Procedure
+
+                </h2>
+
+
+                <div id="procedureList">
+
+                </div>
+
+            </section>
+
+
+        </div>
+
+
+
+        <!-- =================================
+             START SIMULATION
+        ================================= -->
+
+        <section class="simulation-box">
+
+
+            <div>
+
+                <h2>
+
+                    Ready to Start?
+
+                </h2>
+
+
+                <p>
+
+                    Enter the virtual laboratory and
+                    perform the selected practical simulation.
+
+                </p>
+
+            </div>
+
+
+            <a id="startPracticalButton"
+               href="#"
+               class="start-button">
+
+                Start Simulation →
+
+            </a>
+
+
+        </section>
+
+
+    </main>
+
+</div>
+
+
+
+<!-- =================================
+     JAVASCRIPT
+================================= -->
+
+<script src="../js/experiments.js"></script>
+
+<script src="../js/practical-overview.js"></script>
+
+
+</body>
+
+</html>

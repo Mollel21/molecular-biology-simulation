@@ -1,0 +1,2068 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gel Electrophoresis - MoleBio Lab</title>
+    
+    <!-- Load experiments data -->
+    <script src="../data/experiments.js"></script>
+    
+    <style>
+        /* ==========================================
+           BASE STYLES
+        ========================================== */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f0f4f8;
+            color: #173f5f;
+            min-height: 100vh;
+        }
+
+        /* ==========================================
+           LAYOUT
+        ========================================== */
+        .lab-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ==========================================
+           HEADER
+        ========================================== */
+        .lab-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .back-btn {
+            text-decoration: none;
+            color: #4a90e2;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            background: #e8f4fc;
+        }
+
+        .back-btn:hover {
+            background: #d0e8f8;
+            transform: translateX(-3px);
+        }
+
+        .lab-header h1 {
+            font-size: 24px;
+            color: #173f5f;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .step-indicator {
+            background: #e8f4fc;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            color: #4a90e2;
+            font-size: 14px;
+        }
+
+        .timer {
+            background: #f0f4f8;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            color: #173f5f;
+            font-size: 14px;
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* ==========================================
+           MAIN CONTENT
+        ========================================== */
+        .lab-main {
+            flex: 1;
+            display: flex;
+            gap: 25px;
+            min-height: 600px;
+        }
+
+        /* ==========================================
+           CONTROLS PANEL (LEFT)
+        ========================================== */
+        .lab-controls {
+            flex: 1;
+            min-width: 380px;
+            max-width: 480px;
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            overflow-y: auto;
+            max-height: 700px;
+        }
+
+        .step-panel {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .step-panel.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateX(-15px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .step-panel h3 {
+            color: #173f5f;
+            font-size: 18px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e8f4fc;
+        }
+
+        .equipment-status {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+
+        .equipment-status ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 8px;
+        }
+
+        .equipment-status ul li {
+            padding: 4px 0;
+            font-size: 14px;
+            color: #2c3e50;
+        }
+
+        .highlight {
+            color: #4a90e2;
+            font-weight: 600;
+        }
+
+        /* ==========================================
+           ACTION AREA
+        ========================================== */
+        .action-area {
+            margin-top: 15px;
+        }
+
+        .action-btn {
+            padding: 12px 24px;
+            background: #4a90e2;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin: 5px 0;
+        }
+
+        .action-btn:hover:not(:disabled) {
+            background: #357abd;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
+        }
+
+        .action-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .action-btn.primary {
+            background: #27ae60;
+        }
+
+        .action-btn.primary:hover:not(:disabled) {
+            background: #219a52;
+        }
+
+        .action-btn.secondary {
+            background: #e74c3c;
+        }
+
+        .action-btn.secondary:hover:not(:disabled) {
+            background: #c0392b;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e8f0;
+            border-radius: 4px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4a90e2, #357abd);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        .status-msg {
+            padding: 10px 14px;
+            margin-top: 10px;
+            border-radius: 6px;
+            background: #f5f9fc;
+            border-left: 4px solid #4a90e2;
+            font-size: 14px;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            color: #2c3e50;
+            transition: all 0.3s ease;
+        }
+
+        .status-msg.success {
+            border-left-color: #27ae60;
+            background: #e8f5e9;
+        }
+
+        .status-msg.warning {
+            border-left-color: #f39c12;
+            background: #fef9e7;
+        }
+
+        .status-msg.error {
+            border-left-color: #e74c3c;
+            background: #fde8e8;
+        }
+
+        /* ==========================================
+           SAMPLE LIST (STEP 2)
+        ========================================== */
+        .sample-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .sample-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            background: #f5f9fc;
+            border-radius: 8px;
+            border: 1px solid #e0e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .sample-item:hover {
+            border-color: #4a90e2;
+            transform: translateX(3px);
+        }
+
+        .sample-item.loaded {
+            background: #e8f5e9 !important;
+            border-color: #4CAF50 !important;
+            border-left: 4px solid #4CAF50;
+        }
+
+        .sample-item.loaded .sample-label {
+            color: #2e7d32;
+            font-weight: 600;
+        }
+
+        .sample-label {
+            font-weight: 500;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sample-color {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            border: 1px solid rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .sample-item.loaded .sample-color {
+            transform: scale(1.2);
+            box-shadow: 0 0 10px currentColor;
+        }
+
+        .load-btn {
+            padding: 6px 20px;
+            background: #4a90e2;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            font-size: 13px;
+            min-width: 80px;
+        }
+
+        .load-btn:hover:not(:disabled) {
+            background: #357abd;
+            transform: scale(1.05);
+        }
+
+        .load-btn:disabled {
+            background: #4CAF50;
+            cursor: default;
+            opacity: 0.9;
+            transform: none;
+        }
+
+        /* ==========================================
+           RUN CONTROLS (STEP 3)
+        ========================================== */
+        .run-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            padding: 15px;
+            background: #f5f9fc;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+
+        .run-controls label {
+            font-weight: 500;
+            color: #2c3e50;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .run-controls input[type="range"] {
+            width: 100%;
+            height: 6px;
+            -webkit-appearance: none;
+            background: #d0d8e0;
+            border-radius: 3px;
+            outline: none;
+            margin: 5px 0;
+        }
+
+        .run-controls input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #4a90e2;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .run-controls input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            background: #357abd;
+        }
+
+        .run-controls .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 5px;
+        }
+
+        .run-controls .button-group .action-btn {
+            flex: 1;
+        }
+
+        /* ==========================================
+           STAIN OPTIONS (STEP 4)
+        ========================================== */
+        .stain-options {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 15px 0;
+        }
+
+        .stain-options .action-btn {
+            flex: 1;
+            min-width: 100px;
+        }
+
+        /* ==========================================
+           VISUALIZE CONTROLS (STEP 5)
+        ========================================== */
+        .visualize-controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 15px 0;
+        }
+
+        .visualize-controls .action-btn {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        /* ==========================================
+           ANALYSIS (STEP 6)
+        ========================================== */
+        .analysis-area {
+            margin: 15px 0;
+        }
+
+        .analysis-area h4 {
+            color: #173f5f;
+            margin-bottom: 10px;
+        }
+
+        .analysis-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+            font-size: 13px;
+        }
+
+        .analysis-table th {
+            background: #4a90e2;
+            color: white;
+            padding: 10px 12px;
+            text-align: left;
+        }
+
+        .analysis-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #e0e8f0;
+        }
+
+        .analysis-table tr:hover {
+            background: #f5f9fc;
+        }
+
+        .experiment-complete {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            padding: 20px;
+            border-radius: 12px;
+            border: 2px solid #4CAF50;
+            margin-top: 10px;
+        }
+
+        .experiment-complete h3 {
+            border-bottom: none;
+            color: #2e7d32;
+        }
+
+        .experiment-complete ul {
+            list-style: none;
+            padding: 0;
+            margin: 10px 0;
+        }
+
+        .experiment-complete ul li {
+            padding: 5px 0;
+            padding-left: 25px;
+            position: relative;
+            color: #2c3e50;
+        }
+
+        .experiment-complete ul li::before {
+            content: '✅';
+            position: absolute;
+            left: 0;
+        }
+
+        .experiment-complete .action-btn {
+            margin-top: 15px;
+        }
+
+        /* ==========================================
+           GEL VISUALIZATION (RIGHT PANEL)
+        ========================================== */
+        .gel-visualization {
+            flex: 2;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            min-width: 500px;
+        }
+
+        .gel-container {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            flex: 1;
+        }
+
+        .gel-container h3 {
+            color: #173f5f;
+            margin-bottom: 15px;
+        }
+
+        .gel-box {
+            position: relative;
+            width: 100%;
+            height: 420px;
+            background: linear-gradient(180deg, #e8f4f8 0%, #c8e6f0 100%);
+            border-radius: 10px;
+            border: 3px solid #90caf9;
+            overflow: hidden;
+            transition: all 0.8s ease;
+        }
+
+        /* Wells */
+        .wells {
+            display: flex;
+            justify-content: space-around;
+            padding: 15px 30px 0;
+            position: relative;
+            z-index: 2;
+        }
+
+        .well {
+            width: 32px;
+            height: 22px;
+            background: rgba(255, 255, 255, 0.3);
+            border: 2px solid #4a90e2;
+            border-radius: 4px 4px 0 0;
+            transition: all 0.5s ease;
+            position: relative;
+        }
+
+        .well-label {
+            position: absolute;
+            bottom: -22px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 9px;
+            color: #2c3e50;
+            white-space: nowrap;
+            font-weight: 600;
+            opacity: 0.7;
+        }
+
+        /* Bands Container */
+        .bands-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .band {
+            position: absolute;
+            border-radius: 4px;
+            transition: all 0.5s ease;
+            animation: glow 1.5s ease-in-out infinite alternate;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        @keyframes glow {
+            from { opacity: 0.6; }
+            to { opacity: 1; }
+        }
+
+        /* Ladder Labels */
+        .ladder-labels {
+            position: absolute;
+            right: 15px;
+            top: 60px;
+            display: flex;
+            flex-direction: column;
+            gap: 35px;
+            font-size: 11px;
+            color: #2c3e50;
+            font-weight: 600;
+            z-index: 3;
+        }
+
+        .ladder-labels span {
+            background: rgba(255,255,255,0.7);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+        }
+
+        /* Gel Legend */
+        .gel-legend {
+            display: flex;
+            gap: 20px;
+            padding: 12px 0 5px;
+            justify-content: center;
+            flex-wrap: wrap;
+            border-top: 1px solid #e8edf2;
+            margin-top: 15px;
+        }
+
+        .gel-legend span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: #2c3e50;
+        }
+
+        .legend-color {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+
+        /* ==========================================
+           RESULTS PANEL
+        ========================================== */
+        .results-panel {
+            background: white;
+            border-radius: 12px;
+            padding: 20px 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        .results-panel h4 {
+            color: #173f5f;
+            margin-bottom: 10px;
+        }
+
+        #resultsContent {
+            color: #2c3e50;
+            font-size: 14px;
+            min-height: 40px;
+        }
+
+        /* ==========================================
+           FOOTER / NAVIGATION
+        ========================================== */
+        .lab-footer {
+            margin-top: 25px;
+            padding: 15px 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .nav-btn {
+            padding: 10px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #e8f4fc;
+            color: #4a90e2;
+        }
+
+        .nav-btn:hover:not(:disabled) {
+            background: #d0e8f8;
+            transform: translateY(-2px);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .nav-btn.primary {
+            background: #4a90e2;
+            color: white;
+        }
+
+        .nav-btn.primary:hover:not(:disabled) {
+            background: #357abd;
+        }
+
+        .step-counter-text {
+            color: #65788a;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* ==========================================
+           LOADING ANIMATION
+        ========================================== */
+        .loading-dots::after {
+            content: '';
+            animation: dots 1.5s steps(4, end) infinite;
+        }
+
+        @keyframes dots {
+            0% { content: ''; }
+            25% { content: '.'; }
+            50% { content: '..'; }
+            75% { content: '...'; }
+            100% { content: ''; }
+        }
+
+        /* ==========================================
+           RESPONSIVE
+        ========================================== */
+        @media (max-width: 1024px) {
+            .lab-main {
+                flex-direction: column;
+            }
+
+            .lab-controls {
+                max-width: 100%;
+                min-width: unset;
+                max-height: none;
+            }
+
+            .gel-visualization {
+                min-width: unset;
+            }
+
+            .gel-box {
+                height: 350px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .lab-header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+            }
+
+            .header-left {
+                flex-wrap: wrap;
+            }
+
+            .header-right {
+                justify-content: space-between;
+            }
+
+            .lab-header h1 {
+                font-size: 18px;
+            }
+
+            .sample-item {
+                flex-direction: column;
+                gap: 8px;
+                align-items: stretch;
+            }
+
+            .stain-options,
+            .visualize-controls {
+                flex-direction: column;
+            }
+
+            .run-controls .button-group {
+                flex-direction: column;
+            }
+
+            .nav-buttons {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .gel-box {
+                height: 280px;
+            }
+
+            .well {
+                width: 24px;
+                height: 18px;
+            }
+
+            .wells {
+                padding: 10px 15px 0;
+            }
+
+            .ladder-labels {
+                font-size: 9px;
+                gap: 28px;
+                right: 8px;
+            }
+
+            .gel-legend {
+                gap: 10px;
+                font-size: 12px;
+            }
+
+            .analysis-table {
+                font-size: 11px;
+            }
+
+            .analysis-table th,
+            .analysis-table td {
+                padding: 6px 8px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .lab-container {
+                padding: 10px;
+            }
+
+            .lab-controls {
+                padding: 15px;
+            }
+
+            .gel-container {
+                padding: 15px;
+            }
+
+            .gel-box {
+                height: 220px;
+            }
+
+            .well {
+                width: 18px;
+                height: 14px;
+            }
+
+            .wells {
+                padding: 8px 10px 0;
+                gap: 2px;
+            }
+
+            .well-label {
+                font-size: 7px;
+                bottom: -18px;
+            }
+
+            .ladder-labels {
+                display: none;
+            }
+        }
+
+        /* ==========================================
+           UTILITY
+        ========================================== */
+        .hidden {
+            display: none !important;
+        }
+
+        .mt-10 {
+            margin-top: 10px;
+        }
+
+        .mb-10 {
+            margin-bottom: 10px;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .gap-10 {
+            gap: 10px;
+        }
+    </style>
+
+</head>
+<body>
+
+<div class="lab-container">
+
+    <!-- ==========================================
+         HEADER
+    ========================================== -->
+    <header class="lab-header">
+        <div class="header-left">
+            <a href="experiments.html" class="back-btn">← Back</a>
+            <h1 id="simulationTitle">Gel Electrophoresis</h1>
+        </div>
+        <div class="header-right">
+            <span class="step-indicator">Step <span id="currentStep">1</span>/6</span>
+            <span class="timer" id="timer">⏱ 00:00</span>
+        </div>
+    </header>
+
+    <!-- ==========================================
+         MAIN CONTENT
+    ========================================== -->
+    <main class="lab-main">
+
+        <!-- LEFT: CONTROLS -->
+        <div class="lab-controls">
+
+            <!-- Step 1: Prepare Gel -->
+            <div class="step-panel active" id="step1">
+                <h3>Step 1: Prepare Agarose Gel</h3>
+                <div class="equipment-status">
+                    <p>🧪 <span class="highlight">Materials:</span></p>
+                    <ul>
+                        <li>✅ Agarose powder</li>
+                        <li>✅ TAE buffer</li>
+                        <li>✅ Erlenmeyer flask</li>
+                        <li>✅ Gel casting tray</li>
+                        <li>✅ Comb</li>
+                    </ul>
+                </div>
+                <div class="action-area">
+                    <button class="action-btn" onclick="prepareGel()">🧫 Prepare Gel</button>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="gelProgress" style="width: 0%"></div>
+                    </div>
+                    <span class="status-msg" id="gelStatus">Ready to prepare gel</span>
+                </div>
+            </div>
+
+            <!-- Step 2: Load Samples -->
+            <div class="step-panel" id="step2">
+                <h3>Step 2: Load Samples into Wells</h3>
+                <p style="color:#65788a; font-size:14px; margin-bottom:10px;">
+                    Click 'Load' for each sample to add to the gel.
+                </p>
+                <div class="sample-list">
+                    <div class="sample-item" id="sample-ladder">
+                        <span class="sample-label">
+                            <span class="sample-color" style="background:#4682B4;"></span>
+                            Ladder (100-1000bp)
+                        </span>
+                        <button class="load-btn" onclick="loadSample('ladder')">Load</button>
+                    </div>
+                    <div class="sample-item" id="sample-positive">
+                        <span class="sample-label">
+                            <span class="sample-color" style="background:#32CD32;"></span>
+                            Positive Control
+                        </span>
+                        <button class="load-btn" onclick="loadSample('positive')">Load</button>
+                    </div>
+                    <div class="sample-item" id="sample-sample1">
+                        <span class="sample-label">
+                            <span class="sample-color" style="background:#FFD700;"></span>
+                            Sample 1
+                        </span>
+                        <button class="load-btn" onclick="loadSample('sample1')">Load</button>
+                    </div>
+                    <div class="sample-item" id="sample-sample2">
+                        <span class="sample-label">
+                            <span class="sample-color" style="background:#FF8C00;"></span>
+                            Sample 2
+                        </span>
+                        <button class="load-btn" onclick="loadSample('sample2')">Load</button>
+                    </div>
+                    <div class="sample-item" id="sample-negative">
+                        <span class="sample-label">
+                            <span class="sample-color" style="background:#DC143C;"></span>
+                            Negative Control
+                        </span>
+                        <button class="load-btn" onclick="loadSample('negative')">Load</button>
+                    </div>
+                </div>
+                <div class="status-msg" id="loadStatus">Click 'Load' for each sample</div>
+            </div>
+
+            <!-- Step 3: Run Electrophoresis -->
+            <div class="step-panel" id="step3">
+                <h3>Step 3: Run Electrophoresis</h3>
+                <div class="run-controls">
+                    <label>
+                        Voltage:
+                        <span id="voltageDisplay">100</span>V
+                    </label>
+                    <input type="range" min="50" max="200" value="100" id="voltageSlider" onchange="updateVoltage()">
+
+                    <label>
+                        Time:
+                        <span id="timeDisplay">30</span> min
+                    </label>
+                    <input type="range" min="15" max="60" value="30" id="timeSlider" onchange="updateTime()">
+
+                    <div class="button-group">
+                        <button class="action-btn primary" onclick="runElectrophoresis()">▶ Run</button>
+                        <button class="action-btn secondary" onclick="stopElectrophoresis()">⏹ Stop</button>
+                    </div>
+                </div>
+                <div class="status-msg" id="runStatus">⚡ Ready to run electrophoresis</div>
+            </div>
+
+            <!-- Step 4: Stain Gel -->
+            <div class="step-panel" id="step4">
+                <h3>Step 4: Stain Gel</h3>
+                <p style="color:#65788a; font-size:14px; margin-bottom:10px;">
+                    Select a staining method to visualize DNA bands.
+                </p>
+                <div class="stain-options">
+                    <button class="action-btn" onclick="stainGel('Ethidium Bromide')">🧪 Ethidium Bromide</button>
+                    <button class="action-btn" onclick="stainGel('SYBR Safe')">🟢 SYBR Safe</button>
+                    <button class="action-btn" onclick="stainGel('GelRed')">🔴 GelRed</button>
+                </div>
+                <div class="status-msg" id="stainStatus">Select a staining method</div>
+            </div>
+
+            <!-- Step 5: Visualize -->
+            <div class="step-panel" id="step5">
+                <h3>Step 5: Visualize Results</h3>
+                <p style="color:#65788a; font-size:14px; margin-bottom:10px;">
+                    View the gel under UV light and capture the image.
+                </p>
+                <div class="visualize-controls">
+                    <button class="action-btn primary" onclick="visualizeGel()">💡 View Under UV</button>
+                    <button class="action-btn" onclick="captureImage()">📸 Capture Image</button>
+                </div>
+                <div class="status-msg" id="visualizeStatus">Click 'View Under UV'</div>
+            </div>
+
+            <!-- Step 6: Analyze -->
+            <div class="step-panel" id="step6">
+                <h3>Step 6: Analyze Results</h3>
+                <div class="analysis-area">
+                    <div id="bandAnalysis">
+                        <h4>Band Analysis</h4>
+                        <div id="analysisResults">
+                            <p style="color:#65788a;">Complete analysis to see results</p>
+                        </div>
+                    </div>
+                    <button class="action-btn primary" onclick="completeAnalysis()">✅ Complete Experiment</button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- RIGHT: GEL VISUALIZATION -->
+        <div class="gel-visualization">
+
+            <div class="gel-container">
+                <h3>🧫 Agarose Gel</h3>
+                <div class="gel-box" id="gelBox">
+                    <!-- Wells -->
+                    <div class="wells">
+                        <div class="well" id="well-ladder">
+                            <span class="well-label">Ladder</span>
+                        </div>
+                        <div class="well" id="well-positive">
+                            <span class="well-label">+ Control</span>
+                        </div>
+                        <div class="well" id="well-sample1">
+                            <span class="well-label">Sample 1</span>
+                        </div>
+                        <div class="well" id="well-sample2">
+                            <span class="well-label">Sample 2</span>
+                        </div>
+                        <div class="well" id="well-negative">
+                            <span class="well-label">- Control</span>
+                        </div>
+                    </div>
+
+                    <!-- Bands -->
+                    <div class="bands-container" id="bandsContainer"></div>
+
+                    <!-- Ladder Labels -->
+                    <div class="ladder-labels">
+                        <span>1000 bp</span>
+                        <span>500 bp</span>
+                        <span>200 bp</span>
+                        <span>100 bp</span>
+                    </div>
+                </div>
+
+                <!-- Legend -->
+                <div class="gel-legend">
+                    <span>
+                        <span class="legend-color" style="background:#4682B4;"></span>
+                        Ladder
+                    </span>
+                    <span>
+                        <span class="legend-color" style="background:#32CD32;"></span>
+                        Positive Control
+                    </span>
+                    <span>
+                        <span class="legend-color" style="background:#FFD700;"></span>
+                        Sample 1
+                    </span>
+                    <span>
+                        <span class="legend-color" style="background:#FF8C00;"></span>
+                        Sample 2
+                    </span>
+                    <span>
+                        <span class="legend-color" style="background:#DC143C;"></span>
+                        Negative Control
+                    </span>
+                </div>
+            </div>
+
+            <!-- Results Panel -->
+            <div class="results-panel" id="resultsPanel">
+                <h4>📊 Results Summary</h4>
+                <div id="resultsContent">
+                    <p style="color:#65788a;">Complete the experiment to see results</p>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- ==========================================
+         FOOTER
+    ========================================== -->
+    <footer class="lab-footer">
+        <div class="nav-buttons">
+            <button class="nav-btn" id="prevBtn" onclick="prevStep()" disabled>← Previous</button>
+            <span class="step-counter-text" id="stepCounterText">Step 1 of 6</span>
+            <button class="nav-btn primary" id="nextBtn" onclick="nextStep()" disabled>Next Step →</button>
+        </div>
+    </footer>
+
+</div>
+
+<!-- ==========================================
+     JAVASCRIPT
+========================================== -->
+<script>
+// ==========================================
+// GEL ELECTROPHORESIS SIMULATION
+// ==========================================
+
+// ==========================================
+// STATE
+// ==========================================
+const state = {
+    currentStep: 1,
+    maxSteps: 6,
+    gelPrepared: false,
+    samplesLoaded: [],
+    electrophoresisRunning: false,
+    electrophoresisComplete: false,
+    stained: false,
+    visualized: false,
+    analyzed: false,
+    timer: 0,
+    timerInterval: null,
+    voltage: 100,
+    time: 30,
+    stainUsed: null,
+    bandsData: {},
+    imageCaptured: false,
+    autoNavigating: false
+};
+
+// Sample DNA fragment data (bp)
+const sampleFragments = {
+    ladder: [1000, 500, 200, 100],
+    positive: [500, 200],
+    sample1: [450, 200],
+    sample2: [500],
+    negative: []
+};
+
+// Sample colors
+const sampleColors = {
+    ladder: '#4682B4',
+    positive: '#32CD32',
+    sample1: '#FFD700',
+    sample2: '#FF8C00',
+    negative: '#DC143C'
+};
+
+// Sample labels
+const sampleLabels = {
+    ladder: 'Ladder',
+    positive: 'Positive Control',
+    sample1: 'Sample 1',
+    sample2: 'Sample 2',
+    negative: 'Negative Control'
+};
+
+// ==========================================
+// INITIALIZATION
+// ==========================================
+document.addEventListener('DOMContentLoaded', function() {
+    updateStepUI();
+    startTimer();
+    initializeGel();
+    
+    // Load experiment data if available
+    const urlParams = new URLSearchParams(window.location.search);
+    const experimentId = urlParams.get('id');
+    if (experimentId && window.experiments) {
+        const exp = window.experiments.find(e => e.id === experimentId);
+        if (exp) {
+            document.getElementById('simulationTitle').textContent = exp.title;
+        }
+    }
+    
+    console.log('🧬 Gel Electrophoresis Simulation Loaded');
+    console.log('📋 Sample data:', sampleLabels);
+    console.log('🎨 Sample colors:', sampleColors);
+});
+
+function initializeGel() {
+    const gelBox = document.getElementById('gelBox');
+    gelBox.style.background = 'linear-gradient(180deg, #e8f4f8 0%, #c8e6f0 100%)';
+}
+
+// ==========================================
+// TIMER
+// ==========================================
+function startTimer() {
+    state.timerInterval = setInterval(() => {
+        state.timer++;
+        const minutes = Math.floor(state.timer / 60);
+        const seconds = state.timer % 60;
+        document.getElementById('timer').textContent = 
+            `⏱ ${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    }, 1000);
+}
+
+// ==========================================
+// STEP NAVIGATION
+// ==========================================
+function nextStep() {
+    if (state.currentStep < state.maxSteps) {
+        if (!validateStep(state.currentStep)) {
+            return;
+        }
+        state.currentStep++;
+        updateStepUI();
+        checkStepCompletion();
+    }
+}
+
+function prevStep() {
+    if (state.currentStep > 1) {
+        state.currentStep--;
+        updateStepUI();
+    }
+}
+
+function updateStepUI() {
+    // Update panels
+    document.querySelectorAll('.step-panel').forEach((panel, index) => {
+        panel.classList.remove('active');
+        if (index === state.currentStep - 1) {
+            panel.classList.add('active');
+        }
+    });
+
+    // Update indicators
+    document.getElementById('currentStep').textContent = state.currentStep;
+    document.getElementById('stepCounterText').textContent = `Step ${state.currentStep} of ${state.maxSteps}`;
+
+    // Navigation buttons
+    document.getElementById('prevBtn').disabled = state.currentStep === 1;
+    const nextBtn = document.getElementById('nextBtn');
+    nextBtn.disabled = !isStepComplete(state.currentStep);
+    
+    // Update progress
+    updateProgress();
+}
+
+function updateProgress() {
+    const progress = ((state.currentStep - 1) / state.maxSteps) * 100;
+    document.querySelectorAll('.progress-fill').forEach(bar => {
+        if (bar.id !== 'gelProgress') {
+            bar.style.width = progress + '%';
+        }
+    });
+}
+
+function validateStep(step) {
+    switch(step) {
+        case 1:
+            if (!state.gelPrepared) {
+                alert('⚠️ Please prepare the gel first!');
+                return false;
+            }
+            return true;
+        case 2:
+            if (state.samplesLoaded.length < 5) {
+                alert('⚠️ Please load all samples first!');
+                return false;
+            }
+            return true;
+        case 3:
+            if (!state.electrophoresisComplete) {
+                alert('⚠️ Please complete electrophoresis first!');
+                return false;
+            }
+            return true;
+        case 4:
+            if (!state.stained) {
+                alert('⚠️ Please stain the gel first!');
+                return false;
+            }
+            return true;
+        case 5:
+            if (!state.visualized) {
+                alert('⚠️ Please visualize the gel first!');
+                return false;
+            }
+            return true;
+        case 6:
+            return true;
+        default:
+            return true;
+    }
+}
+
+function isStepComplete(step) {
+    switch(step) {
+        case 1: return state.gelPrepared;
+        case 2: return state.samplesLoaded.length >= 5;
+        case 3: return state.electrophoresisComplete;
+        case 4: return state.stained;
+        case 5: return state.visualized;
+        case 6: return state.analyzed;
+        default: return false;
+    }
+}
+
+function checkStepCompletion() {
+    const nextBtn = document.getElementById('nextBtn');
+    nextBtn.disabled = !isStepComplete(state.currentStep);
+}
+
+// ==========================================
+// STEP 1: PREPARE GEL
+// ==========================================
+function prepareGel() {
+    if (state.gelPrepared) {
+        console.log('Gel already prepared');
+        return;
+    }
+
+    const progressBar = document.getElementById('gelProgress');
+    const statusMsg = document.getElementById('gelStatus');
+    const btn = document.querySelector('#step1 .action-btn');
+    
+    btn.disabled = true;
+    let progress = 0;
+    statusMsg.textContent = '🔄 Preparing agarose gel...';
+    statusMsg.className = 'status-msg';
+    
+    console.log('🔄 Preparing gel...');
+    
+    const interval = setInterval(() => {
+        progress += 8;
+        progressBar.style.width = Math.min(progress, 100) + '%';
+        
+        if (progress >= 100) {
+            clearInterval(interval);
+            state.gelPrepared = true;
+            statusMsg.textContent = '✅ Gel prepared successfully!';
+            statusMsg.className = 'status-msg success';
+            btn.disabled = false;
+            btn.textContent = '✅ Gel Ready';
+            btn.style.background = '#27ae60';
+            showGelVisuals();
+            checkStepCompletion();
+            document.getElementById('nextBtn').disabled = false;
+            console.log('✅ Gel preparation complete!');
+        }
+    }, 150);
+}
+
+function showGelVisuals() {
+    const wells = document.querySelectorAll('.well');
+    wells.forEach(well => {
+        well.style.background = 'rgba(255,255,255,0.4)';
+        well.style.border = '2px solid #4a90e2';
+        well.style.height = '24px';
+    });
+}
+
+// ==========================================
+// STEP 2: LOAD SAMPLES
+// ==========================================
+function loadSample(sampleId) {
+    console.log('🔬 Loading sample:', sampleId);
+    
+    if (!state.gelPrepared) {
+        alert('⚠️ Please prepare the gel first!');
+        return;
+    }
+
+    if (state.samplesLoaded.includes(sampleId)) {
+        alert('ℹ️ This sample is already loaded!');
+        return;
+    }
+
+    if (state.autoNavigating) {
+        return;
+    }
+
+    const well = document.getElementById(`well-${sampleId}`);
+    if (!well) {
+        console.error('❌ Well not found for:', sampleId);
+        return;
+    }
+
+    // VISUAL FEEDBACK: WELL
+    well.style.transition = 'all 0.5s ease';
+    well.style.background = sampleColors[sampleId] + '99';
+    well.style.height = '30px';
+    well.style.boxShadow = `0 0 25px ${sampleColors[sampleId]}60`;
+    well.style.border = `2px solid ${sampleColors[sampleId]}`;
+    
+    state.samplesLoaded.push(sampleId);
+    console.log('📦 Samples loaded:', state.samplesLoaded);
+    
+    // VISUAL FEEDBACK: STATUS
+    const statusMsg = document.getElementById('loadStatus');
+    statusMsg.textContent = `✅ Loaded: ${sampleLabels[sampleId]}`;
+    statusMsg.className = 'status-msg success';
+    
+    // VISUAL FEEDBACK: SAMPLE ITEM
+    const sampleItem = document.getElementById(`sample-${sampleId}`);
+    if (sampleItem) {
+        sampleItem.classList.add('loaded');
+        sampleItem.style.background = '#e8f5e9';
+        sampleItem.style.borderColor = '#4CAF50';
+        sampleItem.style.borderLeft = `4px solid ${sampleColors[sampleId]}`;
+    }
+    
+    // VISUAL FEEDBACK: BUTTON
+    const btn = document.querySelector(`#sample-${sampleId} .load-btn`);
+    if (btn) {
+        btn.disabled = true;
+        btn.textContent = '✓ Loaded';
+        btn.style.background = '#4CAF50';
+        btn.style.cursor = 'default';
+    }
+
+    // CHECK IF ALL SAMPLES ARE LOADED
+    if (state.samplesLoaded.length === 5) {
+        console.log('🎉 All samples loaded! Auto-navigating in 0.5s...');
+        setTimeout(() => {
+            autoNavigateToStep3();
+        }, 500);
+    }
+    
+    checkStepCompletion();
+}
+
+// ==========================================
+// AUTO-NAVIGATE TO STEP 3
+// ==========================================
+function autoNavigateToStep3() {
+    if (state.autoNavigating) return;
+    state.autoNavigating = true;
+    
+    const statusMsg = document.getElementById('loadStatus');
+    const nextBtn = document.getElementById('nextBtn');
+    const gelBox = document.getElementById('gelBox');
+    
+    nextBtn.disabled = true;
+    gelBox.style.transition = 'all 0.5s ease';
+    gelBox.style.boxShadow = '0 0 40px rgba(74, 144, 226, 0.3)';
+    
+    let countdown = 3;
+    statusMsg.textContent = `✅ All samples loaded! Proceeding in ${countdown}...`;
+    statusMsg.className = 'status-msg warning';
+    
+    const interval = setInterval(() => {
+        countdown--;
+        if (countdown > 0) {
+            statusMsg.textContent = `✅ All samples loaded! Proceeding in ${countdown}...`;
+            gelBox.style.boxShadow = `0 0 ${40 + (3 - countdown) * 10}px rgba(74, 144, 226, ${0.2 + (3 - countdown) * 0.05})`;
+        } else {
+            clearInterval(interval);
+            statusMsg.textContent = '✅ Moving to electrophoresis...';
+            statusMsg.className = 'status-msg success';
+            gelBox.style.boxShadow = '0 0 60px rgba(74, 144, 226, 0.15)';
+            
+            setTimeout(() => {
+                state.currentStep = 3;
+                state.autoNavigating = false;
+                updateStepUI();
+                checkStepCompletion();
+                const runStatus = document.getElementById('runStatus');
+                runStatus.textContent = '⚡ Ready to run electrophoresis';
+                runStatus.className = 'status-msg';
+            }, 600);
+        }
+    }, 1000);
+}
+
+// ==========================================
+// STEP 3: RUN ELECTROPHORESIS
+// ==========================================
+function updateVoltage() {
+    const slider = document.getElementById('voltageSlider');
+    state.voltage = parseInt(slider.value);
+    document.getElementById('voltageDisplay').textContent = state.voltage;
+}
+
+function updateTime() {
+    const slider = document.getElementById('timeSlider');
+    state.time = parseInt(slider.value);
+    document.getElementById('timeDisplay').textContent = state.time;
+}
+
+function runElectrophoresis() {
+    if (state.samplesLoaded.length < 5) {
+        alert('Please load all samples first!');
+        return;
+    }
+
+    if (state.electrophoresisRunning) return;
+    if (state.electrophoresisComplete) {
+        alert('Electrophoresis is already complete!');
+        return;
+    }
+
+    const statusMsg = document.getElementById('runStatus');
+    const runBtn = document.querySelector('#step3 .action-btn.primary');
+    const stopBtn = document.querySelector('#step3 .action-btn.secondary');
+    
+    state.electrophoresisRunning = true;
+    runBtn.disabled = true;
+    runBtn.textContent = '⏳ Running...';
+    stopBtn.disabled = false;
+    statusMsg.textContent = '⚡ Running electrophoresis...';
+    statusMsg.className = 'status-msg';
+    
+    document.getElementById('bandsContainer').innerHTML = '';
+    
+    let progress = 0;
+    const totalSteps = 20 + Math.floor(state.time / 3);
+    let currentStep = 0;
+    
+    const migrationInterval = setInterval(() => {
+        currentStep++;
+        progress = (currentStep / totalSteps) * 100;
+        moveBands(progress);
+        
+        if (currentStep >= totalSteps || !state.electrophoresisRunning) {
+            clearInterval(migrationInterval);
+            state.electrophoresisRunning = false;
+            state.electrophoresisComplete = true;
+            runBtn.disabled = false;
+            runBtn.textContent = '✅ Complete';
+            runBtn.style.background = '#27ae60';
+            stopBtn.disabled = true;
+            
+            if (state.electrophoresisRunning === false && currentStep < totalSteps) {
+                statusMsg.textContent = '⏹ Electrophoresis stopped.';
+                statusMsg.className = 'status-msg warning';
+            } else {
+                statusMsg.textContent = '✅ Electrophoresis complete! Proceed to staining.';
+                statusMsg.className = 'status-msg success';
+                document.getElementById('nextBtn').disabled = false;
+                checkStepCompletion();
+            }
+        }
+    }, 350);
+}
+
+function stopElectrophoresis() {
+    if (state.electrophoresisRunning) {
+        state.electrophoresisRunning = false;
+        const statusMsg = document.getElementById('runStatus');
+        statusMsg.textContent = '⏹ Electrophoresis stopped.';
+        statusMsg.className = 'status-msg warning';
+        document.querySelector('#step3 .action-btn.primary').disabled = false;
+        document.querySelector('#step3 .action-btn.primary').textContent = '▶ Run';
+    }
+}
+
+function moveBands(progress) {
+    const bandsContainer = document.getElementById('bandsContainer');
+    bandsContainer.innerHTML = '';
+    
+    const gelBox = document.getElementById('gelBox');
+    const gelRect = gelBox.getBoundingClientRect();
+    const wells = document.querySelectorAll('.well');
+    
+    const maxMigration = 280;
+    const currentMigration = (progress / 100) * maxMigration;
+    
+    const wellPositions = {};
+    wells.forEach(well => {
+        const id = well.id.replace('well-', '');
+        const wellRect = well.getBoundingClientRect();
+        wellPositions[id] = {
+            x: wellRect.left - gelRect.left + (wellRect.width / 2) - 10,
+            y: wellRect.top - gelRect.top + 22
+        };
+    });
+    
+    Object.keys(sampleFragments).forEach(sampleId => {
+        const fragments = sampleFragments[sampleId];
+        const pos = wellPositions[sampleId];
+        if (!pos) return;
+        
+        fragments.forEach((size, index) => {
+            const migrationSpeed = 1200 / size;
+            const yOffset = (currentMigration * migrationSpeed) / 3;
+            const yPosition = pos.y + Math.min(yOffset, maxMigration * 0.9);
+            
+            if (yOffset > 10) {
+                const band = document.createElement('div');
+                band.className = 'band';
+                
+                const intensity = Math.min(progress / 100, 0.9) + 0.1;
+                const bandWidth = 20 + (size / 200);
+                const bandHeight = 6 + (size / 300);
+                
+                band.style.cssText = `
+                    position: absolute;
+                    left: ${pos.x + 5}px;
+                    top: ${yPosition}px;
+                    width: ${bandWidth}px;
+                    height: ${bandHeight}px;
+                    border-radius: 4px;
+                    background: ${sampleColors[sampleId]};
+                    opacity: ${intensity};
+                    box-shadow: 0 0 15px ${sampleColors[sampleId]}60;
+                    transition: all 0.3s ease;
+                `;
+                
+                const variation = (Math.random() - 0.5) * 3;
+                band.style.left = (pos.x + 5 + variation) + 'px';
+                
+                bandsContainer.appendChild(band);
+            }
+        });
+    });
+}
+
+// ==========================================
+// STEP 4: STAIN GEL
+// ==========================================
+function stainGel(stainType) {
+    if (!state.electrophoresisComplete) {
+        alert('Please complete electrophoresis first!');
+        return;
+    }
+
+    if (state.stained) {
+        alert('Gel is already stained!');
+        return;
+    }
+
+    const statusMsg = document.getElementById('stainStatus');
+    const gelBox = document.getElementById('gelBox');
+    const btns = document.querySelectorAll('.stain-options .action-btn');
+    
+    btns.forEach(btn => btn.disabled = true);
+    
+    state.stainUsed = stainType;
+    statusMsg.textContent = `🔄 Staining with ${stainType}...`;
+    statusMsg.className = 'status-msg';
+    
+    setTimeout(() => {
+        gelBox.style.background = 'linear-gradient(180deg, #4a6a8a 0%, #1a2a3a 100%)';
+        gelBox.style.opacity = '0.95';
+        gelBox.style.boxShadow = 'inset 0 0 60px rgba(74, 144, 226, 0.2)';
+        
+        setTimeout(() => {
+            state.stained = true;
+            statusMsg.textContent = `✅ Gel stained with ${stainType}! Proceed to visualization.`;
+            statusMsg.className = 'status-msg success';
+            btns.forEach(btn => btn.disabled = false);
+            document.getElementById('nextBtn').disabled = false;
+            checkStepCompletion();
+        }, 1200);
+    }, 1500);
+}
+
+// ==========================================
+// STEP 5: VISUALIZE
+// ==========================================
+function visualizeGel() {
+    if (!state.stained) {
+        alert('Please stain the gel first!');
+        return;
+    }
+
+    if (state.visualized) {
+        alert('Gel is already visualized!');
+        return;
+    }
+
+    const statusMsg = document.getElementById('visualizeStatus');
+    const gelBox = document.getElementById('gelBox');
+    const btn = document.querySelector('#step5 .action-btn.primary');
+    
+    btn.disabled = true;
+    statusMsg.textContent = '💡 Turning on UV light...';
+    statusMsg.className = 'status-msg';
+    
+    gelBox.style.transition = 'all 0.8s ease';
+    gelBox.style.background = 'linear-gradient(180deg, #0a0a2a 0%, #000000 100%)';
+    gelBox.style.boxShadow = '0 0 80px rgba(0, 100, 255, 0.15), inset 0 0 80px rgba(0, 100, 255, 0.05)';
+    
+    document.querySelectorAll('.band').forEach(band => {
+        band.style.boxShadow = `0 0 25px ${band.style.background || '#00ffff'}80, 0 0 50px ${band.style.background || '#00ffff'}40`;
+        band.style.opacity = '1';
+        band.style.animation = 'glow 1s ease-in-out infinite alternate';
+    });
+    
+    const overlay = document.createElement('div');
+    overlay.style.cssText = `
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(ellipse at center, rgba(0, 150, 255, 0.05) 0%, transparent 70%);
+        pointer-events: none;
+        z-index: 0;
+        animation: pulse 2s ease-in-out infinite alternate;
+    `;
+    gelBox.appendChild(overlay);
+    
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes pulse {
+            from { opacity: 0.3; }
+            to { opacity: 0.8; }
+        }
+    `;
+    document.head.appendChild(style);
+    
+    setTimeout(() => {
+        state.visualized = true;
+        statusMsg.textContent = '✅ Gel visualized! Click "Capture Image" to save results.';
+        statusMsg.className = 'status-msg success';
+        btn.disabled = false;
+        document.getElementById('nextBtn').disabled = false;
+        checkStepCompletion();
+    }, 1500);
+}
+
+function captureImage() {
+    if (!state.visualized) {
+        alert('Please visualize the gel first!');
+        return;
+    }
+    
+    if (state.imageCaptured) {
+        alert('Image already captured!');
+        return;
+    }
+    
+    state.imageCaptured = true;
+    const statusMsg = document.getElementById('visualizeStatus');
+    statusMsg.textContent = '📸 Image captured! Proceed to analysis.';
+    statusMsg.className = 'status-msg success';
+    
+    const gelBox = document.getElementById('gelBox');
+    gelBox.style.transition = 'all 0.1s ease';
+    gelBox.style.boxShadow = '0 0 100px rgba(255, 255, 255, 0.5)';
+    setTimeout(() => {
+        gelBox.style.boxShadow = '0 0 80px rgba(0, 100, 255, 0.15), inset 0 0 80px rgba(0, 100, 255, 0.05)';
+    }, 200);
+    
+    setTimeout(() => {
+        document.getElementById('nextBtn').disabled = false;
+        analyzeBands();
+        checkStepCompletion();
+    }, 500);
+}
+
+// ==========================================
+// STEP 6: ANALYZE
+// ==========================================
+function analyzeBands() {
+    const analysisResults = document.getElementById('analysisResults');
+    
+    const results = {
+        ladder: '4 bands visible (1000, 500, 200, 100 bp) - Good separation',
+        positive: '2 bands visible (500, 200 bp) - PCR successful ✓',
+        sample1: '2 bands visible (450, 200 bp) - Target detected ✓',
+        sample2: '1 band visible (500 bp) - Partial amplification ⚠️',
+        negative: 'No bands visible - Negative control valid ✓'
+    };
+    
+    const interpretations = {
+        ladder: 'Reference',
+        positive: '✅ Valid control',
+        sample1: '✅ Positive result',
+        sample2: '⚠️ Needs repeat',
+        negative: '✅ Valid control'
+    };
+    
+    let html = `
+        <table class="analysis-table">
+            <thead>
+                <tr>
+                    <th>Sample</th>
+                    <th>Result</th>
+                    <th>Interpretation</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+    
+    Object.keys(results).forEach(sample => {
+        const label = {
+            ladder: 'Ladder',
+            positive: 'Positive Control',
+            sample1: 'Sample 1',
+            sample2: 'Sample 2',
+            negative: 'Negative Control'
+        }[sample];
+        
+        html += `
+            <tr>
+                <td>
+                    <span style="color: ${sampleColors[sample]}; font-weight: bold;">
+                        ${label}
+                    </span>
+                </td>
+                <td>${results[sample]}</td>
+                <td>${interpretations[sample]}</td>
+            </tr>
+        `;
+    });
+    
+    html += '</tbody></table>';
+    analysisResults.innerHTML = html;
+    
+    updateResultsPanel(results, interpretations);
+}
+
+function updateResultsPanel(results, interpretations) {
+    const resultsContent = document.getElementById('resultsContent');
+    
+    let html = `
+        <div style="font-size:14px; line-height:1.8;">
+            <p><strong>🔬 Experiment Summary:</strong></p>
+            <ul style="list-style:none; padding:0; margin:8px 0;">
+                <li>⚡ Voltage: ${state.voltage}V</li>
+                <li>⏱ Time: ${state.time} min</li>
+                <li>🧪 Stain: ${state.stainUsed}</li>
+                <li>📸 Image: ${state.imageCaptured ? 'Captured ✓' : 'Not captured'}</li>
+            </ul>
+    `;
+    
+    const positiveResults = Object.keys(results).filter(key => 
+        key !== 'ladder' && key !== 'negative' && 
+        results[key].includes('✓')
+    ).length;
+    
+    html += `
+        <p><strong>📊 Results:</strong></p>
+        <ul style="list-style:none; padding:0; margin:5px 0;">
+            <li>${results.ladder}</li>
+            <li>${results.positive}</li>
+            <li>${results.sample1}</li>
+            <li>${results.sample2}</li>
+            <li>${results.negative}</li>
+        </ul>
+        <p><strong>🎯 Interpretation:</strong></p>
+        <p>${positiveResults >= 1 ? '✅ Target detected in samples. Positive control shows expected bands.' : '⚠️ No target detected. Review protocol.'}</p>
+        <p style="margin-top:8px; color:#65788a; font-size:13px;">
+            💡 ${state.imageCaptured ? 'Gel image has been documented.' : 'Remember to document your gel image.'}
+        </p>
+    `;
+    
+    resultsContent.innerHTML = html;
+}
+
+// ==========================================
+// STEP 6: COMPLETE ANALYSIS - UPDATED
+// ==========================================
+function completeAnalysis() {
+    state.analyzed = true;
+    
+    const resultsContent = document.getElementById('resultsContent');
+    const analysisResults = document.getElementById('analysisResults');
+    
+    analysisResults.innerHTML += `
+        <div class="experiment-complete">
+            <h3>✅ Experiment Complete!</h3>
+            <p>All steps completed successfully.</p>
+            <a href="results.html?id=gel-electrophoresis" class="action-btn primary" style="display:inline-block; text-align:center; text-decoration:none;">
+                📊 View Full Results
+            </a>
+        </div>
+    `;
+    
+    document.getElementById('resultsContent').innerHTML = `
+        <div style="background:#e8f5e9; padding:15px; border-radius:8px; border:2px solid #4CAF50;">
+            <h4 style="color:#2e7d32;">🎉 Experiment Completed!</h4>
+            <p style="margin-top:8px;">
+                <strong>Score:</strong> 92/100<br>
+                <strong>Status:</strong> ✅ All steps performed correctly
+            </p>
+            <p style="margin-top:8px; font-size:13px; color:#65788a;">
+                💡 Your results have been saved. View the full report for detailed analysis.
+            </p>
+            <a href="report.html?id=gel-electrophoresis" class="action-btn primary" style="display:inline-block; text-align:center; text-decoration:none; margin-top:10px;">
+                📄 Generate Report
+            </a>
+        </div>
+    `;
+    
+    document.getElementById('nextBtn').disabled = true;
+    checkStepCompletion();
+    
+    // ==========================================
+    // SAVE COMPLETE RESULTS TO LOCALSTORAGE
+    // ==========================================
+    try {
+        const now = new Date();
+        const dateString = now.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+        
+        // Build band results based on loaded samples
+        const bandResults = {
+            ladder: state.samplesLoaded.includes('ladder') ? '4 bands visible (1000, 500, 200, 100 bp)' : 'Not loaded',
+            positive: state.samplesLoaded.includes('positive') ? '2 bands visible (500, 200 bp) - PCR successful ✓' : 'Not loaded',
+            sample1: state.samplesLoaded.includes('sample1') ? '2 bands visible (450, 200 bp) - Target detected ✓' : 'Not loaded',
+            sample2: state.samplesLoaded.includes('sample2') ? '1 band visible (500 bp) - Partial amplification ⚠️' : 'Not loaded',
+            negative: state.samplesLoaded.includes('negative') ? 'No bands visible - Negative control valid ✓' : 'Not loaded'
+        };
+        
+        // Determine interpretation based on results
+        let interpretation = '';
+        let recommendations = [];
+        
+        if (state.samplesLoaded.length === 5) {
+            interpretation = '✅ Target DNA detected in samples. Positive control shows expected bands (500, 200 bp). Negative control is clean - no contamination detected. Sample 1 shows strong amplification, while Sample 2 shows partial amplification.';
+            recommendations = [
+                { text: 'All samples loaded correctly', type: 'good' },
+                { text: 'Good technique demonstrated overall', type: 'good' },
+                { text: 'Sample 2 shows partial amplification - consider repeating with more template DNA', type: 'warning' },
+                { text: `Consider running at ${state.voltage > 100 ? 'lower' : 'higher'} voltage for ${state.time > 30 ? 'shorter' : 'longer'} time for better band resolution`, type: 'info' }
+            ];
+        } else {
+            interpretation = '⚠️ Not all samples were loaded. Please repeat the experiment for complete results.';
+            recommendations = [
+                { text: 'Load all 5 samples for complete analysis', type: 'warning' },
+                { text: 'Ensure gel is properly prepared before loading', type: 'info' }
+            ];
+        }
+        
+        // Build complete results data with ALL fields
+        const resultsData = {
+            // Top-level fields
+            experimentId: 'gel-electrophoresis',
+            title: 'Gel Electrophoresis - DNA Analysis',
+            score: 92,
+            stepsCompleted: 6,
+            totalSteps: 6,
+            timeSpent: '15:30',
+            accuracy: '85%',
+            
+            // DETAILS OBJECT - matches what results.html expects
+            details: {
+                experiment: 'Gel Electrophoresis',
+                voltage: state.voltage + ' V',           // YOUR ACTUAL VOLTAGE
+                time: state.time + ' minutes',            // YOUR ACTUAL TIME
+                stain: state.stainUsed || 'Ethidium Bromide',  // YOUR ACTUAL STAIN
+                image: state.imageCaptured ? 'Yes' : 'No',      // YOUR ACTUAL IMAGE STATUS
+                date: dateString                         // TODAY'S DATE
+            },
+            
+            // Band analysis data
+            bands: [
+                { sample: 'Ladder', result: bandResults.ladder, status: state.samplesLoaded.includes('ladder') ? 'success' : 'error', statusText: state.samplesLoaded.includes('ladder') ? 'Good' : 'Not Loaded' },
+                { sample: 'Positive Control', result: bandResults.positive, status: state.samplesLoaded.includes('positive') ? 'success' : 'error', statusText: state.samplesLoaded.includes('positive') ? 'Valid' : 'Not Loaded' },
+                { sample: 'Sample 1', result: bandResults.sample1, status: state.samplesLoaded.includes('sample1') ? 'success' : 'error', statusText: state.samplesLoaded.includes('sample1') ? 'Detected' : 'Not Loaded' },
+                { sample: 'Sample 2', result: bandResults.sample2, status: state.samplesLoaded.includes('sample2') ? 'warning' : 'error', statusText: state.samplesLoaded.includes('sample2') ? 'Partial' : 'Not Loaded' },
+                { sample: 'Negative Control', result: bandResults.negative, status: state.samplesLoaded.includes('negative') ? 'success' : 'error', statusText: state.samplesLoaded.includes('negative') ? 'Valid' : 'Not Loaded' }
+            ],
+            
+            // Interpretation and recommendations
+            interpretation: interpretation,
+            recommendations: recommendations
+        };
+        
+        // Save to localStorage with the correct key
+        localStorage.setItem('gelElectrophoresisResults', JSON.stringify(resultsData));
+        
+        console.log('💾 Results saved to localStorage with your actual data:');
+        console.log('  ⚡ Voltage:', state.voltage, 'V');
+        console.log('  ⏱️ Time:', state.time, 'minutes');
+        console.log('  🧪 Stain:', state.stainUsed);
+        console.log('  📸 Image:', state.imageCaptured ? 'Captured' : 'Not captured');
+        console.log('  📦 Samples loaded:', state.samplesLoaded);
+        
+    } catch(e) {
+        console.error('Could not save results:', e);
+    }
+}
+
+// ==========================================
+// KEYBOARD SHORTCUTS
+// ==========================================
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowRight' || e.key === 'Enter') {
+        if (!document.getElementById('nextBtn').disabled) {
+            e.preventDefault();
+            nextStep();
+        }
+    } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        prevStep();
+    }
+});
+
+// ==========================================
+// EXPOSE FUNCTIONS TO GLOBAL SCOPE
+// ==========================================
+window.prepareGel = prepareGel;
+window.loadSample = loadSample;
+window.runElectrophoresis = runElectrophoresis;
+window.stopElectrophoresis = stopElectrophoresis;
+window.stainGel = stainGel;
+window.visualizeGel = visualizeGel;
+window.captureImage = captureImage;
+window.completeAnalysis = completeAnalysis;
+window.updateVoltage = updateVoltage;
+window.updateTime = updateTime;
+window.nextStep = nextStep;
+window.prevStep = prevStep;
+window.analyzeBands = analyzeBands;
+
+console.log('✅ Gel Electrophoresis Simulation Ready!');
+console.log('📖 Instructions:');
+console.log('  1. Step 1: Click "Prepare Gel"');
+console.log('  2. Step 2: Click "Load" for each sample (5 total)');
+console.log('  3. Step 3: Adjust settings and click "Run"');
+console.log('  4. Step 4: Select a staining method');
+console.log('  5. Step 5: Click "View Under UV" then "Capture Image"');
+console.log('  6. Step 6: Click "Complete Experiment"');
+</script>
+
+</body>
+</html>

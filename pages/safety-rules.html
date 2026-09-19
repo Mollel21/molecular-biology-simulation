@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Safety Rules | MoleBio Lab</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f0f4f8;
+            color: #173f5f;
+            min-height: 100vh;
+        }
+
+        .safety-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        .safety-header {
+            background: white;
+            border-radius: 12px;
+            padding: 25px 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .safety-header h1 {
+            font-size: 28px;
+            color: #173f5f;
+        }
+
+        .safety-header .subtitle {
+            color: #65788a;
+            font-size: 15px;
+        }
+
+        .back-btn {
+            text-decoration: none;
+            color: #4a90e2;
+            font-weight: 600;
+            padding: 8px 20px;
+            border-radius: 8px;
+            background: #e8f4fc;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: #d0e8f8;
+            transform: translateX(-3px);
+        }
+
+        .safety-body {
+            background: white;
+            border-radius: 12px;
+            padding: 35px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        .safety-body h2 {
+            font-size: 22px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e8f4fc;
+        }
+
+        .safety-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .safety-item {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 15px 18px;
+            border-left: 4px solid #4a90e2;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .safety-item:hover {
+            transform: translateX(3px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .safety-item .icon {
+            font-size: 20px;
+            min-width: 30px;
+            margin-top: 2px;
+        }
+
+        .safety-item .content {
+            flex: 1;
+        }
+
+        .safety-item .number {
+            font-size: 11px;
+            font-weight: 700;
+            color: #4a90e2;
+            margin-bottom: 2px;
+        }
+
+        .safety-item .text {
+            font-size: 14px;
+            color: #2c3e50;
+            line-height: 1.5;
+        }
+
+        .safety-item.warning {
+            border-left-color: #f39c12;
+        }
+
+        .safety-item.warning .number {
+            color: #f39c12;
+        }
+
+        .safety-item.danger {
+            border-left-color: #e74c3c;
+        }
+
+        .safety-item.danger .number {
+            color: #e74c3c;
+        }
+
+        .safety-item.success {
+            border-left-color: #27ae60;
+        }
+
+        .safety-item.success .number {
+            color: #27ae60;
+        }
+
+        .acknowledgment {
+            background: #f5f9fc;
+            border-radius: 12px;
+            padding: 25px;
+            margin-top: 25px;
+            border: 2px solid #e8edf2;
+            text-align: center;
+        }
+
+        .acknowledgment h3 {
+            margin-bottom: 10px;
+            color: #173f5f;
+        }
+
+        .acknowledgment p {
+            color: #65788a;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .acknowledgment .checkbox-group {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .acknowledgment .checkbox-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: #4a90e2;
+            cursor: pointer;
+        }
+
+        .acknowledgment .checkbox-group label {
+            font-size: 15px;
+            color: #173f5f;
+            cursor: pointer;
+        }
+
+        .acknowledge-btn {
+            padding: 12px 40px;
+            background: #4a90e2;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .acknowledge-btn:hover:not(:disabled) {
+            background: #357abd;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
+        }
+
+        .acknowledge-btn:disabled {
+            background: #aab8c1;
+            cursor: not-allowed;
+        }
+
+        .acknowledge-btn.acknowledged {
+            background: #27ae60;
+        }
+
+        .acknowledge-btn.acknowledged:hover {
+            background: #219a52;
+        }
+
+        @media (max-width: 768px) {
+            .safety-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .safety-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .safety-container {
+                padding: 15px 10px;
+            }
+
+            .safety-body {
+                padding: 20px;
+            }
+
+            .acknowledgment .checkbox-group {
+                flex-direction: column;
+            }
+        }
+
+        @media print {
+            .back-btn,
+            .acknowledge-btn {
+                display: none !important;
+            }
+
+            .safety-body {
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }
+
+            .safety-item {
+                break-inside: avoid;
+            }
+        }
+
+        .safety-stats {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin: 15px 0 25px;
+        }
+
+        .stat-box {
+            background: #f5f9fc;
+            padding: 12px 20px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stat-box .number {
+            font-size: 22px;
+            font-weight: 700;
+            color: #4a90e2;
+        }
+
+        .stat-box .label {
+            font-size: 13px;
+            color: #65788a;
+        }
+    </style>
+</head>
+<body>
+
+<div class="safety-container">
+
+    <header class="safety-header">
+        <div>
+            <h1>🛡️ Laboratory Safety Rules</h1>
+            <p class="subtitle">Essential safety guidelines for molecular biology laboratory</p>
+        </div>
+        <a href="experiments.html" class="back-btn">← Back to Experiments</a>
+    </header>
+
+    <div class="safety-body">
+
+        <h2>📋 General Safety Rules</h2>
+
+        <div class="safety-stats">
+            <div class="stat-box">
+                <span class="number" id="totalRules">20</span>
+                <span class="label">Total Rules</span>
+            </div>
+            <div class="stat-box">
+                <span class="number" id="acknowledgedCount">0</span>
+                <span class="label">Acknowledged</span>
+            </div>
+        </div>
+
+        <div class="safety-grid" id="safetyGrid">
+            <!-- Rules loaded from JavaScript -->
+        </div>
+
+        <div class="acknowledgment" id="acknowledgment">
+            <h3>✅ Acknowledgment</h3>
+            <p>I have read and understood all the laboratory safety rules. I agree to follow these rules at all times during laboratory sessions.</p>
+
+            <div class="checkbox-group">
+                <input type="checkbox" id="agreeCheckbox" onchange="updateAcknowledgeButton()" />
+                <label for="agreeCheckbox">I agree to follow all safety rules</label>
+            </div>
+
+            <button class="acknowledge-btn" id="acknowledgeBtn" disabled onclick="acknowledgeSafety()">
+                📝 Acknowledge & Continue
+            </button>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+    // ============================================================
+    // SAFETY RULES DATA
+    // ============================================================
+    const safetyRules = [
+        { id: 1, text: "Always wear an apron during the laboratory session.", icon: "🧪", type: "warning" },
+        { id: 2, text: "Place bags, lab coats, books, etc. in specified locations, NEVER ON THE BENCH TOP.", icon: "📚", type: "warning" },
+        { id: 3, text: "Disinfect work surfaces at the end of each session with 70% ethanol.", icon: "🧼", type: "success" },
+        { id: 4, text: "Always place special wastes in designated waste containers: hazardous wastes, biological wastes, and glassware.", icon: "🗑️", type: "danger" },
+        { id: 5, text: "Dispose of trace-contaminated agarose gels and hazardous materials in the hazardous waste container.", icon: "☣️", type: "danger" },
+        { id: 6, text: "Keep all noxious and volatile compounds in the fume hood.", icon: "💨", type: "danger" },
+        { id: 7, text: "Do not dispose of hazardous or noxious chemicals in laboratory sinks.", icon: "🚫", type: "danger" },
+        { id: 8, text: "Clean up non-hazardous spills immediately using alcohol or bleach.", icon: "🧽", type: "warning" },
+        { id: 9, text: "Dispose of used sharp objects (razor blades, pins, needles, etc.) in the sharps waste box.", icon: "🪡", type: "danger" },
+        { id: 10, text: "Always use mechanical pipetting devices. Mouth pipetting is strictly prohibited.", icon: "🧫", type: "danger" },
+        { id: 11, text: "Eating, drinking, smoking, and storage of foods are not permitted in the laboratory.", icon: "🍔", type: "danger" },
+        { id: 12, text: "Wear disposable gloves whenever handling biological or hazardous materials.", icon: "🧤", type: "warning" },
+        { id: 13, text: "Do not use hypodermic needles and syringes.", icon: "💉", type: "danger" },
+        { id: 14, text: "Use UV goggles and common sense when working with the UV lightbox.", icon: "🕶️", type: "warning" },
+        { id: 15, text: "Avoid adding solids to hot liquids.", icon: "🔥", type: "warning" },
+        { id: 16, text: "At the end of every lab period, throw all trash in the appropriate container.", icon: "🗑️", type: "success" },
+        { id: 17, text: "Wash glassware with detergent, rinse thoroughly, and rinse once with deionized water.", icon: "🧪", type: "success" },
+        { id: 18, text: "Accidents or injuries must be reported to your instructor as soon as possible.", icon: "🆘", type: "danger" },
+        { id: 19, text: "CELL PHONES ARE NOT ALLOWED in the lab under any circumstances.", icon: "📱", type: "danger" },
+        { id: 20, text: "At the end of every lab period, wipe down the tabletop with 70% ethanol. Keep the laboratory neat and clean.", icon: "🧼", type: "success" },
+        { id: 21, text: "Wash your hands after handling all biological or hazardous materials and before leaving the laboratory.", icon: "🧽", type: "success" },
+        { id: 22, text: "Treat each other with respect. You are all here to learn, be patient with each other.", icon: "🤝", type: "success" }
+    ];
+
+    // ============================================================
+    // RENDER SAFETY RULES
+    // ============================================================
+    function renderRules() {
+        const grid = document.getElementById('safetyGrid');
+        grid.innerHTML = '';
+
+        safetyRules.forEach(rule => {
+            const div = document.createElement('div');
+            div.className = `safety-item ${rule.type}`;
+            div.innerHTML = `
+                <div class="icon">${rule.icon}</div>
+                <div class="content">
+                    <div class="number">Rule ${rule.id}</div>
+                    <div class="text">${rule.text}</div>
+                </div>
+            `;
+            grid.appendChild(div);
+        });
+
+        document.getElementById('totalRules').textContent = safetyRules.length;
+    }
+
+    // ============================================================
+    // ACKNOWLEDGMENT FUNCTIONS
+    // ============================================================
+    let acknowledged = false;
+
+    function updateAcknowledgeButton() {
+        const checkbox = document.getElementById('agreeCheckbox');
+        const btn = document.getElementById('acknowledgeBtn');
+        btn.disabled = !checkbox.checked;
+    }
+
+    function acknowledgeSafety() {
+        const btn = document.getElementById('acknowledgeBtn');
+        const checkbox = document.getElementById('agreeCheckbox');
+
+        if (checkbox.checked) {
+            acknowledged = true;
+            btn.textContent = '✅ Acknowledged!';
+            btn.classList.add('acknowledged');
+            btn.disabled = false;
+
+            document.getElementById('acknowledgedCount').textContent = safetyRules.length;
+
+            // Save to localStorage
+            try {
+                localStorage.setItem('safetyAcknowledged', 'true');
+                localStorage.setItem('safetyAcknowledgedDate', new Date().toISOString());
+            } catch(e) {}
+
+            // Show success message
+            const ackDiv = document.getElementById('acknowledgment');
+            ackDiv.style.borderColor = '#27ae60';
+            ackDiv.style.background = '#e8f5e9';
+
+            // Add a success message
+            const msg = document.createElement('p');
+            msg.style.color = '#2e7d32';
+            msg.style.fontWeight = 'bold';
+            msg.style.marginTop = '10px';
+            msg.textContent = '✅ Safety rules acknowledged successfully! You can now proceed to the laboratory.';
+
+            // Remove old message if exists
+            const oldMsg = ackDiv.querySelector('.success-msg');
+            if (oldMsg) oldMsg.remove();
+
+            msg.className = 'success-msg';
+            ackDiv.appendChild(msg);
+
+            // Add a "Proceed to Lab" button
+            const proceedBtn = document.createElement('a');
+            proceedBtn.href = 'experiments.html';
+            proceedBtn.className = 'acknowledge-btn acknowledged';
+            proceedBtn.style.textDecoration = 'none';
+            proceedBtn.style.display = 'inline-block';
+            proceedBtn.style.marginTop = '15px';
+            proceedBtn.textContent = '🧪 Proceed to Laboratory';
+            ackDiv.appendChild(proceedBtn);
+
+            // Hide the old button
+            btn.style.display = 'none';
+            const checkboxGroup = ackDiv.querySelector('.checkbox-group');
+            if (checkboxGroup) checkboxGroup.style.display = 'none';
+        }
+    }
+
+    // ============================================================
+    // CHECK IF ALREADY ACKNOWLEDGED
+    // ============================================================
+    function checkPreviousAcknowledgment() {
+        try {
+            const saved = localStorage.getItem('safetyAcknowledged');
+            if (saved === 'true') {
+                const checkbox = document.getElementById('agreeCheckbox');
+                const btn = document.getElementById('acknowledgeBtn');
+                checkbox.checked = true;
+                acknowledgeSafety();
+            }
+        } catch(e) {}
+    }
+
+    // ============================================================
+    // INIT
+    // ============================================================
+    renderRules();
+    checkPreviousAcknowledgment();
+
+    console.log('🛡️ Safety Rules Page Loaded!');
+    console.log(`📋 ${safetyRules.length} safety rules displayed`);
+</script>
+
+</body>
+</html>

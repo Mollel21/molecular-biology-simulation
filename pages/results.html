@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Results | MoleBio Lab</title>
+    <link rel="stylesheet" href="../css/style.css" />
+    <style>
+        /* ==========================================
+           RESULTS PAGE STYLES
+        ========================================== */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f0f4f8;
+            color: #173f5f;
+            min-height: 100vh;
+        }
+
+        .results-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        /* Header */
+        .results-header {
+            background: white;
+            border-radius: 12px;
+            padding: 25px 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .results-header h1 {
+            font-size: 28px;
+            color: #173f5f;
+        }
+
+        .results-header .subtitle {
+            color: #65788a;
+            font-size: 15px;
+        }
+
+        .back-btn {
+            text-decoration: none;
+            color: #4a90e2;
+            font-weight: 600;
+            padding: 8px 20px;
+            border-radius: 8px;
+            background: #e8f4fc;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: #d0e8f8;
+            transform: translateX(-3px);
+        }
+
+        /* Data Source Badge */
+        .data-source {
+            display: inline-block;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .data-source.saved {
+            background: #e8f5e9;
+            color: #27ae60;
+        }
+
+        .data-source.default {
+            background: #fef9e7;
+            color: #f39c12;
+        }
+
+        /* Score Overview */
+        .score-overview {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .score-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+        }
+
+        .score-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+        }
+
+        .score-card .number {
+            font-size: 36px;
+            font-weight: 800;
+            color: #4a90e2;
+        }
+
+        .score-card .label {
+            color: #65788a;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .score-card .number.green { color: #27ae60; }
+        .score-card .number.orange { color: #f39c12; }
+        .score-card .number.red { color: #e74c3c; }
+        .score-card .number.purple { color: #9b59b6; }
+
+        /* Main Content Grid */
+        .results-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        /* Left Panel */
+        .results-main {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        .results-main h2 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e8f4fc;
+        }
+
+        /* Experiment Details */
+        .experiment-details {
+            margin-bottom: 25px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f4f8;
+        }
+
+        .detail-row .label {
+            color: #65788a;
+            font-weight: 500;
+        }
+
+        .detail-row .value {
+            color: #173f5f;
+            font-weight: 600;
+        }
+
+        .detail-row .value.highlight {
+            color: #4a90e2;
+            font-weight: 700;
+        }
+
+        /* Band Analysis Table */
+        .band-analysis {
+            margin-top: 20px;
+        }
+
+        .band-analysis h3 {
+            font-size: 17px;
+            margin-bottom: 15px;
+            color: #173f5f;
+        }
+
+        .analysis-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .analysis-table th {
+            background: #4a90e2;
+            color: white;
+            padding: 10px 15px;
+            text-align: left;
+        }
+
+        .analysis-table td {
+            padding: 10px 15px;
+            border-bottom: 1px solid #e8edf2;
+        }
+
+        .analysis-table tr:hover {
+            background: #f5f9fc;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 3px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-badge.success {
+            background: #e8f5e9;
+            color: #27ae60;
+        }
+
+        .status-badge.warning {
+            background: #fef9e7;
+            color: #f39c12;
+        }
+
+        .status-badge.error {
+            background: #fde8e8;
+            color: #e74c3c;
+        }
+
+        .status-badge.info {
+            background: #e8f4fc;
+            color: #4a90e2;
+        }
+
+        /* Right Panel */
+        .results-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .sidebar-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        .sidebar-card h3 {
+            font-size: 17px;
+            margin-bottom: 15px;
+            color: #173f5f;
+        }
+
+        /* Interpretation */
+        .interpretation-box {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 15px;
+            border-left: 4px solid #4a90e2;
+        }
+
+        .interpretation-box p {
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+
+        /* Recommendations */
+        .recommendation-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .recommendation-list li {
+            padding: 8px 0;
+            padding-left: 30px;
+            position: relative;
+            border-bottom: 1px solid #f0f4f8;
+            color: #2c3e50;
+            font-size: 14px;
+        }
+
+        .recommendation-list li:last-child {
+            border-bottom: none;
+        }
+
+        .recommendation-list li::before {
+            position: absolute;
+            left: 0;
+            font-size: 16px;
+        }
+
+        .recommendation-list li.good::before {
+            content: '✅';
+        }
+
+        .recommendation-list li.warning::before {
+            content: '⚠️';
+        }
+
+        .recommendation-list li.info::before {
+            content: '💡';
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .action-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .action-btn.primary {
+            background: #4a90e2;
+            color: white;
+        }
+
+        .action-btn.primary:hover {
+            background: #357abd;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
+        }
+
+        .action-btn.success {
+            background: #27ae60;
+            color: white;
+        }
+
+        .action-btn.success:hover {
+            background: #219a52;
+            transform: translateY(-2px);
+        }
+
+        .action-btn.secondary {
+            background: #e8f4fc;
+            color: #4a90e2;
+        }
+
+        .action-btn.secondary:hover {
+            background: #d0e8f8;
+            transform: translateY(-2px);
+        }
+
+        /* Gel Image Preview */
+        .gel-preview {
+            background: linear-gradient(180deg, #0a0a2a 0%, #000000 100%);
+            border-radius: 8px;
+            padding: 20px;
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            border: 2px solid #4a90e2;
+        }
+
+        .gel-preview .placeholder {
+            color: #4a90e2;
+            text-align: center;
+        }
+
+        .gel-preview .placeholder .icon {
+            font-size: 48px;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .gel-preview .placeholder p {
+            font-size: 14px;
+            opacity: 0.7;
+        }
+
+        /* No Results Message */
+        .no-results {
+            background: #fef9e7;
+            border: 2px solid #f39c12;
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .no-results .icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .no-results h3 {
+            color: #f39c12;
+            margin-bottom: 10px;
+        }
+
+        .no-results p {
+            color: #65788a;
+            margin-bottom: 20px;
+        }
+
+        /* ==========================================
+           RESPONSIVE
+        ========================================== */
+        @media (max-width: 1024px) {
+            .score-overview {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 900px) {
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .results-container {
+                padding: 15px 10px;
+            }
+
+            .results-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .score-overview {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+
+            .score-card .number {
+                font-size: 28px;
+            }
+
+            .analysis-table {
+                font-size: 12px;
+            }
+
+            .analysis-table th,
+            .analysis-table td {
+                padding: 6px 10px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .action-btn {
+                min-width: auto;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .score-overview {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+            .back-btn,
+            .action-buttons {
+                display: none !important;
+            }
+
+            .results-container {
+                padding: 0;
+            }
+
+            .results-header {
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }
+
+            .score-card,
+            .results-main,
+            .sidebar-card {
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }
+
+            .gel-preview {
+                border: 1px solid #ddd;
+                background: #f5f5f5;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="results-container">
+
+    <!-- ==========================================
+         HEADER
+    ========================================== -->
+    <header class="results-header">
+        <div>
+            <h1>📊 Experiment Results</h1>
+            <p class="subtitle" id="experimentTitle">Loading results...</p>
+        </div>
+        <a href="experiments.html" class="back-btn">← Back to Experiments</a>
+    </header>
+
+    <!-- ==========================================
+         RESULTS CONTENT
+    ========================================== -->
+    <div id="resultsContent">
+        <!-- Dynamically loaded -->
+    </div>
+
+</div>
+
+<!-- ==========================================
+     JAVASCRIPT
+========================================== -->
+<script>
+// ==========================================
+// RESULTS PAGE LOGIC WITH LOCALSTORAGE
+// ==========================================
+
+// ==========================================
+// DEFAULT STATIC DATA FOR EACH EXPERIMENT
+// ==========================================
+const defaultResults = {
+    // ==========================================
+    // DNA EXTRACTION - FIXED!
+    // ==========================================
+    'dna-extraction': {
+        title: 'DNA / RNA Extraction Results',
+        score: 85,
+        stepsCompleted: 6,
+        totalSteps: 6,
+        timeSpent: '12:45',
+        accuracy: '85%',
+        details: {
+            experiment: 'DNA / RNA Extraction',
+            voltage: 'N/A',
+            time: '25 minutes',
+            stain: 'N/A',
+            image: 'N/A',
+            date: new Date().toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            })
+        },
+        bands: [
+            { sample: 'Sample A', result: 'DNA extracted successfully - High yield', status: 'success', statusText: 'Good' },
+            { sample: 'Sample B', result: 'DNA extracted - Moderate yield', status: 'success', statusText: 'Good' },
+            { sample: 'Control', result: 'No DNA detected - Clean', status: 'success', statusText: 'Valid' }
+        ],
+        interpretation: '✅ DNA successfully extracted. Sample A shows high yield, Sample B shows moderate yield. Control is clean - no contamination detected.',
+        recommendations: [
+            { text: 'Good extraction technique', type: 'good' },
+            { text: 'Consider increasing lysis time for better yield', type: 'info' },
+            { text: 'Ensure proper mixing during binding step', type: 'info' }
+        ]
+    },
+
+    // ==========================================
+    // GEL ELECTROPHORESIS
+    // ==========================================
+    'gel-electrophoresis': {
+        title: 'Gel Electrophoresis - DNA Analysis (Sample Data)',
+        score: 92,
+        stepsCompleted: 6,
+        totalSteps: 6,
+        timeSpent: '15:30',
+        accuracy: '85%',
+        details: {
+            experiment: 'Gel Electrophoresis',
+            voltage: '100 V',
+            time: '30 minutes',
+            stain: 'Ethidium Bromide',
+            image: 'Yes',
+            date: new Date().toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            })
+        },
+        bands: [
+            { sample: 'Ladder', result: '4 bands visible (1000, 500, 200, 100 bp)', status: 'success', statusText: 'Good' },
+            { sample: 'Positive Control', result: '2 bands visible (500, 200 bp)', status: 'success', statusText: 'Valid' },
+            { sample: 'Sample 1', result: '2 bands visible (450, 200 bp)', status: 'success', statusText: 'Detected' },
+            { sample: 'Sample 2', result: '1 band visible (500 bp)', status: 'warning', statusText: 'Partial' },
+            { sample: 'Negative Control', result: 'No bands visible', status: 'success', statusText: 'Valid' }
+        ],
+        interpretation: '✅ Target DNA detected in samples. Positive control shows expected bands. Negative control is clean - no contamination detected.',
+        recommendations: [
+            { text: 'Sample data - complete the experiment for your results', type: 'info' },
+            { text: 'Run the gel electrophoresis simulation to get your actual results', type: 'warning' }
+        ]
+    },
+
+    // ==========================================
+    // BACTERIAL PCR
+    // ==========================================
+    'bacterial-pcr': {
+        title: 'Bacterial DNA Detection Results',
+        score: 88,
+        stepsCompleted: 10,
+        totalSteps: 12,
+        timeSpent: '18:20',
+        accuracy: '82%',
+        details: {
+            experiment: 'Bacterial DNA Detection',
+            voltage: '100 V',
+            time: '35 minutes',
+            stain: 'SYBR Safe',
+            image: 'Yes',
+            date: new Date().toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            })
+        },
+        bands: [
+            { sample: 'Ladder', result: '6 bands visible', status: 'success', statusText: 'Good' },
+            { sample: 'Positive Control', result: '2 bands visible', status: 'success', statusText: 'Valid' },
+            { sample: 'Sample 1', result: '2 bands visible', status: 'success', statusText: 'Detected' },
+            { sample: 'Sample 2', result: 'No bands visible', status: 'error', statusText: 'Not Detected' },
+            { sample: 'Negative Control', result: 'No bands visible', status: 'success', statusText: 'Valid' }
+        ],
+        interpretation: '⚠️ Bacterial DNA detected in Sample 1 but not in Sample 2. Positive control shows expected amplification. Negative control is clean.',
+        recommendations: [
+            { text: 'Good PCR technique', type: 'good' },
+            { text: 'Sample 2 shows no amplification - increase template DNA', type: 'warning' },
+            { text: 'Consider optimizing annealing temperature', type: 'info' }
+        ]
+    },
+
+    // ==========================================
+    // FUNGAL PCR
+    // ==========================================
+    'fungal-pcr': {
+        title: 'Fungal DNA Detection Results',
+        score: 90,
+        stepsCompleted: 11,
+        totalSteps: 12,
+        timeSpent: '20:15',
+        accuracy: '80%',
+        details: {
+            experiment: 'Fungal DNA Detection',
+            voltage: '100 V',
+            time: '40 minutes',
+            stain: 'GelRed',
+            image: 'Yes',
+            date: new Date().toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            })
+        },
+        bands: [
+            { sample: 'Ladder', result: '5 bands visible', status: 'success', statusText: 'Good' },
+            { sample: 'Positive Control', result: '2 bands visible', status: 'success', statusText: 'Valid' },
+            { sample: 'Sample 1', result: '2 bands visible', status: 'success', statusText: 'Detected' },
+            { sample: 'Sample 2', result: '2 bands visible', status: 'success', statusText: 'Detected' },
+            { sample: 'Negative Control', result: 'No bands visible', status: 'success', statusText: 'Valid' }
+        ],
+        interpretation: '✅ Fungal DNA detected in both samples. Positive control shows expected bands. Negative control is clean.',
+        recommendations: [
+            { text: 'Excellent results overall', type: 'good' },
+            { text: 'All controls are valid', type: 'good' },
+            { text: 'Consider running a lower voltage for better separation', type: 'info' }
+        ]
+    }
+};
+
+// ==========================================
+// LOAD RESULTS FROM LOCALSTORAGE
+// ==========================================
+function loadResults() {
+    const container = document.getElementById('resultsContent');
+    
+    // Get experiment ID from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const experimentId = urlParams.get('id') || 'gel-electrophoresis';
+    
+    console.log('🔍 Loading results for experiment:', experimentId);
+    
+    // Try to get saved results from localStorage
+    let savedData = null;
+    let isFromStorage = false;
+    let storageKey = '';
+    
+    // Define possible localStorage keys for each experiment
+    const keyMap = {
+        'dna-extraction': ['dnaExtractionResults', 'dna-extractionResults', 'dna_extraction_results'],
+        'gel-electrophoresis': ['gelElectrophoresisResults', 'gel-electrophoresisResults', 'gel_electrophoresis_results'],
+        'bacterial-pcr': ['bacterialPcrResults', 'bacterial-pcrResults', 'bacterial_pcr_results'],
+        'fungal-pcr': ['fungalPcrResults', 'fungal-pcrResults', 'fungal_pcr_results']
+    };
+    
+    const possibleKeys = keyMap[experimentId] || [experimentId + 'Results'];
+    
+    try {
+        // Try all possible keys for this experiment
+        for (let key of possibleKeys) {
+            const stored = localStorage.getItem(key);
+            if (stored) {
+                savedData = JSON.parse(stored);
+                storageKey = key;
+                console.log('📦 Found saved results in localStorage with key:', key);
+                isFromStorage = true;
+                break;
+            }
+        }
+        
+        if (!savedData) {
+            console.log('ℹ️ No saved results found for', experimentId);
+        }
+    } catch (e) {
+        console.warn('Could not read from localStorage:', e);
+    }
+    
+    // Use saved data if available, otherwise fall back to default
+    let data = null;
+    let dataSource = 'default';
+    
+    if (savedData && savedData.details) {
+        data = savedData;
+        dataSource = 'saved';
+        console.log('✅ Using saved data with details object');
+    } else if (savedData && savedData.voltage !== undefined) {
+        // Convert flat data to details structure
+        console.log('🔄 Converting flat saved data to details structure');
+        const defaultExp = defaultResults[experimentId] || defaultResults['gel-electrophoresis'];
+        data = {
+            title: savedData.title || defaultExp.title,
+            score: savedData.score || defaultExp.score,
+            stepsCompleted: savedData.stepsCompleted || defaultExp.stepsCompleted,
+            totalSteps: savedData.totalSteps || defaultExp.totalSteps,
+            timeSpent: savedData.timeSpent || defaultExp.timeSpent,
+            accuracy: savedData.accuracy || defaultExp.accuracy,
+            details: {
+                experiment: savedData.experiment || defaultExp.details.experiment,
+                voltage: savedData.voltage ? savedData.voltage + ' V' : defaultExp.details.voltage,
+                time: savedData.time ? savedData.time + ' minutes' : defaultExp.details.time,
+                stain: savedData.stain || defaultExp.details.stain,
+                image: savedData.imageCaptured ? 'Yes' : 'No',
+                date: savedData.completionDate ? new Date(savedData.completionDate).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                }) : defaultExp.details.date
+            },
+            bands: savedData.bands || defaultExp.bands,
+            interpretation: savedData.interpretation || defaultExp.interpretation,
+            recommendations: savedData.recommendations || defaultExp.recommendations
+        };
+        dataSource = 'saved-converted';
+        console.log('✅ Converted saved data');
+    } else {
+        // Use default data for this experiment
+        data = defaultResults[experimentId] || defaultResults['gel-electrophoresis'];
+        console.log('📋 Using default data for:', experimentId);
+    }
+    
+    // Update header
+    const titleSuffix = isFromStorage ? ' (Your Results)' : ' (Sample Data)';
+    document.getElementById('experimentTitle').textContent = (data.title || 'Experiment Results') + titleSuffix;
+    
+    // Build the results HTML
+    let html = '';
+    
+    // Check if we have valid data
+    if (!data || !data.bands) {
+        html = `
+            <div class="no-results">
+                <div class="icon">🔬</div>
+                <h3>No Results Found</h3>
+                <p>Complete the experiment first to see your results here.</p>
+                <a href="${experimentId}.html" class="action-btn primary" style="display:inline-block; text-decoration:none;">
+                    🧫 Start Experiment
+                </a>
+            </div>
+        `;
+        container.innerHTML = html;
+        return;
+    }
+    
+    // ==========================================
+    // SCORE OVERVIEW
+    // ==========================================
+    html += `
+        <div class="score-overview">
+            <div class="score-card">
+                <div class="number green">${data.score || 'N/A'}</div>
+                <div class="label">⭐ Overall Score</div>
+            </div>
+            <div class="score-card">
+                <div class="number purple">${data.stepsCompleted || 0}/${data.totalSteps || 0}</div>
+                <div class="label">📋 Steps Completed</div>
+            </div>
+            <div class="score-card">
+                <div class="number orange">${data.timeSpent || '00:00'}</div>
+                <div class="label">⏱️ Time Spent</div>
+            </div>
+            <div class="score-card">
+                <div class="number blue">${data.accuracy || '0%'}</div>
+                <div class="label">🎯 Accuracy</div>
+            </div>
+        </div>
+    `;
+    
+    // ==========================================
+    // DATA SOURCE BADGE
+    // ==========================================
+    let sourceBadge = '';
+    if (isFromStorage) {
+        sourceBadge = `<span class="data-source saved">✅ Your Saved Results</span>`;
+    } else {
+        sourceBadge = `<span class="data-source default">ℹ️ Sample Data</span>`;
+    }
+    
+    // ==========================================
+    // MAIN GRID
+    // ==========================================
+    html += `
+        <div class="results-grid">
+            <!-- LEFT: Main Results -->
+            <div class="results-main">
+                <h2>🔬 Experiment Details ${sourceBadge}</h2>
+                
+                <div class="experiment-details">
+                    <div class="detail-row">
+                        <span class="label">📌 Experiment</span>
+                        <span class="value">${data.details?.experiment || 'N/A'}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="label">⚡ Voltage</span>
+                        <span class="value highlight">${data.details?.voltage || 'N/A'}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="label">⏱️ Run Time</span>
+                        <span class="value highlight">${data.details?.time || 'N/A'}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="label">🧪 Staining Method</span>
+                        <span class="value highlight">${data.details?.stain || 'N/A'}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="label">📸 Image Captured</span>
+                        <span class="value">${data.details?.image || 'No'}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="label">📅 Date Completed</span>
+                        <span class="value">${data.details?.date || 'N/A'}</span>
+                    </div>
+                    ${isFromStorage ? `<div class="detail-row" style="background:#e8f5e9; padding:8px 12px; border-radius:4px; margin-top:8px;">
+                        <span class="label" style="color:#27ae60;">✅ Status</span>
+                        <span class="value" style="color:#27ae60;">Results from your experiment</span>
+                    </div>` : `<div class="detail-row" style="background:#fef9e7; padding:8px 12px; border-radius:4px; margin-top:8px;">
+                        <span class="label" style="color:#f39c12;">ℹ️ Status</span>
+                        <span class="value" style="color:#f39c12;">Sample data shown - complete experiment for your results</span>
+                    </div>`}
+                </div>
+                
+                <div class="band-analysis">
+                    <h3>🧬 Analysis Results</h3>
+                    <table class="analysis-table">
+                        <thead>
+                            <tr>
+                                <th>Sample</th>
+                                <th>Result</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+    `;
+    
+    data.bands.forEach(band => {
+        const statusClass = {
+            'success': 'success',
+            'warning': 'warning',
+            'error': 'error',
+            'info': 'info'
+        }[band.status] || 'info';
+        
+        html += `
+            <tr>
+                <td><strong>${band.sample}</strong></td>
+                <td>${band.result}</td>
+                <td><span class="status-badge ${statusClass}">${band.statusText}</span></td>
+            </tr>
+        `;
+    });
+    
+    html += `
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- RIGHT: Sidebar -->
+            <div class="results-sidebar">
+                <!-- Preview -->
+                <div class="sidebar-card">
+                    <h3>🧫 Results Preview</h3>
+                    <div class="gel-preview" id="gelPreview">
+                        <div class="placeholder">
+                            <span class="icon">🧬</span>
+                            <p>${isFromStorage ? 'Your results' : 'Sample results'}</p>
+                            <p style="font-size:12px; opacity:0.5;">${data.details?.experiment || 'Experiment'}</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Interpretation -->
+                <div class="sidebar-card">
+                    <h3>📖 Interpretation</h3>
+                    <div class="interpretation-box">
+                        <p>${data.interpretation || 'No interpretation available.'}</p>
+                    </div>
+                </div>
+                
+                <!-- Recommendations -->
+                <div class="sidebar-card">
+                    <h3>💡 Recommendations</h3>
+                    <ul class="recommendation-list">
+    `;
+    
+    if (data.recommendations && data.recommendations.length > 0) {
+        data.recommendations.forEach(rec => {
+            html += `<li class="${rec.type}">${rec.text}</li>`;
+        });
+    } else {
+        html += `<li class="info">No recommendations available.</li>`;
+    }
+    
+    html += `
+                    </ul>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="sidebar-card">
+                    <h3>📄 Actions</h3>
+                    <div class="action-buttons">
+                        <a href="report.html?id=${experimentId}" class="action-btn primary">📄 Generate Report</a>
+                        <a href="${experimentId}.html" class="action-btn secondary">🔄 Repeat Experiment</a>
+                        <button onclick="window.print()" class="action-btn secondary">🖨️ Print Results</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    container.innerHTML = html;
+    
+    // Log what was displayed
+    console.log('📊 Displaying results:', {
+        source: dataSource,
+        experiment: data.details?.experiment,
+        score: data.score,
+        isFromStorage: isFromStorage
+    });
+}
+
+// ==========================================
+// INITIALIZE
+// ==========================================
+document.addEventListener('DOMContentLoaded', loadResults);
+
+// ==========================================
+// EXPOSE FUNCTIONS
+// ==========================================
+window.loadResults = loadResults;
+</script>
+
+</body>
+</html>

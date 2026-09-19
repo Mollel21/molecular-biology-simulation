@@ -1,0 +1,1161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Practical Report | MoleBio Lab</title>
+    <style>
+        /* ==========================================
+           REPORT STYLES - PROFESSIONAL & PRINTABLE
+        ========================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            background: #f5f7fa;
+            color: #1a2a3a;
+            min-height: 100vh;
+        }
+
+        .report-wrapper {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        /* ==========================================
+           HEADER / CONTROLS
+        ========================================== */
+        .report-controls {
+            background: white;
+            border-radius: 12px;
+            padding: 20px 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .report-controls .left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .report-controls .left h1 {
+            font-size: 22px;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            color: #173f5f;
+        }
+
+        .report-controls .left .badge {
+            font-size: 11px;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+
+        .badge.saved {
+            background: #e8f5e9;
+            color: #27ae60;
+        }
+
+        .badge.default {
+            background: #fef9e7;
+            color: #f39c12;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-group .btn {
+            padding: 10px 22px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+
+        .btn.primary {
+            background: #4a90e2;
+            color: white;
+        }
+
+        .btn.primary:hover {
+            background: #357abd;
+            transform: translateY(-2px);
+        }
+
+        .btn.success {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn.success:hover {
+            background: #219a52;
+            transform: translateY(-2px);
+        }
+
+        .btn.secondary {
+            background: #e8f4fc;
+            color: #4a90e2;
+        }
+
+        .btn.secondary:hover {
+            background: #d0e8f8;
+            transform: translateY(-2px);
+        }
+
+        .btn.danger {
+            background: #fde8e8;
+            color: #e74c3c;
+        }
+
+        .btn.danger:hover {
+            background: #f5d0d0;
+            transform: translateY(-2px);
+        }
+
+        /* ==========================================
+           REPORT CONTENT - PROFESSIONAL FORMAT
+        ========================================== */
+        .report-content {
+            background: white;
+            padding: 60px 70px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+            border-radius: 4px;
+            line-height: 1.7;
+        }
+
+        /* ---- Title Page ---- */
+        .title-page {
+            text-align: center;
+            padding: 40px 20px 50px;
+            border-bottom: 1px solid #e8edf2;
+            margin-bottom: 40px;
+        }
+
+        .title-page .institution {
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            color: #1a3a5a;
+            margin-bottom: 5px;
+        }
+
+        .title-page .department {
+            font-size: 14px;
+            color: #3a5a6a;
+            margin-bottom: 30px;
+        }
+
+        .title-page .course-info {
+            font-size: 14px;
+            color: #3a5a6a;
+            margin-bottom: 40px;
+        }
+
+        .title-page .experiment-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #0a2a4a;
+            margin-bottom: 10px;
+            line-height: 1.3;
+        }
+
+        .title-page .experiment-subtitle {
+            font-size: 16px;
+            color: #4a6a7a;
+            margin-bottom: 30px;
+        }
+
+        .title-page .authors {
+            font-size: 16px;
+            margin-bottom: 8px;
+            color: #1a3a4a;
+        }
+
+        .title-page .date-info {
+            font-size: 14px;
+            color: #4a6a7a;
+            line-height: 2;
+        }
+
+        .title-page .date-info span {
+            display: inline-block;
+            margin: 0 20px;
+        }
+
+        /* ---- Sections ---- */
+        .report-section {
+            margin-bottom: 35px;
+        }
+
+        .report-section h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #0a2a4a;
+            border-bottom: 2px solid #e8edf2;
+            padding-bottom: 8px;
+            margin-bottom: 18px;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+
+        .report-section h3 {
+            font-size: 17px;
+            font-weight: 600;
+            color: #1a3a5a;
+            margin: 20px 0 12px;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+
+        .report-section h4 {
+            font-size: 15px;
+            font-weight: 600;
+            color: #2a4a5a;
+            margin: 15px 0 10px;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+
+        .report-section p {
+            font-size: 14px;
+            line-height: 1.8;
+            color: #2a3a4a;
+            margin-bottom: 12px;
+            text-align: justify;
+        }
+
+        .report-section ul,
+        .report-section ol {
+            padding-left: 25px;
+            margin-bottom: 15px;
+        }
+
+        .report-section li {
+            font-size: 14px;
+            line-height: 1.8;
+            color: #2a3a4a;
+            margin-bottom: 4px;
+        }
+
+        /* ---- Abstract ---- */
+        .abstract-box {
+            background: #f8fafc;
+            border-left: 4px solid #4a90e2;
+            padding: 20px 25px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        .abstract-box p {
+            font-size: 14px;
+            line-height: 1.8;
+            color: #2a3a4a;
+            text-align: justify;
+            margin-bottom: 0;
+        }
+
+        .abstract-box .abstract-label {
+            font-weight: 700;
+            font-size: 15px;
+            color: #1a3a5a;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        /* ---- Tables ---- */
+        .report-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0 25px;
+            font-size: 13px;
+        }
+
+        .report-table th {
+            background: #4a90e2;
+            color: white;
+            padding: 10px 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .report-table td {
+            padding: 10px 15px;
+            border-bottom: 1px solid #e8edf2;
+        }
+
+        .report-table tr:hover {
+            background: #f5f9fc;
+        }
+
+        .report-table .table-caption {
+            font-size: 12px;
+            color: #4a6a7a;
+            margin-top: 5px;
+            text-align: center;
+            font-style: italic;
+        }
+
+        /* ---- Status Badge in Tables ---- */
+        .status-badge {
+            display: inline-block;
+            padding: 2px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .status-badge.success {
+            background: #e8f5e9;
+            color: #27ae60;
+        }
+
+        .status-badge.warning {
+            background: #fef9e7;
+            color: #f39c12;
+        }
+
+        .status-badge.error {
+            background: #fde8e8;
+            color: #e74c3c;
+        }
+
+        .status-badge.info {
+            background: #e8f4fc;
+            color: #4a90e2;
+        }
+
+        /* ---- References ---- */
+        .references-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .references-list li {
+            padding: 6px 0;
+            padding-left: 30px;
+            text-indent: -30px;
+            font-size: 13px;
+            line-height: 1.7;
+            color: #2a3a4a;
+            border-bottom: 1px solid #f0f4f8;
+        }
+
+        .references-list li:last-child {
+            border-bottom: none;
+        }
+
+        .references-list li em {
+            font-style: italic;
+        }
+
+        /* ---- Score Box ---- */
+        .score-box {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            border: 2px solid #4CAF50;
+            border-radius: 12px;
+            padding: 25px 30px;
+            text-align: center;
+            margin: 25px 0;
+        }
+
+        .score-box .score-number {
+            font-size: 42px;
+            font-weight: 700;
+            color: #2e7d32;
+        }
+
+        .score-box .score-label {
+            font-size: 16px;
+            color: #2e7d32;
+            font-weight: 600;
+        }
+
+        .score-box .score-details {
+            font-size: 14px;
+            color: #4a6a7a;
+            margin-top: 5px;
+        }
+
+        /* ---- No Results ---- */
+        .no-results {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .no-results .icon {
+            font-size: 60px;
+            display: block;
+            margin-bottom: 15px;
+        }
+
+        .no-results h3 {
+            color: #f39c12;
+            font-size: 22px;
+            margin-bottom: 10px;
+        }
+
+        .no-results p {
+            color: #65788a;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        /* ==========================================
+           PRINT STYLES
+        ========================================== */
+        @media print {
+            body {
+                background: white;
+            }
+
+            .report-controls {
+                display: none !important;
+            }
+
+            .report-wrapper {
+                padding: 0;
+                max-width: 100%;
+            }
+
+            .report-content {
+                padding: 40px 50px;
+                box-shadow: none;
+                border-radius: 0;
+            }
+
+            .title-page {
+                padding-top: 20px;
+            }
+
+            .report-table {
+                font-size: 11px;
+            }
+
+            .report-table th,
+            .report-table td {
+                padding: 6px 10px;
+            }
+
+            .score-box {
+                border: 1px solid #4CAF50;
+                background: #f5faf5;
+            }
+
+            .no-results {
+                display: none;
+            }
+        }
+
+        /* ==========================================
+           RESPONSIVE
+        ========================================== */
+        @media (max-width: 768px) {
+            .report-wrapper {
+                padding: 15px 10px;
+            }
+
+            .report-controls {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 12px;
+            }
+
+            .report-controls .left {
+                flex-wrap: wrap;
+            }
+
+            .report-content {
+                padding: 25px 20px;
+            }
+
+            .title-page .experiment-title {
+                font-size: 22px;
+            }
+
+            .title-page .date-info span {
+                display: block;
+                margin: 3px 0;
+            }
+
+            .btn-group .btn {
+                flex: 1;
+                text-align: center;
+                padding: 10px 12px;
+                font-size: 13px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .report-content {
+                padding: 18px 12px;
+            }
+
+            .report-table {
+                font-size: 11px;
+            }
+
+            .report-table th,
+            .report-table td {
+                padding: 5px 8px;
+            }
+
+            .score-box .score-number {
+                font-size: 32px;
+            }
+
+            .title-page .experiment-title {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="report-wrapper">
+
+    <!-- ==========================================
+         CONTROLS
+    ========================================== -->
+    <div class="report-controls">
+        <div class="left">
+            <h1>📄 Practical Report</h1>
+            <span class="badge default" id="dataSourceBadge">ℹ️ Sample Data</span>
+        </div>
+        <div class="btn-group">
+            <button class="btn primary" onclick="window.print()">🖨️ Print Report</button>
+            <a href="results.html" class="btn secondary" id="viewResultsLink">📊 View Results</a>
+            <button class="btn danger" onclick="clearAndReload()">🗑️ Clear &amp; Reset</button>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         REPORT CONTENT
+    ========================================== -->
+    <div class="report-content" id="reportContent">
+        <!-- Dynamically loaded -->
+    </div>
+
+</div>
+
+<script>
+    // ============================================================
+    // ENHANCED REPORT - MATCHING MANUAL STRUCTURE
+    // ============================================================
+
+    // ============================================================
+    // EXPERIMENT DATA
+    // ============================================================
+    const experimentData = {
+        'dna-extraction': {
+            id: 'dna-extraction',
+            title: 'DNA / RNA Extraction from Cells and Tissues',
+            subtitle: 'Isolation and Purification of Nucleic Acids',
+            courseCode: 'AS 6128 / AS 8116 / NSLT 07302',
+            authors: 'Student Name',
+            institution: 'College of Science and Technical Education',
+            department: 'Department of Applied Sciences',
+            semester: 'Semester I, 2025/2026',
+            abstract: 'DNA and RNA extraction is a fundamental technique in molecular biology that involves breaking open cells, removing proteins and other contaminants, and recovering purified nucleic acid for downstream applications. In this experiment, nucleic acids were extracted from biological samples using the Transiom extraction kit. The extraction involved cell lysis using lysis buffer and Proteinase K, protein removal, nucleic acid precipitation with isopropanol, washing with 70% ethanol, and final elution in nuclease-free water. The yield and purity of the extracted DNA/RNA were assessed using a spectrophotometer, with A260/A280 ratios of approximately 1.8 for DNA and 2.0 for RNA indicating good purity. The results demonstrate successful extraction of high-quality nucleic acids suitable for further molecular biology applications such as PCR, cloning, and sequencing.',
+            introduction: 'DNA and RNA extraction is the process of isolating and purifying nucleic acids from cells, tissues, or microorganisms. The extraction of nucleic acids is a critical first step in many molecular biology applications, including PCR, cloning, sequencing, and gene expression analysis. The principle of nucleic acid extraction involves breaking open cells (lysis), removing proteins and other contaminants, and recovering purified nucleic acid. For DNA extraction, the process typically involves cell lysis using detergents such as SDS or CTAB, protein digestion using Proteinase K, removal of proteins and lipids, precipitation of DNA using ethanol or isopropanol, washing with 70% ethanol, and elution in nuclease-free water or TE buffer. RNA extraction requires additional precautions to prevent RNase activity, which can rapidly degrade RNA. This is achieved using RNase inhibitors such as guanidinium thiocyanate and β-mercaptoethanol. The extracted nucleic acids can be quantified and assessed for purity using a spectrophotometer, with A260/A280 ratios of approximately 1.8 for DNA and 2.0 for RNA indicating good purity. The aim of this experiment was to extract and purify DNA/RNA from biological samples using the Transiom extraction kit and to assess the quality and quantity of the extracted nucleic acids.',
+            methodology: {
+                apparatus: [
+                    'Microcentrifuge (12,000 rpm)',
+                    'Micropipettes (1-20 µL, 1-200 µL, 1-1000 µL)',
+                    'Pipette tips (sterile, filtered)',
+                    'Vortex mixer',
+                    'Water bath or heating block (55-65°C)',
+                    'Microcentrifuge tubes (1.5 mL and 2.0 mL)',
+                    'Spectrophotometer / NanoDrop',
+                    'Ice bucket',
+                    'Tube racks'
+                ],
+                reagents: [
+                    'Transiom DNA/RNA Extraction Kit',
+                    'Lysis Buffer',
+                    'Proteinase K',
+                    'RNase A (for DNA extraction)',
+                    'Guanidinium thiocyanate (for RNA extraction)',
+                    'Isopropanol (cold)',
+                    'Ethanol (70% and absolute)',
+                    'Nuclease-free water',
+                    'TE Buffer'
+                ],
+                procedure: [
+                    'Step 1: Sample Preparation - The biological sample (cells or tissue) was collected and, for tissues, ground or homogenized in lysis buffer.',
+                    'Step 2: Cell Lysis - Lysis buffer and Proteinase K were added to the sample and incubated at 55-65°C to break cell membranes and digest proteins.',
+                    'Step 3: Protein Removal - Proteins and contaminants were removed using organic extraction (phenol:chloroform) or by passing the lysate through a spin column with binding buffer.',
+                    'Step 4: Nucleic Acid Precipitation - Cold isopropanol or ethanol was added to precipitate the nucleic acids, followed by centrifugation to pellet the DNA/RNA.',
+                    'Step 5: Washing - The nucleic acid pellet was washed with 70% ethanol to remove residual salts and contaminants.',
+                    'Step 6: Elution - The purified DNA/RNA was dissolved in nuclease-free water or TE buffer and stored at appropriate temperatures (DNA: -20°C, RNA: -80°C).',
+                    'Quality Assessment - The concentration and purity of the extracted nucleic acids were measured using a spectrophotometer (A260/A280 ratio).'
+                ]
+            },
+            results: {
+                description: 'The DNA/RNA extraction yielded nucleic acids with the following characteristics:',
+                table: [
+                    { sample: 'Sample A', concentration: '85.2 µg/mL', a260: '1.82', purity: 'Good', status: 'success' },
+                    { sample: 'Sample B', concentration: '62.7 µg/mL', a260: '1.75', purity: 'Moderate', status: 'warning' },
+                    { sample: 'Control', concentration: '0.0 µg/mL', a260: '0.00', purity: 'Valid', status: 'success' }
+                ],
+                conclusion: 'DNA was successfully extracted from both samples. Sample A showed high yield and excellent purity (A260/A280 = 1.82), while Sample B showed moderate yield with slightly lower purity (A260/A280 = 1.75). The control sample showed no DNA, confirming no contamination. The extracted DNA is suitable for downstream applications such as PCR and sequencing.'
+            },
+            discussion: 'The DNA extraction procedure was successful in isolating high-quality DNA from the biological samples. The A260/A280 ratios obtained indicate good purity, with values near the ideal 1.8 for DNA. Sample A showed excellent purity (1.82) and high concentration (85.2 µg/mL), suggesting efficient cell lysis and protein removal. Sample B showed moderate purity (1.75), which may indicate slight protein contamination or incomplete removal of contaminants. The presence of DNA in the samples and its absence in the control confirms that the extraction procedure was effective and that there was no cross-contamination. The yield and purity obtained are sufficient for most downstream molecular biology applications, including PCR amplification, restriction enzyme digestion, and sequencing. Future improvements could include increasing the incubation time for Proteinase K digestion to improve protein removal and optimizing the washing steps to enhance purity.',
+            conclusion: 'In conclusion, DNA/RNA was successfully extracted from biological samples using the Transiom extraction kit. Sample A yielded high-quality DNA with excellent purity, while Sample B yielded moderate-quality DNA. The control sample showed no contamination, confirming the reliability of the extraction procedure. The aim of the experiment was achieved, and the extracted nucleic acids are suitable for further molecular biology applications.',
+            references: [
+                'Sambrook, J. & Russell, D.W. (2001). Molecular Cloning: A Laboratory Manual. 3rd ed. Cold Spring Harbor Laboratory Press.',
+                'Green, M.R. & Sambrook, J. (2012). Molecular Cloning: A Laboratory Manual. 4th ed. Cold Spring Harbor Laboratory Press.',
+                'Chomczynski, P. & Sacchi, N. (1987). Single-step method of RNA isolation by acid guanidinium thiocyanate-phenol-chloroform extraction. Analytical Biochemistry, 162(1), 156-159.'
+            ],
+            rawScore: 85,
+            rawMistakes: 2,
+            stepsCompleted: 6,
+            totalSteps: 6
+        },
+
+        'gel-electrophoresis': {
+            id: 'gel-electrophoresis',
+            title: 'Agarose Gel Electrophoresis of DNA Fragments',
+            subtitle: 'Separation and Visualization of Nucleic Acids',
+            courseCode: 'AS 6128 / AS 8116 / NSLT 07302',
+            authors: 'Student Name',
+            institution: 'College of Science and Technical Education',
+            department: 'Department of Applied Sciences',
+            semester: 'Semester I, 2025/2026',
+            abstract: 'Agarose gel electrophoresis is a widely used technique for separating DNA, RNA, or protein molecules based on their size and charge. In this experiment, DNA fragments were separated using agarose gel electrophoresis. A 1% agarose gel was prepared in TAE buffer and stained with ethidium bromide. DNA samples mixed with loading buffer were loaded into wells and subjected to electrophoresis at 100 V for 30 minutes. DNA fragments migrated toward the positive electrode, with smaller fragments migrating faster than larger ones. The gel was visualized under UV light, revealing distinct bands corresponding to DNA fragments of different sizes. The DNA ladder showed bands at expected sizes (100, 200, 500, 1000 bp), confirming proper gel performance. The results demonstrate successful separation of DNA fragments, with the technique being effective for size-based DNA analysis.',
+            introduction: 'Agarose gel electrophoresis is a fundamental technique in molecular biology used to separate DNA, RNA, or protein molecules based on their size and charge. Nucleic acid molecules are negatively charged due to their phosphate backbone and migrate toward the positive electrode (anode) when an electric field is applied. The migration rate of DNA fragments through the agarose gel matrix is inversely proportional to the logarithm of their molecular weight, meaning smaller fragments migrate faster than larger fragments. The separation of DNA fragments is influenced by several factors, including agarose concentration, voltage, buffer composition, and the presence of intercalating dyes such as ethidium bromide. Agarose gel electrophoresis is commonly used for analyzing PCR products, verifying DNA integrity, separating restriction enzyme-digested DNA fragments, and purifying DNA fragments for cloning or sequencing. In this experiment, agarose gel electrophoresis was used to separate DNA fragments to assess their size and purity.',
+            methodology: {
+                apparatus: [
+                    'Agarose gel electrophoresis system',
+                    'Power supply unit (100 V)',
+                    'Gel casting tray with combs',
+                    'UV transilluminator',
+                    'Gel documentation system',
+                    'Micropipettes (1-100 µL)',
+                    'Pipette tips',
+                    'Microcentrifuge tubes'
+                ],
+                reagents: [
+                    'Agarose powder (1%)',
+                    'TAE buffer (Tris-acetate-EDTA)',
+                    'DNA ladder (100 bp and/or 1 kb)',
+                    'Ethidium bromide (0.5 µg/mL)',
+                    'Loading buffer (with glycerol and tracking dyes)',
+                    'DNA samples',
+                    'Nuclease-free water'
+                ],
+                procedure: [
+                    'Step 1: Gel Preparation - 1% agarose was mixed with TAE buffer and heated in a microwave until completely dissolved. The solution was cooled to approximately 60°C and ethidium bromide was added to a final concentration of 0.5 µg/mL.',
+                    'Step 2: Casting - The molten agarose was poured into a gel casting tray with a comb inserted. The gel was allowed to solidify at room temperature for approximately 20 minutes.',
+                    'Step 3: Sample Loading - DNA samples were mixed with loading buffer and carefully loaded into the wells using a micropipette.',
+                    'Step 4: Electrophoresis - The gel was placed in the electrophoresis chamber and covered with TAE buffer. Electrophoresis was performed at 100 V for 30 minutes.',
+                    'Step 5: Visualization - The gel was placed on a UV transilluminator and DNA bands were visualized. Images were captured using a gel documentation system.',
+                    'Step 6: Analysis - DNA fragment sizes were estimated by comparing the migration distance of samples with the DNA ladder.'
+                ]
+            },
+            results: {
+                description: 'The agarose gel electrophoresis of DNA fragments yielded the following results:',
+                table: [
+                    { sample: 'Ladder', concentration: 'N/A', a260: 'N/A', purity: '4 bands visible (100, 200, 500, 1000 bp)', status: 'success' },
+                    { sample: 'Positive Control', concentration: 'N/A', a260: 'N/A', purity: '2 bands visible (500, 200 bp)', status: 'success' },
+                    { sample: 'Sample 1', concentration: 'N/A', a260: 'N/A', purity: '2 bands visible (450, 200 bp)', status: 'success' },
+                    { sample: 'Sample 2', concentration: 'N/A', a260: 'N/A', purity: '1 band visible (500 bp)', status: 'warning' },
+                    { sample: 'Negative Control', concentration: 'N/A', a260: 'N/A', purity: 'No bands visible', status: 'success' }
+                ],
+                conclusion: 'The DNA ladder showed clear bands at the expected sizes, confirming proper gel performance. The positive control showed the expected 500 bp and 200 bp bands, indicating successful PCR amplification. Sample 1 showed bands at 450 bp and 200 bp, confirming the presence of target DNA. Sample 2 showed only one band at 500 bp, suggesting partial amplification or lower DNA yield. The negative control showed no bands, confirming no contamination.'
+            },
+            discussion: 'The gel electrophoresis results demonstrate successful separation of DNA fragments. The DNA ladder showed well-resolved bands at the expected sizes (100, 200, 500, 1000 bp), confirming that the gel and running conditions were appropriate. The positive control showed the expected bands, indicating that the PCR reaction worked correctly. Sample 1 showed bands at 450 bp and 200 bp, confirming the presence of the target DNA fragment. However, Sample 2 showed only a single band at 500 bp, which may indicate lower amplification efficiency or partial degradation of the DNA sample. The absence of bands in the negative control confirms that there was no cross-contamination during the experiment. The migration of DNA fragments was consistent with size-based separation, with smaller fragments migrating faster than larger ones. The results validate the use of agarose gel electrophoresis as a reliable technique for DNA analysis.',
+            conclusion: 'In conclusion, DNA fragments were successfully separated and visualized using agarose gel electrophoresis. The technique was effective in resolving DNA fragments of different sizes, with the ladder confirming accurate size separation. The positive control showed expected bands, validating the PCR amplification. Sample 1 showed clear target bands, while Sample 2 showed partial amplification. The negative control confirmed no contamination. The experiment successfully demonstrated the principle of DNA separation by agarose gel electrophoresis.',
+            references: [
+                'Sambrook, J. & Russell, D.W. (2001). Molecular Cloning: A Laboratory Manual. 3rd ed. Cold Spring Harbor Laboratory Press.',
+                'Sharp, P.A., Sugden, B. & Sambrook, J. (1973). Detection of two restriction endonuclease activities in Haemophilus parainfluenzae using analytical agarose-ethidium bromide electrophoresis. Biochemistry, 12(16), 3055-3063.'
+            ],
+            rawScore: 92,
+            rawMistakes: 0,
+            stepsCompleted: 6,
+            totalSteps: 6
+        },
+
+        'bacterial-pcr': {
+            id: 'bacterial-pcr',
+            title: 'Bacterial DNA Detection by Polymerase Chain Reaction',
+            subtitle: 'Amplification and Detection of 16S rRNA Gene',
+            courseCode: 'AS 6128 / AS 8116 / NSLT 07302',
+            authors: 'Student Name',
+            institution: 'College of Science and Technical Education',
+            department: 'Department of Applied Sciences',
+            semester: 'Semester I, 2025/2026',
+            abstract: 'Polymerase Chain Reaction (PCR) is a powerful technique for exponential amplification of specific DNA sequences. In this experiment, bacterial DNA was detected using PCR amplification of the 16S rRNA gene. Bacterial DNA was extracted from samples using the Transiom extraction kit. PCR was performed using universal bacterial primers (27F and 1492R) targeting the 16S rRNA gene. The PCR reaction mixture included Taq polymerase, dNTPs, primers, buffer, and template DNA. The thermal cycling conditions consisted of initial denaturation at 95°C, followed by 35 cycles of denaturation at 94°C, annealing at 55°C, and extension at 72°C. The PCR products were analyzed by agarose gel electrophoresis. The positive control showed bands at the expected size, confirming successful PCR amplification. Samples with bacterial DNA showed bands of approximately 1500 bp, while the negative control showed no bands. The results demonstrate successful detection of bacterial DNA using PCR.',
+            introduction: 'Polymerase Chain Reaction (PCR) is an in-vitro method for exponential amplification of a target portion of template DNA. The technique involves the incorporation of nucleotides by DNA polymerase during thermal cycling. PCR consists of three main steps: denaturation, annealing, and extension, which are repeated for 25-40 cycles to amplify the target DNA exponentially. The 16S rRNA gene is a common target for bacterial detection because it contains conserved regions that allow universal primer binding and variable regions that enable species identification. Universal bacterial primers (27F and 1492R) are commonly used to amplify a ~1500 bp fragment of the 16S rRNA gene. PCR has revolutionized molecular biology and is widely used in diagnostics, forensics, and research. In this experiment, bacterial DNA was detected using PCR amplification of the 16S rRNA gene, followed by agarose gel electrophoresis to visualize the amplified products.',
+            methodology: {
+                apparatus: [
+                    'Thermal cycler (PCR machine)',
+                    'Micropipettes (1-20 µL, 1-200 µL, 1-1000 µL)',
+                    'Filtered pipette tips',
+                    'Vortex mixer',
+                    'Microcentrifuge',
+                    'PCR tubes (0.2 mL)',
+                    'Electrophoresis equipment',
+                    'UV transilluminator',
+                    'Gel documentation system'
+                ],
+                reagents: [
+                    'Transiom Bacterial DNA Extraction Kit',
+                    '2x PCR Master Mix (Taq polymerase, dNTPs, buffer, MgCl₂)',
+                    'Bacterial primers 27F (10 µM)',
+                    'Bacterial primers 1492R (10 µM)',
+                    'Nuclease-free water',
+                    'DNA template (extracted bacterial DNA)',
+                    'Agarose',
+                    'TAE buffer',
+                    'DNA ladder',
+                    'Loading buffer'
+                ],
+                procedure: [
+                    'Step 1: DNA Extraction - Bacterial DNA was extracted using the Transiom extraction kit following the manufacturer\'s protocol.',
+                    'Step 2: PCR Setup - The PCR reaction mix was prepared in a PCR tube containing 12.5 µL of 2x PCR Master Mix, 8 µL of nuclease-free water, 1 µL of 27F primer (10 µM), 1 µL of 1492R primer (10 µM), and 2 µL of template DNA (total volume 25 µL).',
+                    'Step 3: Thermal Cycling - The PCR tubes were placed in the thermal cycler and subjected to cycling conditions: initial denaturation at 95°C for 2 minutes, followed by 35 cycles of denaturation at 95°C for 15 seconds, annealing at 60°C for 15 seconds, and extension at 72°C for 30 seconds, with a final extension at 72°C for 1 minute.',
+                    'Step 4: Gel Electrophoresis - PCR products were analyzed by agarose gel electrophoresis (1% agarose in TAE buffer) at 100 V for 20-40 minutes.',
+                    'Step 5: Visualization - DNA bands were visualized under UV light and images were captured for analysis.'
+                ]
+            },
+            results: {
+                description: 'The PCR amplification of bacterial DNA yielded the following results on agarose gel electrophoresis:',
+                table: [
+                    { sample: 'Ladder', concentration: 'N/A', a260: 'N/A', purity: '6 bands visible (100-3000 bp)', status: 'success' },
+                    { sample: 'Positive Control', concentration: 'N/A', a260: 'N/A', purity: '2 bands visible (500, 200 bp)', status: 'success' },
+                    { sample: 'Sample 1', concentration: 'N/A', a260: 'N/A', purity: '2 bands visible (500, 200 bp) - Bacterial DNA detected ✓', status: 'success' },
+                    { sample: 'Sample 2', concentration: 'N/A', a260: 'N/A', purity: 'No bands visible - No detection ❌', status: 'error' },
+                    { sample: 'Negative Control', concentration: 'N/A', a260: 'N/A', purity: 'No bands visible - Control valid ✓', status: 'success' }
+                ],
+                conclusion: 'The positive control showed bands at the expected sizes, confirming that the PCR reaction worked correctly. Sample 1 showed bands corresponding to the 16S rRNA gene, indicating the presence of bacterial DNA. Sample 2 showed no bands, suggesting that no bacterial DNA was present in the sample or that the PCR failed. The negative control showed no bands, confirming no contamination.'
+            },
+            discussion: 'The PCR results demonstrate successful amplification of bacterial DNA from Sample 1. The positive control showed the expected 500 bp and 200 bp bands, confirming that the PCR reagents and cycling conditions were optimal. Sample 1 showed clear bands at the expected sizes, confirming the presence of bacterial DNA. However, Sample 2 showed no amplification, which could be due to several reasons: the sample may not have contained bacterial DNA, the DNA extraction may have been inefficient, or the PCR conditions may need optimization for that particular sample. The negative control showed no bands, confirming that there was no contamination during the PCR setup. The results validate the use of PCR for bacterial DNA detection, with the 16S rRNA gene being an effective target for identifying bacteria. Future work could involve sequencing the PCR products for species identification.',
+            conclusion: 'In conclusion, bacterial DNA was successfully detected in Sample 1 using PCR amplification of the 16S rRNA gene. The positive control confirmed that the PCR reaction worked correctly, and the negative control confirmed no contamination. Sample 2 showed no amplification, suggesting the absence of bacterial DNA. The experiment demonstrates the effectiveness of PCR as a sensitive and specific method for bacterial DNA detection.',
+            references: [
+                'Sambrook, J. & Russell, D.W. (2001). Molecular Cloning: A Laboratory Manual. 3rd ed. Cold Spring Harbor Laboratory Press.',
+                'Weisburg, W.G., Barns, S.M., Pelletier, D.A. & Lane, D.J. (1991). 16S ribosomal DNA amplification for phylogenetic study. Journal of Bacteriology, 173(2), 697-703.',
+                'Mullis, K.B. & Faloona, F.A. (1987). Specific synthesis of DNA in vitro via a polymerase-catalyzed chain reaction. Methods in Enzymology, 155, 335-350.'
+            ],
+            rawScore: 88,
+            rawMistakes: 1,
+            stepsCompleted: 5,
+            totalSteps: 5
+        },
+
+        'fungal-pcr': {
+            id: 'fungal-pcr',
+            title: 'Fungal DNA Detection by Polymerase Chain Reaction',
+            subtitle: 'Amplification and Detection of ITS Region',
+            courseCode: 'AS 6128 / AS 8116 / NSLT 07302',
+            authors: 'Student Name',
+            institution: 'College of Science and Technical Education',
+            department: 'Department of Applied Sciences',
+            semester: 'Semester I, 2025/2026',
+            abstract: 'Fungal DNA detection using PCR requires specialized extraction methods due to the tough chitin cell wall of fungi. In this experiment, fungal DNA was extracted using the Transiom extraction kit with additional steps for fungal lysis, including Lyticase enzyme treatment and bead beating for mechanical disruption. PCR was performed using ITS (Internal Transcribed Spacer) primers (ITS1 and ITS4) to amplify the fungal ITS region. The PCR reaction mixture included Taq polymerase, dNTPs, primers, buffer, and template DNA. The thermal cycling conditions consisted of initial denaturation at 95°C, followed by 30 cycles of denaturation at 95°C, annealing at 58°C, and extension at 72°C. The PCR products were analyzed by agarose gel electrophoresis. The positive control showed bands at the expected size (~500-800 bp), confirming successful PCR amplification. Samples with fungal DNA showed bands of approximately 500-800 bp, while the negative control showed no bands. The results demonstrate successful detection of fungal DNA using PCR with ITS primers.',
+            introduction: 'Fungal DNA detection by PCR requires specialized extraction methods due to the presence of a tough chitin cell wall that is resistant to standard lysis procedures. Fungal cell walls contain chitin, a polysaccharide that provides structural rigidity and requires enzymatic and mechanical disruption for efficient DNA release. Lyticase is an enzyme that specifically degrades chitin, and bead beating provides mechanical force to physically break open fungal cells. The Internal Transcribed Spacer (ITS) region of ribosomal DNA is the most widely used target for fungal detection and identification. The ITS region has conserved sequences that allow universal primer binding and variable sequences that enable species identification. ITS1 and ITS4 primers are commonly used to amplify the ITS1-5.8S-ITS2 region, which is approximately 500-800 bp. In this experiment, fungal DNA was extracted using Lyticase and bead beating, followed by PCR amplification of the ITS region and agarose gel electrophoresis for visualization.',
+            methodology: {
+                apparatus: [
+                    'Thermal cycler (PCR machine)',
+                    'Micropipettes (1-20 µL, 1-200 µL, 1-1000 µL)',
+                    'Filtered pipette tips',
+                    'Vortex mixer',
+                    'Microcentrifuge',
+                    'Bead beater (for mechanical disruption)',
+                    'PCR tubes (0.2 mL)',
+                    'Electrophoresis equipment',
+                    'UV transilluminator',
+                    'Gel documentation system'
+                ],
+                reagents: [
+                    'Transiom DNA Extraction Kit',
+                    'Lysis Buffer',
+                    'Proteinase K',
+                    'Lyticase Enzyme (for chitin degradation)',
+                    'Glass Beads (for bead beating)',
+                    '2x PCR Master Mix (Taq polymerase, dNTPs, buffer, MgCl₂)',
+                    'Fungal primers ITS1 (10 µM)',
+                    'Fungal primers ITS4 (10 µM)',
+                    'Nuclease-free water',
+                    'Agarose',
+                    'TAE buffer',
+                    'DNA ladder',
+                    'Loading buffer'
+                ],
+                procedure: [
+                    'Step 1: Fungal DNA Extraction - Fungal cells were lysed using Lyticase enzyme to degrade chitin, followed by bead beating for mechanical disruption. DNA was then purified using the Transiom extraction kit.',
+                    'Step 2: PCR Setup - The PCR reaction mix was prepared containing 12.5 µL of 2x PCR Master Mix, 8 µL of nuclease-free water, 1 µL of ITS1 primer (10 µM), 1 µL of ITS4 primer (10 µM), and 2 µL of template DNA (total volume 25 µL).',
+                    'Step 3: Thermal Cycling - PCR was performed with initial denaturation at 95°C for 5 minutes, followed by 35 cycles of denaturation at 95°C for 30 seconds, annealing at 60°C for 30 seconds, and extension at 72°C for 1 minute, with a final extension at 72°C for 7 minutes.',
+                    'Step 4: Gel Electrophoresis - PCR products were analyzed by agarose gel electrophoresis (1% agarose in TAE buffer) at 100 V for 20-40 minutes.',
+                    'Step 5: Visualization - DNA bands were visualized under UV light and images were captured for analysis.'
+                ]
+            },
+            results: {
+                description: 'The PCR amplification of fungal DNA yielded the following results on agarose gel electrophoresis:',
+                table: [
+                    { sample: 'Ladder', concentration: 'N/A', a260: 'N/A', purity: '5 bands visible (100-1000 bp)', status: 'success' },
+                    { sample: 'Positive Control', concentration: 'N/A', a260: 'N/A', purity: '2 bands visible (500, 200 bp)', status: 'success' },
+                    { sample: 'Sample 1', concentration: 'N/A', a260: 'N/A', purity: '2 bands visible (500, 200 bp) - Fungal DNA detected ✓', status: 'success' },
+                    { sample: 'Sample 2', concentration: 'N/A', a260: 'N/A', purity: '2 bands visible (500, 200 bp) - Fungal DNA detected ✓', status: 'success' },
+                    { sample: 'Negative Control', concentration: 'N/A', a260: 'N/A', purity: 'No bands visible - Control valid ✓', status: 'success' }
+                ],
+                conclusion: 'The positive control showed bands at the expected sizes, confirming successful PCR amplification. Both Sample 1 and Sample 2 showed bands corresponding to the ITS region, indicating the presence of fungal DNA. The negative control showed no bands, confirming no contamination. The results demonstrate successful detection of fungal DNA using PCR with ITS primers.'
+            },
+            discussion: 'The PCR results demonstrate successful amplification of fungal DNA from both samples. The positive control showed the expected bands, confirming that the PCR reagents and cycling conditions were optimal. Sample 1 and Sample 2 both showed clear bands at the expected sizes, confirming the presence of fungal DNA. The use of Lyticase and bead beating for fungal DNA extraction proved effective in breaking open the tough chitin cell walls and releasing DNA. The ITS primers successfully amplified the target region, confirming their specificity for fungal DNA. The negative control showed no bands, confirming that there was no contamination during the PCR setup. The results validate the use of PCR with ITS primers as an effective method for fungal DNA detection. Future work could involve sequencing the PCR products for species identification.',
+            conclusion: 'In conclusion, fungal DNA was successfully detected in both samples using PCR amplification of the ITS region. The positive control confirmed successful PCR amplification, and the negative control confirmed no contamination. The extraction method using Lyticase and bead beating was effective for fungal cell lysis. The experiment demonstrates the effectiveness of PCR as a sensitive and specific method for fungal DNA detection.',
+            references: [
+                'Sambrook, J. & Russell, D.W. (2001). Molecular Cloning: A Laboratory Manual. 3rd ed. Cold Spring Harbor Laboratory Press.',
+                'White, T.J., Bruns, T., Lee, S. & Taylor, J. (1990). Amplification and direct sequencing of fungal ribosomal RNA genes for phylogenetics. PCR Protocols: A Guide to Methods and Applications, 315-322.',
+                'Schoch, C.L. et al. (2012). Nuclear ribosomal internal transcribed spacer (ITS) region as a universal DNA barcode marker for Fungi. Proceedings of the National Academy of Sciences, 109(16), 6241-6246.'
+            ],
+            rawScore: 90,
+            rawMistakes: 0,
+            stepsCompleted: 6,
+            totalSteps: 6
+        }
+    };
+
+    // ============================================================
+    // COURSE INFORMATION
+    // ============================================================
+    const courseInfo = {
+        institution: 'College of Science and Technical Education',
+        department: 'Department of Applied Sciences',
+        semester: 'Semester I, 2025/2026'
+    };
+
+    // ============================================================
+    // LOAD REPORT
+    // ============================================================
+    function loadReport() {
+        const container = document.getElementById('reportContent');
+
+        // Get experiment ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const experimentId = urlParams.get('id') || 'gel-electrophoresis';
+
+        console.log('📄 Loading enhanced report for:', experimentId);
+
+        // Try to get saved results from localStorage
+        let savedData = null;
+        let isFromStorage = false;
+
+        const keyMap = {
+            'dna-extraction': ['dnaExtractionResults', 'dna-extractionResults'],
+            'gel-electrophoresis': ['gelElectrophoresisResults', 'gel-electrophoresisResults'],
+            'bacterial-pcr': ['bacterialPcrResults', 'bacterial-pcrResults'],
+            'fungal-pcr': ['fungalPcrResults', 'fungal-pcrResults']
+        };
+
+        const possibleKeys = keyMap[experimentId] || [experimentId + 'Results'];
+
+        try {
+            for (let key of possibleKeys) {
+                const stored = localStorage.getItem(key);
+                if (stored) {
+                    savedData = JSON.parse(stored);
+                    isFromStorage = true;
+                    console.log('📦 Found saved results with key:', key);
+                    break;
+                }
+            }
+        } catch (e) {
+            console.warn('Could not read from localStorage:', e);
+        }
+
+        // Get base data from experimentData
+        const baseData = experimentData[experimentId] || experimentData['gel-electrophoresis'];
+
+        // Merge saved data with base data if available
+        let data = { ...baseData };
+
+        if (savedData) {
+            // Merge saved data into the report
+            if (savedData.score) data.rawScore = savedData.score;
+            if (savedData.rawData?.mistakes !== undefined) data.rawMistakes = savedData.rawData.mistakes;
+            if (savedData.mistakes !== undefined) data.rawMistakes = savedData.mistakes;
+            if (savedData.stepsCompleted) data.stepsCompleted = savedData.stepsCompleted;
+            if (savedData.totalSteps) data.totalSteps = savedData.totalSteps;
+
+            // Update title and subtitle if available
+            if (savedData.details?.experiment) {
+                data.title = savedData.details.experiment + ' Report';
+            }
+
+            console.log('✅ Merged saved data into report');
+        }
+
+        // Update the data source badge
+        const badge = document.getElementById('dataSourceBadge');
+        if (isFromStorage) {
+            badge.textContent = '✅ Your Results';
+            badge.className = 'badge saved';
+        } else {
+            badge.textContent = 'ℹ️ Sample Data';
+            badge.className = 'badge default';
+        }
+
+        // Update the view results link
+        document.getElementById('viewResultsLink').href = 'results.html?id=' + experimentId;
+
+        // Build the report HTML
+        let html = '';
+
+        // ==========================================
+        // TITLE PAGE
+        // ==========================================
+        const score = data.rawScore || 0;
+        const mistakes = data.rawMistakes || 0;
+        const scoreColor = score >= 80 ? 'green' : score >= 60 ? 'orange' : 'red';
+        const scoreEmoji = score >= 80 ? '⭐' : score >= 60 ? '📊' : '📖';
+
+        html += `
+            <div class="title-page">
+                <div class="institution">${data.institution || courseInfo.institution}</div>
+                <div class="department">${data.department || courseInfo.department}</div>
+                <div class="course-info">${data.courseCode || 'AS 6128 / AS 8116 / NSLT 07302'}</div>
+
+                <div style="height: 30px;"></div>
+
+                <div class="experiment-title">${data.title}</div>
+                <div class="experiment-subtitle">${data.subtitle || ''}</div>
+
+                <div style="height: 30px;"></div>
+
+                <div class="authors">${data.authors || 'Student Name'}</div>
+
+                <div style="height: 30px;"></div>
+
+                <div class="date-info">
+                    <span>📅 Date of Experiment: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                    <span>📝 Date of Submission: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                </div>
+
+                <div style="height: 10px;"></div>
+
+                <div class="date-info">
+                    <span>${data.semester || courseInfo.semester}</span>
+                </div>
+
+                <div style="height: 30px;"></div>
+
+                <!-- Score Box -->
+                <div class="score-box" style="margin-top: 20px;">
+                    <div class="score-label">${scoreEmoji} Overall Performance</div>
+                    <div class="score-number" style="color: ${scoreColor === 'green' ? '#2e7d32' : scoreColor === 'orange' ? '#f39c12' : '#e74c3c'};">
+                        ${score}%
+                    </div>
+                    <div class="score-details">
+                        ${score >= 80 ? 'Excellent work! 🎉' : score >= 60 ? 'Good effort! Keep improving!' : 'Review the protocol and try again.'}
+                        &nbsp;|&nbsp; ❌ Mistakes: ${mistakes}
+                        ${isFromStorage ? ' ✅ (Your Results)' : ' ℹ️ (Sample Data)'}
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // ==========================================
+        // ABSTRACT
+        // ==========================================
+        html += `
+            <div class="report-section">
+                <h2>1. ABSTRACT</h2>
+                <div class="abstract-box">
+                    <p>${data.abstract || 'No abstract available.'}</p>
+                </div>
+            </div>
+        `;
+
+        // ==========================================
+        // INTRODUCTION
+        // ==========================================
+        html += `
+            <div class="report-section">
+                <h2>2. INTRODUCTION</h2>
+                ${data.introduction ? data.introduction.split('\n').map(p => `<p>${p.trim()}</p>`).join('') : '<p>No introduction available.</p>'}
+            </div>
+        `;
+
+        // ==========================================
+        // METHODOLOGY
+        // ==========================================
+        html += `
+            <div class="report-section">
+                <h2>3. METHODOLOGY</h2>
+
+                <h3>3.1 Apparatus</h3>
+                <ul>
+                    ${data.methodology?.apparatus?.map(item => `<li>${item}</li>`).join('') || '<li>No apparatus listed.</li>'}
+                </ul>
+
+                <h3>3.2 Reagents / Materials</h3>
+                <ul>
+                    ${data.methodology?.reagents?.map(item => `<li>${item}</li>`).join('') || '<li>No reagents listed.</li>'}
+                </ul>
+
+                <h3>3.3 Procedure</h3>
+                <ol>
+                    ${data.methodology?.procedure?.map(item => `<li>${item}</li>`).join('') || '<li>No procedure available.</li>'}
+                </ol>
+            </div>
+        `;
+
+        // ==========================================
+        // RESULTS
+        // ==========================================
+        html += `
+            <div class="report-section">
+                <h2>4. RESULTS</h2>
+
+                <p>${data.results?.description || 'The experiment yielded the following results:'}</p>
+
+                <table class="report-table">
+                    <thead>
+                        <tr>
+                            <th>Sample</th>
+                            <th>Concentration</th>
+                            <th>A260/A280</th>
+                            <th>Result / Purity</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        `;
+
+        if (data.results?.table && data.results.table.length > 0) {
+            data.results.table.forEach(row => {
+                const statusClass = {
+                    'success': 'success',
+                    'warning': 'warning',
+                    'error': 'error',
+                    'info': 'info'
+                }[row.status] || 'info';
+
+                html += `
+                    <tr>
+                        <td><strong>${row.sample}</strong></td>
+                        <td>${row.concentration || 'N/A'}</td>
+                        <td>${row.a260 || 'N/A'}</td>
+                        <td>${row.purity}</td>
+                        <td><span class="status-badge ${statusClass}">${row.status}</span></td>
+                    </tr>
+                `;
+            });
+        } else {
+            html += `
+                <tr>
+                    <td colspan="5" style="text-align: center; color: #65788a;">No results data available.</td>
+                </tr>
+            `;
+        }
+
+        html += `
+                    </tbody>
+                </table>
+
+                <div class="table-caption">Table 1: Summary of experimental results</div>
+
+                ${data.results?.conclusion ? `<p><strong>Conclusion of Results:</strong> ${data.results.conclusion}</p>` : ''}
+            </div>
+        `;
+
+        // ==========================================
+        // DISCUSSION
+        // ==========================================
+        html += `
+            <div class="report-section">
+                <h2>5. DISCUSSION</h2>
+                ${data.discussion ? data.discussion.split('\n').map(p => `<p>${p.trim()}</p>`).join('') : '<p>No discussion available.</p>'}
+            </div>
+        `;
+
+        // ==========================================
+        // CONCLUSION
+        // ==========================================
+        html += `
+            <div class="report-section">
+                <h2>6. CONCLUSION</h2>
+                ${data.conclusion ? data.conclusion.split('\n').map(p => `<p>${p.trim()}</p>`).join('') : '<p>No conclusion available.</p>'}
+            </div>
+        `;
+
+        // ==========================================
+        // REFERENCES
+        // ==========================================
+        html += `
+            <div class="report-section">
+                <h2>7. REFERENCES</h2>
+                <ul class="references-list">
+                    ${data.references?.map(ref => `<li>${ref}</li>`).join('') || '<li>No references available.</li>'}
+                </ul>
+            </div>
+        `;
+
+        // ==========================================
+        // FOOTER
+        // ==========================================
+        html += `
+            <div style="text-align: center; padding-top: 30px; border-top: 1px solid #e8edf2; margin-top: 30px; font-size: 12px; color: #8aa2ae;">
+                <p>Report generated by MoleBio Lab • ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                <p style="margin-top: 2px;">${data.institution || courseInfo.institution} • ${data.department || courseInfo.department}</p>
+            </div>
+        `;
+
+        container.innerHTML = html;
+    }
+
+    // ============================================================
+    // CLEAR AND RELOAD
+    // ============================================================
+    function clearAndReload() {
+        if (confirm('Are you sure you want to clear all saved data and reload the report?')) {
+            try {
+                const urlParams = new URLSearchParams(window.location.search);
+                const experimentId = urlParams.get('id') || 'gel-electrophoresis';
+
+                const keyMap = {
+                    'dna-extraction': ['dnaExtractionResults', 'dna-extractionResults'],
+                    'gel-electrophoresis': ['gelElectrophoresisResults', 'gel-electrophoresisResults'],
+                    'bacterial-pcr': ['bacterialPcrResults', 'bacterial-pcrResults'],
+                    'fungal-pcr': ['fungalPcrResults', 'fungal-pcrResults']
+                };
+
+                const keys = keyMap[experimentId] || [experimentId + 'Results'];
+                keys.forEach(key => localStorage.removeItem(key));
+
+                alert('✅ Data cleared successfully! Reloading...');
+                location.reload();
+            } catch (e) {
+                alert('Error clearing data: ' + e.message);
+            }
+        }
+    }
+
+    // ============================================================
+    // INITIALIZE
+    // ============================================================
+    document.addEventListener('DOMContentLoaded', loadReport);
+
+    // Expose functions globally
+    window.loadReport = loadReport;
+    window.clearAndReload = clearAndReload;
+</script>
+
+</body>
+</html>

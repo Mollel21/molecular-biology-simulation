@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PCR Theory | MoleBio Lab</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f0f4f8;
+            color: #173f5f;
+            min-height: 100vh;
+        }
+
+        .theory-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        .theory-header {
+            background: white;
+            border-radius: 12px;
+            padding: 25px 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .theory-header h1 {
+            font-size: 28px;
+            color: #173f5f;
+        }
+
+        .theory-header .subtitle {
+            color: #65788a;
+            font-size: 15px;
+        }
+
+        .back-btn {
+            text-decoration: none;
+            color: #4a90e2;
+            font-weight: 600;
+            padding: 8px 20px;
+            border-radius: 8px;
+            background: #e8f4fc;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: #d0e8f8;
+            transform: translateX(-3px);
+        }
+
+        .theory-body {
+            background: white;
+            border-radius: 12px;
+            padding: 35px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        .theory-body h2 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: #173f5f;
+            border-bottom: 2px solid #e8f4fc;
+            padding-bottom: 10px;
+        }
+
+        .theory-body h3 {
+            font-size: 19px;
+            margin: 25px 0 12px;
+            color: #1a6a8a;
+        }
+
+        .theory-body h4 {
+            font-size: 16px;
+            margin: 18px 0 10px;
+            color: #1a6a8a;
+        }
+
+        .theory-body p {
+            font-size: 15px;
+            line-height: 1.8;
+            color: #2c3e50;
+            margin-bottom: 12px;
+        }
+
+        .theory-body ul, .theory-body ol {
+            padding-left: 25px;
+            margin-bottom: 15px;
+        }
+
+        .theory-body li {
+            font-size: 15px;
+            line-height: 1.8;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .theory-body .highlight-box {
+            background: #f5f9fc;
+            border-left: 4px solid #4a90e2;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .theory-body .highlight-box.warning {
+            border-left-color: #f39c12;
+            background: #fef9e7;
+        }
+
+        .theory-body .highlight-box.danger {
+            border-left-color: #e74c3c;
+            background: #fde8e8;
+        }
+
+        .theory-body .highlight-box.success {
+            border-left-color: #27ae60;
+            background: #e8f5e9;
+        }
+
+        .theory-body table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0 25px;
+            font-size: 14px;
+        }
+
+        .theory-body th {
+            background: #4a90e2;
+            color: white;
+            padding: 12px 15px;
+            text-align: left;
+        }
+
+        .theory-body td {
+            padding: 10px 15px;
+            border-bottom: 1px solid #e8edf2;
+        }
+
+        .theory-body tr:hover {
+            background: #f5f9fc;
+        }
+
+        .theory-body .tag {
+            display: inline-block;
+            padding: 3px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .theory-body .tag.blue {
+            background: #e8f4fc;
+            color: #4a90e2;
+        }
+
+        .theory-body .tag.green {
+            background: #e8f5e9;
+            color: #27ae60;
+        }
+
+        .theory-body .tag.orange {
+            background: #fef9e7;
+            color: #f39c12;
+        }
+
+        .theory-body .tag.red {
+            background: #fde8e8;
+            color: #e74c3c;
+        }
+
+        .theory-body .tag.purple {
+            background: #f3e8fc;
+            color: #9b59b6;
+        }
+
+        .theory-body .diagram-box {
+            background: #f8fafc;
+            border: 2px solid #e8edf2;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .theory-body .diagram-box .diagram {
+            font-family: monospace;
+            font-size: 14px;
+            line-height: 2;
+            color: #173f5f;
+            white-space: pre;
+            text-align: left;
+            display: inline-block;
+        }
+
+        .theory-body .steps-list {
+            counter-reset: step-counter;
+            list-style: none;
+            padding: 0;
+        }
+
+        .theory-body .steps-list li {
+            counter-increment: step-counter;
+            padding: 12px 15px 12px 55px;
+            position: relative;
+            border-bottom: 1px solid #f0f4f8;
+        }
+
+        .theory-body .steps-list li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 0;
+            top: 10px;
+            background: #4a90e2;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 32px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .theory-body .steps-list li:last-child {
+            border-bottom: none;
+        }
+
+        @media (max-width: 768px) {
+            .theory-container {
+                padding: 15px 10px;
+            }
+
+            .theory-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .theory-body {
+                padding: 20px;
+            }
+
+            .theory-body table {
+                font-size: 12px;
+            }
+
+            .theory-body th,
+            .theory-body td {
+                padding: 6px 10px;
+            }
+
+            .theory-body .diagram-box .diagram {
+                font-size: 11px;
+            }
+        }
+
+        @media print {
+            .back-btn {
+                display: none !important;
+            }
+
+            .theory-body {
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }
+
+            .theory-body .diagram-box {
+                border: 1px solid #ddd;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="theory-container">
+
+    <header class="theory-header">
+        <div>
+            <h1>🧬 Polymerase Chain Reaction (PCR)</h1>
+            <p class="subtitle">Understanding the principle, components, and cycling of PCR</p>
+        </div>
+        <a href="index.html" class="back-btn">← Back to Theory Library</a>
+    </header>
+
+    <div class="theory-body">
+
+        <!-- ==========================================
+             INTRODUCTION
+        ========================================== -->
+        <h2>📖 Introduction to PCR</h2>
+
+        <p>
+            <strong>Polymerase Chain Reaction (PCR)</strong> is an in-vitro method for exponential amplification 
+            of a target portion of template DNA. It involves the incorporation of nucleotides by DNA polymerase 
+            during thermal cycling.
+        </p>
+
+        <div class="highlight-box success">
+            <strong>🧬 Key Principle:</strong> PCR selectively amplifies a specific DNA region through repeated 
+            cycles of <strong>denaturation</strong>, <strong>annealing</strong>, and <strong>extension</strong>, 
+            resulting in millions of copies of the target DNA.
+        </div>
+
+        <!-- ==========================================
+             COMPONENTS
+        ========================================== -->
+        <h2>🧪 PCR Components</h2>
+
+        <h3>Required Reagents</h3>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Reagent</th>
+                    <th>Function</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Taq DNA Polymerase</strong></td>
+                    <td>Heat-stable enzyme that synthesizes new DNA strands</td>
+                </tr>
+                <tr>
+                    <td><strong>dNTPs</strong></td>
+                    <td>Building blocks (nucleotides) for DNA synthesis</td>
+                </tr>
+                <tr>
+                    <td><strong>Primers (Forward &amp; Reverse)</strong></td>
+                    <td>Short DNA sequences that initiate DNA amplification</td>
+                </tr>
+                <tr>
+                    <td><strong>MgCl₂</strong></td>
+                    <td>Essential cofactor for DNA polymerase activity</td>
+                </tr>
+                <tr>
+                    <td><strong>PCR Buffer</strong></td>
+                    <td>Provides optimal pH and ionic conditions</td>
+                </tr>
+                <tr>
+                    <td><strong>Nuclease-free Water</strong></td>
+                    <td>Diluent and reaction volume adjuster</td>
+                </tr>
+                <tr>
+                    <td><strong>Template DNA</strong></td>
+                    <td>The DNA sample to be amplified</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="highlight-box warning">
+            <strong>⚠️ Important:</strong> Optimal template DNA amounts:
+            <ul>
+                <li><strong>Plasmid/Phage DNA:</strong> 0.01 - 1 ng per 25 µL reaction</li>
+                <li><strong>Genomic DNA:</strong> 0.1 - 1 µg per 25 µL reaction</li>
+            </ul>
+            Higher template amounts increase the risk of non-specific PCR products.
+        </div>
+
+        <!-- ==========================================
+             CYCLING CONDITIONS
+        ========================================== -->
+        <h2>🔥 PCR Cycling Conditions</h2>
+
+        <p>
+            The thermal cycler follows a programmed temperature profile to amplify DNA. 
+            A typical 3-step PCR protocol is shown below:
+        </p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Step</th>
+                    <th>Temperature</th>
+                    <th>Duration</th>
+                    <th>Cycles</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Initial Denaturation</strong></td>
+                    <td>95°C</td>
+                    <td>2-10 min</td>
+                    <td>1</td>
+                </tr>
+                <tr>
+                    <td><strong>Denaturation</strong></td>
+                    <td>94°C</td>
+                    <td>10-30 sec</td>
+                    <td rowspan="3">30-35</td>
+                </tr>
+                <tr>
+                    <td><strong>Annealing</strong></td>
+                    <td>50-60°C</td>
+                    <td>20-30 sec</td>
+                </tr>
+                <tr>
+                    <td><strong>Extension</strong></td>
+                    <td>72°C</td>
+                    <td>30-60 sec</td>
+                </tr>
+                <tr>
+                    <td><strong>Final Extension</strong></td>
+                    <td>72°C</td>
+                    <td>5-7 min</td>
+                    <td>1</td>
+                </tr>
+                <tr>
+                    <td><strong>Hold</strong></td>
+                    <td>10°C</td>
+                    <td>∞</td>
+                    <td>1</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="diagram-box">
+            <div class="diagram">
+                ┌─────────────────────────────────────────────────────────────┐
+                │                    PCR CYCLE DIAGRAM                       │
+                ├─────────────────────────────────────────────────────────────┤
+                │                                                             │
+                │   95°C ──── 95°C ──── 95°C ──── 95°C ──── 95°C           │
+                │     │         │         │         │         │              │
+                │     │    ┌────┘    ┌────┘    ┌────┘    ┌────┘              │
+                │     │    │         │         │         │                   │
+                │     │    │    ┌────┘    ┌────┘    ┌────┘                   │
+                │     │    │    │         │         │                        │
+                │     ▼    ▼    ▼         ▼         ▼                        │
+                │     ═══════════════════════════════════                    │
+                │     50-60°C       50-60°C       50-60°C                    │
+                │       │             │             │                        │
+                │       ▼             ▼             ▼                        │
+                │       ═══════════════════════════════════                    │
+                │       72°C         72°C         72°C                       │
+                │                                                             │
+                │   ┌─────────┐  ┌─────────┐  ┌─────────┐                   │
+                │   │ Cycle 1 │→│ Cycle 2 │→│ Cycle 3 │→ ... → Cycle 30  │
+                │   └─────────┘  └─────────┘  └─────────┘                   │
+                │                                                             │
+                │   🔥 Denaturation  │  ❄️ Annealing  │  🔥 Extension      │
+                │   (94°C, 10-30s)   │  (50-60°C, 20-30s) │  (72°C, 30-60s)   │
+                └─────────────────────────────────────────────────────────────┘
+            </div>
+        </div>
+
+        <!-- ==========================================
+             BACTERIAL PRIMERS
+        ========================================== -->
+        <h2>🎯 Bacterial Primers (16S rRNA)</h2>
+
+        <div class="highlight-box">
+            <p><strong>27F Primer:</strong> <code>5'-AGAGTTTGATCCTGGCTCAG-3'</code></p>
+            <p><strong>1492R Primer:</strong> <code>5'-GGTTACCTTGTTACGACTT-3'</code></p>
+            <p><strong>Target:</strong> 16S rRNA gene (~1500 bp)</p>
+            <p><strong>Purpose:</strong> Universal bacterial detection</p>
+        </div>
+
+        <!-- ==========================================
+             FUNGAL PRIMERS
+        ========================================== -->
+        <h2>🎯 Fungal Primers (ITS Region)</h2>
+
+        <div class="highlight-box">
+            <p><strong>ITS1 Primer:</strong> <code>5'-TCCGTAGGTGAACCTGCGG-3'</code></p>
+            <p><strong>ITS4 Primer:</strong> <code>5'-TCCTCCGCTTATTGATATGC-3'</code></p>
+            <p><strong>Target:</strong> Internal Transcribed Spacer (ITS) region</p>
+            <p><strong>Purpose:</strong> Fungal-specific detection and identification</p>
+        </div>
+
+        <!-- ==========================================
+             PCR APPLICATIONS
+        ========================================== -->
+        <h2>📊 PCR Applications in Molecular Biology</h2>
+
+        <ol>
+            <li><strong>DNA Cloning:</strong> Amplifying genes for insertion into vectors</li>
+            <li><strong>Sequencing:</strong> Generating DNA for Sanger or Next-Gen sequencing</li>
+            <li><strong>Genotyping:</strong> Identifying genetic variations and mutations</li>
+            <li><strong>Detection:</strong> Identifying pathogens (bacteria, fungi, viruses)</li>
+            <li><strong>Forensics:</strong> DNA fingerprinting and profiling</li>
+            <li><strong>Gene Expression:</strong> RT-PCR for mRNA quantification</li>
+        </ol>
+
+        <!-- ==========================================
+             REFERENCES
+        ========================================== -->
+        <h2>📚 References</h2>
+
+        <div class="highlight-box">
+            <p>Sambrook, J. &amp; Russell, D.W. (2001). <em>Molecular Cloning: A Laboratory Manual</em>. 3rd ed. Cold Spring Harbor Laboratory Press.</p>
+            <p>Mullis, K.B. &amp; Faloona, F.A. (1987). Specific synthesis of DNA in vitro via a polymerase-catalyzed chain reaction. <em>Methods in Enzymology</em>, 155, 335-350.</p>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+    console.log('🧬 PCR Theory Page Loaded!');
+</script>
+
+</body>
+</html>

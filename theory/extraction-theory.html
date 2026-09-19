@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DNA/RNA Extraction Theory | MoleBio Lab</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f0f4f8;
+            color: #173f5f;
+            min-height: 100vh;
+        }
+
+        .theory-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        .theory-header {
+            background: white;
+            border-radius: 12px;
+            padding: 25px 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .theory-header h1 {
+            font-size: 28px;
+            color: #173f5f;
+        }
+
+        .theory-header .subtitle {
+            color: #65788a;
+            font-size: 15px;
+        }
+
+        .back-btn {
+            text-decoration: none;
+            color: #4a90e2;
+            font-weight: 600;
+            padding: 8px 20px;
+            border-radius: 8px;
+            background: #e8f4fc;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: #d0e8f8;
+            transform: translateX(-3px);
+        }
+
+        .theory-body {
+            background: white;
+            border-radius: 12px;
+            padding: 35px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        .theory-body h2 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: #173f5f;
+            border-bottom: 2px solid #e8f4fc;
+            padding-bottom: 10px;
+        }
+
+        .theory-body h3 {
+            font-size: 19px;
+            margin: 25px 0 12px;
+            color: #1a6a8a;
+        }
+
+        .theory-body h4 {
+            font-size: 16px;
+            margin: 18px 0 10px;
+            color: #1a6a8a;
+        }
+
+        .theory-body p {
+            font-size: 15px;
+            line-height: 1.8;
+            color: #2c3e50;
+            margin-bottom: 12px;
+        }
+
+        .theory-body ul,
+        .theory-body ol {
+            padding-left: 25px;
+            margin-bottom: 15px;
+        }
+
+        .theory-body li {
+            font-size: 15px;
+            line-height: 1.8;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .theory-body .highlight-box {
+            background: #f5f9fc;
+            border-left: 4px solid #4a90e2;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .theory-body .highlight-box.warning {
+            border-left-color: #f39c12;
+            background: #fef9e7;
+        }
+
+        .theory-body .highlight-box.danger {
+            border-left-color: #e74c3c;
+            background: #fde8e8;
+        }
+
+        .theory-body .highlight-box.success {
+            border-left-color: #27ae60;
+            background: #e8f5e9;
+        }
+
+        .theory-body .highlight-box.purple {
+            border-left-color: #9b59b6;
+            background: #f3e8fc;
+        }
+
+        .theory-body table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0 25px;
+            font-size: 14px;
+        }
+
+        .theory-body th {
+            background: #4a90e2;
+            color: white;
+            padding: 12px 15px;
+            text-align: left;
+        }
+
+        .theory-body td {
+            padding: 10px 15px;
+            border-bottom: 1px solid #e8edf2;
+        }
+
+        .theory-body tr:hover {
+            background: #f5f9fc;
+        }
+
+        .theory-body .tag {
+            display: inline-block;
+            padding: 3px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .theory-body .tag.blue {
+            background: #e8f4fc;
+            color: #4a90e2;
+        }
+
+        .theory-body .tag.green {
+            background: #e8f5e9;
+            color: #27ae60;
+        }
+
+        .theory-body .tag.orange {
+            background: #fef9e7;
+            color: #f39c12;
+        }
+
+        .theory-body .tag.red {
+            background: #fde8e8;
+            color: #e74c3c;
+        }
+
+        .theory-body .tag.purple {
+            background: #f3e8fc;
+            color: #9b59b6;
+        }
+
+        .theory-body .diagram-box {
+            background: #f8fafc;
+            border: 2px solid #e8edf2;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .theory-body .diagram-box .diagram {
+            font-family: monospace;
+            font-size: 14px;
+            line-height: 2;
+            color: #173f5f;
+            white-space: pre;
+            text-align: left;
+            display: inline-block;
+        }
+
+        .theory-body .steps-list {
+            counter-reset: step-counter;
+            list-style: none;
+            padding: 0;
+        }
+
+        .theory-body .steps-list li {
+            counter-increment: step-counter;
+            padding: 12px 15px 12px 55px;
+            position: relative;
+            border-bottom: 1px solid #f0f4f8;
+        }
+
+        .theory-body .steps-list li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 0;
+            top: 10px;
+            background: #4a90e2;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 32px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .theory-body .steps-list li:last-child {
+            border-bottom: none;
+        }
+
+        .comparison-table td:first-child {
+            font-weight: 600;
+            color: #173f5f;
+        }
+
+        @media (max-width: 768px) {
+            .theory-container {
+                padding: 15px 10px;
+            }
+
+            .theory-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .theory-body {
+                padding: 20px;
+            }
+
+            .theory-body table {
+                font-size: 12px;
+            }
+
+            .theory-body th,
+            .theory-body td {
+                padding: 6px 10px;
+            }
+
+            .theory-body .diagram-box .diagram {
+                font-size: 11px;
+            }
+        }
+
+        @media print {
+            .back-btn {
+                display: none !important;
+            }
+
+            .theory-body {
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }
+
+            .theory-body .diagram-box {
+                border: 1px solid #ddd;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="theory-container">
+
+    <header class="theory-header">
+        <div>
+            <h1>🧪 DNA / RNA Extraction Theory</h1>
+            <p class="subtitle">Principles, methods, and quality assessment of nucleic acid extraction</p>
+        </div>
+        <a href="index.html" class="back-btn">← Back to Theory Library</a>
+    </header>
+
+    <div class="theory-body">
+
+        <!-- ==========================================
+             INTRODUCTION
+        ========================================== -->
+        <h2>📖 Introduction</h2>
+
+        <p>
+            <strong>DNA and RNA extraction</strong> is the process of isolating and purifying nucleic acids 
+            from biological samples (cells, tissues, or microorganisms). The goal is to obtain high-quality 
+            nucleic acids free from proteins, lipids, carbohydrates, and other contaminants that could 
+            interfere with downstream applications.
+        </p>
+
+        <div class="highlight-box success">
+            <strong>🧬 Key Principle:</strong> DNA/RNA extraction involves breaking open cells, 
+            removing proteins and other contaminants, and recovering purified nucleic acid for 
+            downstream molecular biology applications.
+        </div>
+
+        <!-- ==========================================
+             BASIC STEPS
+        ========================================== -->
+        <h2>📋 Basic Steps of Nucleic Acid Extraction</h2>
+
+        <p>
+            The extraction process follows a series of steps common to both DNA and RNA isolation:
+        </p>
+
+        <ol class="steps-list">
+            <li>
+                <strong>Cell Lysis:</strong> Breaking the cell membrane and nuclear membrane to 
+                release nucleic acids. This can be done using detergents, enzymes, mechanical disruption, 
+                or a combination.
+            </li>
+            <li>
+                <strong>Removal of Proteins and Contaminants:</strong> Using enzymes (Proteinase K), 
+                organic extraction (phenol-chloroform), or binding columns to remove proteins, lipids, 
+                and other contaminants.
+            </li>
+            <li>
+                <strong>Precipitation or Binding:</strong> Using alcohol (ethanol or isopropanol) 
+                to precipitate DNA/RNA, or binding to a silica membrane in spin columns.
+            </li>
+            <li>
+                <strong>Washing:</strong> Removing residual contaminants and salts with wash buffers 
+                containing ethanol.
+            </li>
+            <li>
+                <strong>Elution:</strong> Releasing pure DNA or RNA using nuclease-free water or 
+                elution buffer.
+            </li>
+        </ol>
+
+        <!-- ==========================================
+             REAGENTS
+        ========================================== -->
+        <h2>🧪 Reagents Required</h2>
+
+        <h3>Common Reagents for DNA &amp; RNA Extraction</h3>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Reagent</th>
+                    <th>Function</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Lysis Buffer</strong></td>
+                    <td>Contains detergents (SDS, CTAB) to break cell membranes</td>
+                </tr>
+                <tr>
+                    <td><strong>Tris-HCl</strong></td>
+                    <td>Maintains optimal pH for enzymatic activity</td>
+                </tr>
+                <tr>
+                    <td><strong>EDTA</strong></td>
+                    <td>Chelates Mg²⁺ to inhibit nucleases</td>
+                </tr>
+                <tr>
+                    <td><strong>NaCl / Potassium Acetate</strong></td>
+                    <td>Provides ionic strength for DNA precipitation</td>
+                </tr>
+                <tr>
+                    <td><strong>Ethanol (70% and absolute)</strong></td>
+                    <td>Washes and precipitates nucleic acids</td>
+                </tr>
+                <tr>
+                    <td><strong>Isopropanol</strong></td>
+                    <td>Precipitates DNA/RNA from solution</td>
+                </tr>
+                <tr>
+                    <td><strong>Nuclease-free Water</strong></td>
+                    <td>Elutes and stores purified nucleic acids</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>DNA-Specific Reagents</h3>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Reagent</th>
+                    <th>Function</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Proteinase K</strong></td>
+                    <td>Digests proteins to remove contamination</td>
+                </tr>
+                <tr>
+                    <td><strong>RNase A</strong></td>
+                    <td>Removes RNA contamination from DNA samples</td>
+                </tr>
+                <tr>
+                    <td><strong>Phenol:Chloroform:Isoamyl Alcohol</strong></td>
+                    <td>Organic extraction for protein removal (optional)</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>RNA-Specific Reagents</h3>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Reagent</th>
+                    <th>Function</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Guanidinium Thiocyanate</strong></td>
+                    <td>Inactivates RNases during extraction</td>
+                </tr>
+                <tr>
+                    <td><strong>β-Mercaptoethanol</strong></td>
+                    <td>Inactivates RNases to protect RNA</td>
+                </tr>
+                <tr>
+                    <td><strong>DNase I</strong></td>
+                    <td>Removes DNA contamination from RNA samples</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- ==========================================
+             DNA EXTRACTION
+        ========================================== -->
+        <h2>🧬 DNA Extraction Procedure</h2>
+
+        <h3>Step 1: Sample Preparation</h3>
+        <ul>
+            <li>Collect cells or tissue sample</li>
+            <li>For tissues: grind or homogenize in lysis buffer</li>
+        </ul>
+
+        <h3>Step 2: Cell Lysis</h3>
+        <ul>
+            <li>Add lysis buffer and Proteinase K</li>
+            <li>Incubate at 55-65°C to break membranes and digest proteins</li>
+        </ul>
+
+        <div class="highlight-box warning">
+            <strong>💡 Tip:</strong> Incubation time and temperature are critical for complete lysis. 
+            Prolonged incubation may degrade DNA, while insufficient incubation results in low yield.
+        </div>
+
+        <h3>Step 3: Removal of Proteins</h3>
+        <ul>
+            <li>Add phenol:chloroform (if using organic extraction)</li>
+            <li>Centrifuge to separate phases</li>
+            <li>Transfer aqueous (upper) layer containing DNA</li>
+        </ul>
+
+        <h3>Step 4: DNA Precipitation</h3>
+        <ul>
+            <li>Add cold isopropanol or ethanol</li>
+            <li>Mix gently and incubate</li>
+            <li>Centrifuge to pellet DNA</li>
+        </ul>
+
+        <h3>Step 5: Washing</h3>
+        <ul>
+            <li>Wash DNA pellet with 70% ethanol</li>
+            <li>Centrifuge and discard supernatant</li>
+            <li>Air dry the pellet</li>
+        </ul>
+
+        <h3>Step 6: Elution</h3>
+        <ul>
+            <li>Dissolve DNA in nuclease-free water or TE buffer</li>
+            <li>Store at -20°C</li>
+        </ul>
+
+        <!-- ==========================================
+             RNA EXTRACTION
+        ========================================== -->
+        <h2>🧬 RNA Extraction Procedure</h2>
+
+        <div class="highlight-box danger">
+            <strong>⚠️ Important:</strong> RNA is more unstable than DNA. RNases are everywhere 
+            (on skin, in dust, on surfaces). Use RNase-free reagents, gloves, and work quickly.
+        </div>
+
+        <h3>Step 1: Sample Homogenization</h3>
+        <ul>
+            <li>Homogenize cells/tissues in guanidinium-based lysis buffer</li>
+            <li>Work quickly to prevent RNA degradation</li>
+        </ul>
+
+        <h3>Step 2: Phase Separation</h3>
+        <ul>
+            <li>Add chloroform</li>
+            <li>Centrifuge to separate phases</li>
+            <li>Collect aqueous phase containing RNA</li>
+        </ul>
+
+        <h3>Step 3: RNA Precipitation</h3>
+        <ul>
+            <li>Add isopropanol</li>
+            <li>Incubate and centrifuge to pellet RNA</li>
+        </ul>
+
+        <h3>Step 4: Washing</h3>
+        <ul>
+            <li>Wash RNA pellet with 70% ethanol</li>
+        </ul>
+
+        <h3>Step 5: Elution</h3>
+        <ul>
+            <li>Dissolve RNA in RNase-free water</li>
+            <li>Store at -80°C</li>
+        </ul>
+
+        <!-- ==========================================
+             QUALITY ASSESSMENT
+        ========================================== -->
+        <h2>📊 Quality and Quantity Assessment</h2>
+
+        <h3>Measuring Nucleic Acid Concentration</h3>
+        <p>
+            Nucleic acid concentration is measured using a <strong>spectrophotometer or NanoDrop</strong> 
+            by measuring absorbance at 260 nm (A₂₆₀).
+        </p>
+
+        <h3>Purity Ratios</h3>
+
+        <div class="highlight-box">
+            <p><strong>DNA Purity:</strong> A₂₆₀ / A₂₈₀ ≈ <strong>1.8</strong></p>
+            <p><strong>RNA Purity:</strong> A₂₆₀ / A₂₈₀ ≈ <strong>2.0</strong></p>
+            <p><strong>Protein Contamination:</strong> A₂₆₀ / A₂₃₀ &gt; 2.0 indicates clean sample</p>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Ratio</th>
+                    <th>Pure DNA</th>
+                    <th>Pure RNA</th>
+                    <th>Contamination Indication</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>A₂₆₀ / A₂₈₀</strong></td>
+                    <td>≈ 1.8</td>
+                    <td>≈ 2.0</td>
+                    <td>&lt; 1.7 = Protein contamination</td>
+                </tr>
+                <tr>
+                    <td><strong>A₂₆₀ / A₂₃₀</strong></td>
+                    <td>&gt; 2.0</td>
+                    <td>&gt; 2.0</td>
+                    <td>&lt; 2.0 = Salt or organic contamination</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>Integrity Check</h3>
+        <p>
+            Nucleic acid integrity is checked by <strong>agarose gel electrophoresis</strong>:
+        </p>
+        <ul>
+            <li><strong>DNA:</strong> High molecular weight band without smearing indicates intact DNA</li>
+            <li><strong>RNA:</strong> Sharp 28S and 18S rRNA bands (2:1 ratio) indicates intact RNA</li>
+        </ul>
+
+        <div class="diagram-box">
+            <div class="diagram">
+                ┌─────────────────────────────────────────────────────────────┐
+                │         DNA vs RNA GEL PATTERNS                          │
+                ├─────────────────────────────────────────────────────────────┤
+                │                                                             │
+                │   DNA (Genomic)           RNA (Total)                      │
+                │                                                             │
+                │   ┌─────────────┐        ┌─────────────┐                   │
+                │   │  ██████████ │        │  ██████████ │   ← 28S rRNA    │
+                │   │  ██████████ │        │  ██████████ │                   │
+                │   │  ██████████ │        │  ██████████ │   ← 18S rRNA    │
+                │   │  ██████████ │        │  ██████████ │                   │
+                │   │  ██████████ │        │  ██████████ │                   │
+                │   │  ██████████ │        │             │                   │
+                │   └─────────────┘        └─────────────┘                   │
+                │                                                             │
+                │   ✅ High MW DNA        ✅ Good RNA (2:1 ratio)           │
+                │                                                             │
+                └─────────────────────────────────────────────────────────────┘
+            </div>
+        </div>
+
+        <!-- ==========================================
+             DNA vs RNA
+        ========================================== -->
+        <h2>🔄 DNA vs RNA: Key Differences in Extraction</h2>
+
+        <table class="comparison-table">
+            <thead>
+                <tr>
+                    <th>Feature</th>
+                    <th>DNA</th>
+                    <th>RNA</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Stability</td>
+                    <td>Stable</td>
+                    <td>Unstable (easily degraded by RNases)</td>
+                </tr>
+                <tr>
+                    <td>Special Reagents</td>
+                    <td>Proteinase K, RNase A</td>
+                    <td>Guanidinium thiocyanate, β-Mercaptoethanol</td>
+                </tr>
+                <tr>
+                    <td>Storage Temperature</td>
+                    <td>-20°C</td>
+                    <td>-80°C (or -20°C short-term)</td>
+                </tr>
+                <tr>
+                    <td>A₂₆₀ / A₂₈₀ Ratio</td>
+                    <td>≈ 1.8</td>
+                    <td>≈ 2.0</td>
+                </tr>
+                <tr>
+                    <td>Typical Yield</td>
+                    <td>High</td>
+                    <td>Variable (depends on sample)</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- ==========================================
+             APPLICATIONS
+        ========================================== -->
+        <h2>📊 Applications of Purified Nucleic Acids</h2>
+
+        <ol>
+            <li><strong>PCR Amplification:</strong> DNA detection and amplification</li>
+            <li><strong>Sequencing:</strong> Sanger, Next-Generation Sequencing</li>
+            <li><strong>Cloning:</strong> Inserting genes into vectors</li>
+            <li><strong>Gene Expression Analysis:</strong> RT-PCR, qPCR, RNA-seq</li>
+            <li><strong>Genotyping:</strong> SNP detection, DNA fingerprinting</li>
+            <li><strong>Pathogen Detection:</strong> Bacterial and fungal identification</li>
+            <li><strong>Epigenetics:</strong> Methylation studies</li>
+        </ol>
+
+        <!-- ==========================================
+             REFERENCES
+        ========================================== -->
+        <h2>📚 References</h2>
+
+        <div class="highlight-box">
+            <p>Sambrook, J. &amp; Russell, D.W. (2001). <em>Molecular Cloning: A Laboratory Manual</em>. 3rd ed. Cold Spring Harbor Laboratory Press.</p>
+            <p>Green, M.R. &amp; Sambrook, J. (2012). <em>Molecular Cloning: A Laboratory Manual</em>. 4th ed. Cold Spring Harbor Laboratory Press.</p>
+            <p>Chomczynski, P. &amp; Sacchi, N. (1987). Single-step method of RNA isolation by acid guanidinium thiocyanate-phenol-chloroform extraction. <em>Analytical Biochemistry</em>, 162(1), 156-159.</p>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+    console.log('🧪 DNA/RNA Extraction Theory Page Loaded!');
+</script>
+
+</body>
+</html>

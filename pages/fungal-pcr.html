@@ -1,0 +1,2258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PCR - Fungal DNA Detection</title>
+
+    <style>
+        /* ==========================================
+           ALL YOUR EXISTING CSS STYLES HERE
+           (KEEP EVERYTHING THE SAME)
+        ========================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #e8f0f5;
+            color: #1a3a4a;
+            overflow-x: hidden;
+        }
+
+        .app {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 220px;
+            background: #0d2b3e;
+            color: white;
+            padding: 20px 0;
+            position: fixed;
+            height: 100vh;
+        }
+
+        .sidebar .logo {
+            font-size: 22px;
+            font-weight: bold;
+            padding: 0 20px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .sidebar .logo span {
+            color: #4fc3f7;
+        }
+
+        .sidebar a {
+            display: block;
+            color: #b0c4d9;
+            text-decoration: none;
+            padding: 12px 20px;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        .sidebar a:hover,
+        .sidebar a.active {
+            background: #1a4058;
+            color: white;
+        }
+
+        .main {
+            margin-left: 220px;
+            flex: 1;
+            padding: 25px 30px;
+        }
+
+        .header {
+            background: white;
+            padding: 20px 25px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            color: #5a7a8a;
+        }
+
+        .progress-area {
+            margin-top: 15px;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: #3a5a6a;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #dce6ed;
+            border-radius: 10px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #1a8bc0, #4fc3f7);
+            transition: width 0.8s ease;
+        }
+
+        .lab-grid {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 20px;
+        }
+
+        .laboratory {
+            background: linear-gradient(180deg, #d5e3ec, #bccfd9);
+            border-radius: 16px;
+            min-height: 650px;
+            position: relative;
+            border: 2px solid #a8bcc8;
+            padding: 15px;
+            overflow: hidden;
+        }
+
+        .lab-label {
+            font-size: 11px;
+            font-weight: bold;
+            color: #4a6a7a;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .bench {
+            position: absolute;
+            bottom: 15px;
+            left: 15px;
+            right: 15px;
+            height: 110px;
+            background: #a8bcc8;
+            border-radius: 8px;
+            border-bottom: 10px solid #8aa2ae;
+        }
+
+        .equipment {
+            position: absolute;
+            cursor: grab;
+            transition: transform 0.3s ease, opacity 0.5s ease;
+        }
+
+        .equipment:hover {
+            transform: scale(1.05);
+            z-index: 10;
+        }
+
+        .equipment.dragging {
+            opacity: 0.4;
+            cursor: grabbing;
+            transform: scale(0.95);
+        }
+
+        .equipment.placed {
+            opacity: 0.3;
+            transform: scale(0.9);
+            pointer-events: none;
+        }
+
+        .equipment-name {
+            text-align: center;
+            font-size: 10px;
+            font-weight: bold;
+            color: #1a3a4a;
+            margin-top: 5px;
+            pointer-events: none;
+        }
+
+        .drop-zone {
+            position: absolute;
+            border: 3px dashed rgba(33, 150, 243, 0);
+            border-radius: 12px;
+            transition: all 0.3s;
+            pointer-events: none;
+        }
+
+        .drop-zone.active {
+            border-color: rgba(33, 150, 243, 0.7);
+            background: rgba(33, 150, 243, 0.08);
+            animation: pulse-zone 1.5s ease-in-out infinite;
+        }
+
+        .drop-zone.highlight {
+            border-color: #4CAF50;
+            background: rgba(76, 175, 80, 0.2);
+            box-shadow: 0 0 30px rgba(76, 175, 80, 0.3);
+            transform: scale(1.02);
+        }
+
+        @keyframes pulse-zone {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        .drop-zone .label {
+            position: absolute;
+            bottom: -28px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 10px;
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            padding: 3px 14px;
+            border-radius: 12px;
+            white-space: nowrap;
+            display: none;
+            font-weight: bold;
+        }
+
+        .drop-zone.active .label {
+            display: block;
+        }
+
+        /* ===== SAMPLE TUBE ===== */
+        .sample-tube {
+            width: 60px;
+            height: 130px;
+            border: 3px solid #4a6a7a;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 10px 10px 22px 22px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.05), 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .sample-tube::before {
+            content: "";
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            height: 10px;
+            background: #4a6a7a;
+            border-radius: 4px;
+        }
+
+        .sample-tube .tube-label {
+            position: absolute;
+            top: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 7px;
+            font-weight: bold;
+            color: #2a4a5a;
+            z-index: 5;
+            background: rgba(255, 255, 255, 0.5);
+            padding: 1px 6px;
+            border-radius: 3px;
+            display: none;
+        }
+
+        .sample-tube.has-sample .tube-label {
+            display: block;
+        }
+
+        .tube-liquid {
+            position: absolute;
+            bottom: 4px;
+            left: 4px;
+            right: 4px;
+            height: 5px;
+            background: #d0dce6;
+            border-radius: 0 0 18px 18px;
+            transition: height 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+                background 0.8s ease,
+                box-shadow 0.8s ease;
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .tube-liquid.empty { height: 5px; background: #d0dce6; }
+        .tube-liquid.sample-loaded { height: 35px; background: linear-gradient(180deg, #e8d5b5, #d4b896); }
+        .tube-liquid.lysis-added { height: 55px; background: linear-gradient(180deg, #8a9bc9, #6a7aaa); }
+        .tube-liquid.bead-beating { height: 60px; background: linear-gradient(180deg, #c9a8a8, #a87878); animation: shake 0.3s ease-in-out infinite alternate; }
+        .tube-liquid.enz-lysis { height: 65px; background: linear-gradient(180deg, #a8c9a8, #78a878); }
+        .tube-liquid.pcr-mix-added { height: 70px; background: linear-gradient(180deg, #c9a8e8, #a878c8); }
+        .tube-liquid.pcr-complete { height: 70px; background: linear-gradient(180deg, #a8d8e8, #78b8c8); animation: pulse-glow 1s ease-in-out infinite alternate; }
+
+        @keyframes shake {
+            0% { transform: translateX(-2px); }
+            100% { transform: translateX(2px); }
+        }
+
+        @keyframes pulse-glow {
+            0% { box-shadow: inset 0 0 20px rgba(100, 200, 255, 0.3); }
+            100% { box-shadow: inset 0 0 40px rgba(100, 200, 255, 0.6); }
+        }
+
+        .tube-status {
+            position: absolute;
+            bottom: -35px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 9px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 2px 10px;
+            border-radius: 10px;
+            white-space: nowrap;
+            display: none;
+            font-weight: bold;
+        }
+
+        .sample-tube.has-sample .tube-status {
+            display: block;
+        }
+
+        /* ===== TUBE RACK ===== */
+        .tube-rack {
+            width: 220px;
+            height: 110px;
+            background: #5a7a8a;
+            border-radius: 12px;
+            padding: 20px 25px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+            position: relative;
+            border: 2px solid #4a6a7a;
+        }
+
+        .rack-hole {
+            width: 55px;
+            height: 55px;
+            background: #2a4a5a;
+            border-radius: 50%;
+            box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.4);
+            transition: all 0.5s ease;
+            position: relative;
+            border: 2px solid #3a5a6a;
+        }
+
+        .rack-hole.has-sample {
+            background: #e8d5b5;
+            box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.2), 0 0 40px rgba(232, 213, 181, 0.5);
+            border-color: #c8b595;
+        }
+
+        .rack-hole.has-sample::after {
+            content: "🧪";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 26px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+
+        /* ===== REAGENT BOTTLES ===== */
+        .reagent-bottle {
+            width: 75px;
+            height: 105px;
+            background: white;
+            border: 2px solid #8aa2ae;
+            border-radius: 8px;
+            text-align: center;
+            padding-top: 30px;
+            position: relative;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .reagent-bottle:hover {
+            transform: translateY(-5px);
+        }
+
+        .reagent-bottle::before {
+            content: "";
+            position: absolute;
+            top: -12px;
+            left: 20px;
+            right: 20px;
+            height: 12px;
+            background: #4a6a7a;
+            border-radius: 4px 4px 0 0;
+        }
+
+        .reagent-liquid {
+            position: absolute;
+            bottom: 5px;
+            left: 5px;
+            right: 5px;
+            height: 50px;
+            border-radius: 4px;
+            opacity: 0.85;
+            transition: all 0.5s ease;
+        }
+
+        .reagent-label {
+            position: relative;
+            z-index: 2;
+            font-size: 9px;
+            font-weight: bold;
+            background: rgba(255, 255, 255, 0.85);
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+
+        .reagent-bottle.used {
+            opacity: 0.4;
+            transform: scale(0.9);
+            pointer-events: none;
+        }
+
+        .reagent-bottle.used::after {
+            content: "✓";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 30px;
+            color: #4CAF50;
+            z-index: 10;
+        }
+
+        .liquid-lysis { background: linear-gradient(180deg, #8a9bc9, #6a7aaa); }
+        .liquid-enzyme { background: linear-gradient(180deg, #a8c9a8, #78a878); }
+        .liquid-beads { background: linear-gradient(180deg, #c9b8a8, #a89888); }
+        .liquid-pcr-mix { background: linear-gradient(180deg, #c9a8e8, #a878c8); }
+        .liquid-primers { background: linear-gradient(180deg, #f0c8a8, #e0a888); }
+        .liquid-master-mix { background: linear-gradient(180deg, #a8d8e8, #78b8c8); }
+
+        /* ===== POSITIONS ===== */
+        #sampleStation { left: 80px; bottom: 190px; z-index: 5; }
+        #sampleStation.placed { opacity: 0; transform: scale(0.3); pointer-events: none; }
+        #rackStation { left: 30px; bottom: 55px; }
+        #lysisBottle { left: 310px; top: 95px; }
+        #enzymeBottle { left: 410px; top: 95px; }
+        #beadBottle { right: 190px; top: 100px; cursor: default; }
+        #primerBottle { right: 90px; top: 100px; }
+        #masterMixBottle { right: 75px; bottom: 200px; }
+
+        /* ===== THERMAL CYCLER ===== */
+        .thermal-cycler {
+            width: 200px;
+            height: 140px;
+            background: #3a4a5a;
+            border: 3px solid #2a3a4a;
+            border-radius: 12px;
+            position: relative;
+            transition: all 0.5s ease;
+            cursor: pointer;
+        }
+
+        .thermal-cycler .display {
+            position: absolute;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #0a1a22;
+            color: #8ff0ae;
+            padding: 8px 15px;
+            font-family: monospace;
+            font-size: 14px;
+            border-radius: 6px;
+            width: 160px;
+            text-align: center;
+        }
+
+        .thermal-cycler .lid {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 70px;
+            background: #2a3a4a;
+            border-radius: 0 0 12px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #8aa2ae;
+            border-top: 2px solid #1a2a3a;
+        }
+
+        .thermal-cycler .lid .block {
+            width: 140px;
+            height: 35px;
+            background: #1a2a3a;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .thermal-cycler .lid .block .well {
+            width: 18px;
+            height: 22px;
+            background: #0a1a22;
+            border-radius: 3px;
+            border: 1px solid #2a3a4a;
+        }
+
+        .thermal-cycler.running {
+            animation: cycler-glow 0.8s ease-in-out infinite alternate;
+        }
+
+        @keyframes cycler-glow {
+            0% { box-shadow: 0 0 20px rgba(33, 150, 243, 0.2); }
+            100% { box-shadow: 0 0 50px rgba(33, 150, 243, 0.5); }
+        }
+
+        .thermal-cycler.running .display {
+            animation: temp-flash 0.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes temp-flash {
+            0% { color: #8ff0ae; }
+            100% { color: #ff8f8f; }
+        }
+
+        .thermal-cycler.ready {
+            border-color: #4CAF50;
+        }
+
+        .thermal-cycler.ready::after {
+            content: "▶ Click to Start PCR";
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            color: #4CAF50;
+            font-weight: bold;
+            background: rgba(255,255,255,0.9);
+            padding: 2px 12px;
+            border-radius: 12px;
+            white-space: nowrap;
+        }
+
+        .thermal-cycler.disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* ===== GEL ELECTROPHORESIS ===== */
+        .gel-box {
+            width: 220px;
+            height: 120px;
+            background: #c8d8e0;
+            border: 3px solid #8aa2ae;
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.5s ease;
+        }
+
+        .gel-box .gel {
+            position: absolute;
+            top: 10px;
+            left: 15px;
+            right: 15px;
+            bottom: 10px;
+            background: #e8eef0;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .gel-box .gel .wells {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 10px;
+        }
+
+        .gel-box .gel .well {
+            width: 12px;
+            height: 20px;
+            background: #aab8c0;
+            border-radius: 2px;
+        }
+
+        .gel-box .gel .bands {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            height: 50px;
+        }
+
+        .gel-box .gel .band {
+            width: 14px;
+            border-radius: 2px;
+            transition: all 1.5s ease;
+            opacity: 0;
+            height: 0;
+        }
+
+        .gel-box .gel .band.visible {
+            opacity: 1;
+            height: 30px;
+        }
+
+        .gel-box .gel .band.positive {
+            background: linear-gradient(180deg, #FF6F00, #E65100);
+            box-shadow: 0 0 20px rgba(255, 111, 0, 0.3);
+        }
+
+        .gel-box .gel .band.negative {
+            background: #d0d0d0;
+            height: 20px !important;
+        }
+
+        .gel-box .gel .band.ladder {
+            background: linear-gradient(180deg, #2196F3, #1565C0);
+            width: 10px;
+            height: 50px !important;
+            opacity: 1 !important;
+        }
+
+        .gel-box .gel .labels {
+            display: flex;
+            gap: 20px;
+            font-size: 8px;
+            color: #4a6a7a;
+            margin-top: 5px;
+        }
+
+        .gel-box .gel .labels span {
+            width: 14px;
+            text-align: center;
+        }
+
+        .gel-box .gel .result-label {
+            font-size: 10px;
+            font-weight: bold;
+            color: #1a3a4a;
+            margin-top: 5px;
+        }
+
+        .gel-box .gel .result-label.positive {
+            color: #E65100;
+        }
+
+        .gel-box .gel .result-label.negative {
+            color: #757575;
+        }
+
+        .gel-box.running {
+            animation: gel-glow 0.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes gel-glow {
+            0% { box-shadow: 0 0 20px rgba(33, 150, 243, 0.1); }
+            100% { box-shadow: 0 0 40px rgba(33, 150, 243, 0.3); }
+        }
+
+        .gel-box.ready {
+            border-color: #4CAF50;
+        }
+
+        .gel-box.ready::after {
+            content: "▶ Click to Run Gel";
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            color: #4CAF50;
+            font-weight: bold;
+            background: rgba(255,255,255,0.9);
+            padding: 2px 12px;
+            border-radius: 12px;
+            white-space: nowrap;
+        }
+
+        .gel-box.disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* ===== POSITIONS ===== */
+        #thermalCyclerStation { right: 260px; bottom: 75px; }
+        #gelStation { right: 45px; bottom: 70px; }
+
+        /* ===== CONTROL PANEL ===== */
+        .panel {
+            background: white;
+            padding: 22px;
+            border-radius: 14px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+            max-height: 650px;
+            overflow-y: auto;
+        }
+
+        .step-badge {
+            display: inline-block;
+            background: #e1eef7;
+            color: #1a6a8a;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .panel h2 {
+            margin: 10px 0 8px;
+            font-size: 20px;
+        }
+
+        .instruction-box {
+            background: #f5f9fc;
+            padding: 14px;
+            border-radius: 8px;
+            border-left: 4px solid #1a8bc0;
+            line-height: 2.2;
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+
+        .instruction-box .highlight {
+            display: inline-block;
+            background: #e1eef7;
+            padding: 2px 14px;
+            border-radius: 4px;
+            font-weight: bold;
+            color: #1a6a8a;
+            border: 1px solid #b8d4e8;
+            font-size: 13px;
+        }
+
+        .instruction-box .highlight-green {
+            display: inline-block;
+            background: #e8f5e9;
+            padding: 2px 14px;
+            border-radius: 4px;
+            font-weight: bold;
+            color: #2e7d32;
+            border: 1px solid #a5d6a7;
+            font-size: 13px;
+        }
+
+        .instruction-box .highlight-orange {
+            display: inline-block;
+            background: #fff3e0;
+            padding: 2px 14px;
+            border-radius: 4px;
+            font-weight: bold;
+            color: #e65100;
+            border: 1px solid #ffcc80;
+            font-size: 13px;
+        }
+
+        .instruction-box .step-num {
+            display: inline-block;
+            background: #1a8bc0;
+            color: white;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 22px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-right: 6px;
+        }
+
+        .instruction-box .hint {
+            display: block;
+            font-size: 12px;
+            color: #5a7a8a;
+            margin-top: 6px;
+            border-top: 1px dashed #d0dce6;
+            padding-top: 6px;
+        }
+
+        .equipment-list {
+            background: #f5f9fc;
+            padding: 12px 14px;
+            border-radius: 8px;
+            border: 1px solid #dce6ed;
+            font-size: 13px;
+            line-height: 2.2;
+            margin-bottom: 15px;
+        }
+
+        .equipment-list .arrow {
+            color: #1a8bc0;
+            font-weight: bold;
+            margin: 0 4px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .next-btn, .repeat-btn, .reset-btn {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .next-btn {
+            background: #1a8bc0;
+            color: white;
+        }
+        .next-btn:disabled {
+            background: #aab8c1;
+            cursor: not-allowed;
+        }
+        .next-btn:hover:not(:disabled) {
+            background: #0f6f9a;
+            transform: translateY(-2px);
+        }
+
+        .repeat-btn {
+            background: #ff9800;
+            color: white;
+        }
+        .repeat-btn:hover {
+            background: #e68900;
+            transform: translateY(-2px);
+        }
+
+        .reset-btn {
+            background: #f44336;
+            color: white;
+        }
+        .reset-btn:hover {
+            background: #d32f2f;
+            transform: translateY(-2px);
+        }
+
+        .dashboard-btn {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            border: 2px solid #1a8bc0;
+            border-radius: 8px;
+            background: white;
+            color: #1a8bc0;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .dashboard-btn:hover {
+            background: #1a8bc0;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .back-btn {
+            width: 100%;
+            padding: 12px;
+            margin-top: 8px;
+            border: 2px solid #8aa2ae;
+            border-radius: 8px;
+            background: white;
+            color: #4a6a7a;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .back-btn:hover {
+            background: #8aa2ae;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .status-box {
+            margin-top: 14px;
+            padding: 12px 14px;
+            background: #f0f5f8;
+            border-radius: 8px;
+            border-left: 4px solid #8aa2ae;
+            font-size: 14px;
+            min-height: 48px;
+            line-height: 1.8;
+            transition: all 0.3s;
+        }
+
+        .status-box.success {
+            background: #e8f5e9;
+            border-left-color: #43a047;
+            color: #1e5a2a;
+        }
+
+        .status-box.error {
+            background: #fde8e8;
+            border-left-color: #e53935;
+            color: #8a2a2a;
+        }
+        
+        /* ===== RESULT ===== */
+        .result {
+            display: none;
+            background: white;
+            padding: 40px;
+            text-align: center;
+            border-radius: 16px;
+            margin-top: 20px;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .result.show {
+            display: block;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-icon {
+            font-size: 60px;
+            animation: bounce 1s ease infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        .result h2 {
+            margin: 12px 0;
+        }
+
+        .result p {
+            color: #5a7a8a;
+            margin-bottom: 16px;
+        }
+
+        .finish-btn {
+            display: inline-block;
+            background: #1a8bc0;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .finish-btn:hover {
+            background: #0f6f9a;
+            transform: translateY(-2px);
+        }
+
+        .success-flash {
+            animation: flash 0.6s ease;
+        }
+
+        @keyframes flash {
+            0%, 100% { box-shadow: 0 0 0 rgba(76, 175, 80, 0); }
+            50% { box-shadow: 0 0 50px rgba(76, 175, 80, 0.6); }
+        }
+
+        @media (max-width: 1000px) {
+            .lab-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+            .main {
+                margin-left: 0;
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="app">
+
+        <div class="sidebar">
+            <div class="logo">🧬 <span>MoleBio</span></div>
+            <a href="#" class="active">🧫 PCR - Fungal Detection</a>
+            <a href="#">📊 Progress</a>
+            <a href="#">🔬 Equipment</a>
+            <a href="#">📖 Instructions</a>
+        </div>
+
+        <div class="main">
+
+            <div class="header">
+                <h1>🧫 PCR - Fungal DNA Detection</h1>
+                <p>Detect fungal DNA through specialized extraction, PCR amplification and gel electrophoresis</p>
+
+                <div class="progress-area">
+                    <div class="progress-info">
+                        <span id="stepLabel">Step 1 of 6</span>
+                        <span id="progressPercent">0%</span>
+                        <span id="mistakesDisplay">❌ Mistakes: 0</span>
+                        <span id="scoreDisplay">⭐ Score: 100%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lab-grid">
+
+                <div class="laboratory" id="laboratory">
+
+                    <div class="lab-label">🧫 VIRTUAL LAB - FUNGAL DETECTION</div>
+
+                    <div class="drop-zone" id="dropZoneRack" style="left:30px;bottom:45px;width:230px;height:130px;">
+                        <span class="label">📥 Drop Sample Here</span>
+                    </div>
+                    <div class="drop-zone" id="dropZoneTube" style="left:70px;bottom:170px;width:80px;height:140px;">
+                        <span class="label">📥 Drop Reagent Here</span>
+                    </div>
+
+                    <!-- SAMPLE TUBE -->
+                    <div class="equipment" id="sampleStation" data-type="sample" draggable="true">
+                        <div class="sample-tube" id="sampleTube">
+                            <div class="tube-label">SAMPLE</div>
+                            <div class="tube-liquid empty" id="tubeLiquid"></div>
+                            <div class="tube-status" id="tubeStatus">⚪ Empty</div>
+                        </div>
+                        <div class="equipment-name">🧪 Sample Tube</div>
+                    </div>
+
+                    <!-- TUBE RACK -->
+                    <div class="equipment" id="rackStation" data-type="rack">
+                        <div class="tube-rack">
+                            <div class="rack-hole" id="rackHole1"></div>
+                            <div class="rack-hole" id="rackHole2"></div>
+                            <div class="rack-hole" id="rackHole3"></div>
+                        </div>
+                        <div class="equipment-name">🧫 Tube Rack</div>
+                    </div>
+
+                    <!-- REAGENTS -->
+                    <div class="equipment" id="lysisBottle" data-type="lysis" draggable="true">
+                        <div class="reagent-bottle" id="lysisBottleInner">
+                            <div class="reagent-label">🧪 Lysis Buffer</div>
+                            <div class="reagent-liquid liquid-lysis"></div>
+                        </div>
+                        <div class="equipment-name">Lysis Buffer</div>
+                    </div>
+
+                    <div class="equipment" id="enzymeBottle" data-type="enzyme" draggable="true">
+                        <div class="reagent-bottle" id="enzymeBottleInner">
+                            <div class="reagent-label">🧬 Lyticase</div>
+                            <div class="reagent-liquid liquid-enzyme"></div>
+                        </div>
+                        <div class="equipment-name">Lyticase Enzyme</div>
+                    </div>
+
+                    <div class="equipment" id="beadBottle" data-type="beads" draggable="true">
+                        <div class="reagent-bottle" id="beadBottleInner">
+                            <div class="reagent-label">🔮 Bead Beating</div>
+                            <div class="reagent-liquid liquid-beads"></div>
+                        </div>
+                        <div class="equipment-name">Glass Beads</div>
+                    </div>
+
+                    <div class="equipment" id="primerBottle" data-type="primers" draggable="true">
+                        <div class="reagent-bottle" id="primerBottleInner">
+                            <div class="reagent-label">🎯 Fungal Primers</div>
+                            <div class="reagent-liquid liquid-primers"></div>
+                        </div>
+                        <div class="equipment-name">ITS Primers</div>
+                    </div>
+
+                    <div class="equipment" id="masterMixBottle" data-type="masterMix" draggable="true">
+                        <div class="reagent-bottle" id="masterMixBottleInner">
+                            <div class="reagent-label">🧪 Master Mix</div>
+                            <div class="reagent-liquid liquid-master-mix"></div>
+                        </div>
+                        <div class="equipment-name">PCR Master Mix</div>
+                    </div>
+
+                    <!-- THERMAL CYCLER -->
+                    <div class="equipment" id="thermalCyclerStation" data-type="thermalCycler">
+                        <div class="thermal-cycler" id="thermalCycler">
+                            <div class="display" id="cyclerDisplay">⏸ Idle - 25°C</div>
+                            <div class="lid">
+                                <div class="block">
+                                    <div class="well"></div>
+                                    <div class="well"></div>
+                                    <div class="well"></div>
+                                    <div class="well"></div>
+                                    <div class="well"></div>
+                                    <div class="well"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="equipment-name">🔥 Thermal Cycler</div>
+                    </div>
+
+                    <!-- GEL ELECTROPHORESIS -->
+                    <div class="equipment" id="gelStation" data-type="gel">
+                        <div class="gel-box" id="gelBox">
+                            <div class="gel">
+                                <div class="wells">
+                                    <div class="well"></div>
+                                    <div class="well"></div>
+                                    <div class="well"></div>
+                                    <div class="well"></div>
+                                    <div class="well"></div>
+                                </div>
+                                <div class="bands">
+                                    <div class="band ladder" id="bandLadder"></div>
+                                    <div class="band" id="band1"></div>
+                                    <div class="band" id="band2"></div>
+                                    <div class="band" id="band3"></div>
+                                    <div class="band" id="band4"></div>
+                                </div>
+                                <div class="labels">
+                                    <span>L</span>
+                                    <span>+</span>
+                                    <span>Sample</span>
+                                    <span>-</span>
+                                    <span>Sample</span>
+                                </div>
+                                <div class="result-label" id="gelResult">Waiting for sample...</div>
+                            </div>
+                        </div>
+                        <div class="equipment-name">⚡ Gel Electrophoresis</div>
+                    </div>
+
+                    <div class="bench"></div>
+                </div>
+
+                <!-- CONTROL PANEL -->
+                <div class="panel">
+                    <span class="step-badge" id="stepBadge">STEP 1</span>
+                    <h2 id="stepTitle">Fungal Sample Preparation</h2>
+
+                    <div class="instruction-box" id="instructionBox">
+                        <span class="step-num">1</span> 
+                        Drag <span class="highlight">🧪 Sample Tube</span> to the <span class="highlight-green">🧫 Tube Rack</span>
+                        <br>
+                        <span class="hint">💡 <strong>BEGINNER TIP:</strong> Click and HOLD the Sample Tube, then DRAG it to the Tube Rack below. The tube will fill with sample!</span>
+                    </div>
+
+                    <div class="equipment-list" id="equipmentList">
+                        <strong>🔧 Equipment Needed:</strong><br>
+                        🧪 Sample Tube <span class="arrow">→</span> 🧫 Tube Rack
+                    </div>
+
+                    <div class="action-buttons">
+                        <button class="next-btn" id="nextBtn" disabled>➜ Next Step</button>
+                        <button class="repeat-btn" id="repeatBtn">↻ Repeat</button>
+                        <button class="reset-btn" id="resetBtn">⟳ Start Over</button>
+                    </div>
+
+                    <a href="./student-dashboard.html" class="dashboard-btn">🏠 Return to Dashboard</a>
+                    <a href="./experiments.html" class="back-btn">🔬 Back to Practicals</a>
+
+                    <div class="status-box" id="statusBox">💡 Follow the instructions above. Drag items when the drop zone flashes!</div>
+                </div>
+
+            </div>
+
+            <div class="result" id="result">
+                <div class="result-icon">🧬</div>
+                <h2 id="resultTitle">✅ Fungal DNA Detected!</h2>
+                <p id="resultMessage">The ITS PCR product was successfully amplified and visualized on the gel. Fungal DNA is present in the sample.</p>
+                <p>Score: <strong id="finalScore">100%</strong> &nbsp;|&nbsp; Mistakes: <strong id="finalMistakes">0</strong></p>
+                <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; margin-top: 15px;">
+                    <a href="./student-dashboard.html" class="finish-btn">← Return to Dashboard</a>
+                    <a href="./results.html?id=fungal-pcr" class="finish-btn" style="background: #4CAF50;">📊 View Results</a>
+                    <a href="./report.html?id=fungal-pcr" class="finish-btn" style="background: #9b59b6;">📄 Generate Report</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        // STATE
+        // ============================================================
+        let currentStep = 1;
+        let actionDone = false;
+        let score = 100;
+        let mistakes = 0;
+
+        // Fungal-specific states
+        let samplePlaced = false;
+        let lysisAdded = false;
+        let enzymeAdded = false;
+        let beadsAdded = false;
+        let beadBeatingDone = false;
+        let primersAdded = false;
+        let masterMixAdded = false;
+        let pcrComplete = false;
+        let gelRun = false;
+        let isCycling = false;
+        let isGelRunning = false;
+        let detectionResult = null;
+
+        // Auto-navigation flags
+        let autoNavStep2 = false;
+        let autoNavStep3 = false;
+
+        // ============================================================
+        // DOM REFS
+        // ============================================================
+        const stepLabel = document.getElementById('stepLabel');
+        const progressPercent = document.getElementById('progressPercent');
+        const progressFill = document.getElementById('progressFill');
+        const stepBadge = document.getElementById('stepBadge');
+        const stepTitle = document.getElementById('stepTitle');
+        const instructionBox = document.getElementById('instructionBox');
+        const equipmentList = document.getElementById('equipmentList');
+        const nextBtn = document.getElementById('nextBtn');
+        const repeatBtn = document.getElementById('repeatBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const statusBox = document.getElementById('statusBox');
+        const mistakesDisplay = document.getElementById('mistakesDisplay');
+        const scoreDisplay = document.getElementById('scoreDisplay');
+        const tubeLiquid = document.getElementById('tubeLiquid');
+        const tubeStatus = document.getElementById('tubeStatus');
+        const sampleTube = document.getElementById('sampleTube');
+        const thermalCycler = document.getElementById('thermalCycler');
+        const cyclerDisplay = document.getElementById('cyclerDisplay');
+        const gelBox = document.getElementById('gelBox');
+        const band1 = document.getElementById('band1');
+        const band2 = document.getElementById('band2');
+        const band3 = document.getElementById('band3');
+        const band4 = document.getElementById('band4');
+        const gelResult = document.getElementById('gelResult');
+        const rackHole1 = document.getElementById('rackHole1');
+        const sampleStation = document.getElementById('sampleStation');
+
+        // ============================================================
+        // BEGINNER-FRIENDLY STEP DESCRIPTIONS
+        // ============================================================
+        const stepDescriptions = {
+            1: {
+                title: 'Fungal Sample Preparation',
+                instruction: `
+                    <span class="step-num">1</span> 
+                    Drag <span class="highlight">🧪 Sample Tube</span> to the <span class="highlight-green">🧫 Tube Rack</span>
+                    <br>
+                    <span class="hint">💡 <strong>BEGINNER TIP:</strong> Click and HOLD the Sample Tube, then DRAG it to the Tube Rack below. The tube will fill with sample!</span>
+                `,
+                equipment: '🧪 Sample Tube <span class="arrow">→</span> 🧫 Tube Rack',
+                statusTip: '💡 Click and hold the Sample Tube, drag it to the Tube Rack, and release!'
+            },
+            2: {
+                title: 'Fungal Cell Lysis (3 Reagents!)',
+                instruction: `
+                    <span class="step-num">1</span> Drag <span class="highlight">🧪 Lysis Buffer</span> to Sample Tube
+                    <br>
+                    <span class="step-num">2</span> Drag <span class="highlight">🧬 Lyticase</span> to Sample Tube
+                    <br>
+                    <span class="step-num">3</span> Drag <span class="highlight-orange">🔮 Glass Beads</span> to Sample Tube
+                    <br>
+                    <span class="hint">💡 <strong>BEGINNER TIP:</strong> Fungi have tough cell walls! You need ALL 3 reagents. Watch the tube change color after each one!</span>
+                `,
+                equipment: 'Lysis Buffer <span class="arrow">+</span> Lyticase <span class="arrow">+</span> Beads <span class="arrow">→</span> Sample Tube',
+                statusTip: '💡 Drag each reagent to the tube. You need all 3!'
+            },
+            3: {
+                title: 'Bead Beating - FUNGAL SPECIFIC!',
+                instruction: `
+                    <span class="step-num">1</span> Click <span class="highlight-orange">🔮 Glass Beads</span> to start <span class="highlight-orange">Bead Beating</span>
+                    <br>
+                    <span class="hint">💡 <strong>BEGINNER TIP:</strong> The Glass Beads will be GLOWING when ready. Just click them! Watch the tube shake as cells break open!</span>
+                `,
+                equipment: 'Glass Beads <span class="arrow">→</span> Bead Beating',
+                statusTip: '💡 Click the GLOWING Glass Beads to start bead beating!'
+            },
+            4: {
+                title: 'PCR Setup',
+                instruction: `
+                    <span class="step-num">1</span> Drag <span class="highlight">🎯 Fungal Primers</span> to Sample Tube
+                    <br>
+                    <span class="step-num">2</span> Drag <span class="highlight">🧪 PCR Master Mix</span> to Sample Tube
+                    <br>
+                    <span class="hint">💡 <strong>BEGINNER TIP:</strong> ITS Primers are specifically for fungi! They target the ITS region - the "fungal barcode".</span>
+                `,
+                equipment: 'ITS Primers <span class="arrow">+</span> PCR Master Mix <span class="arrow">→</span> Sample Tube',
+                statusTip: '💡 Drag ITS Primers then Master Mix to the tube.'
+            },
+            5: {
+                title: 'PCR Amplification',
+                instruction: `
+                    <span class="step-num">1</span> Click <span class="highlight">🔥 Thermal Cycler</span> to start PCR
+                    <br>
+                    <span class="hint">💡 <strong>BEGINNER TIP:</strong> Click the Thermal Cycler when it turns GREEN. It will cycle through 30 cycles automatically!</span>
+                `,
+                equipment: 'Sample Tube <span class="arrow">→</span> Thermal Cycler',
+                statusTip: '💡 Click the GREEN Thermal Cycler to start PCR!'
+            },
+            6: {
+                title: 'Gel Electrophoresis',
+                instruction: `
+                    <span class="step-num">1</span> Click <span class="highlight">⚡ Gel Electrophoresis</span> to run the gel
+                    <br>
+                    <span class="hint">💡 <strong>BEGINNER TIP:</strong> Click the GREEN Gel box. Orange bands = Fungal DNA detected! Gray bands = No fungal DNA.</span>
+                `,
+                equipment: 'PCR Product <span class="arrow">→</span> Gel Electrophoresis',
+                statusTip: '💡 Click the GREEN Gel box to see your results!'
+            }
+        };
+
+        // ============================================================
+        // UPDATE TUBE VISUAL
+        // ============================================================
+        function updateTubeVisual(state, message) {
+            tubeLiquid.className = 'tube-liquid';
+            if (state) {
+                tubeLiquid.classList.add(state);
+            }
+            if (message) {
+                tubeStatus.textContent = message;
+                sampleTube.classList.add('has-sample');
+            }
+            if (state && state !== 'empty') {
+                sampleTube.classList.add('has-sample');
+            } else if (state === 'empty') {
+                sampleTube.classList.remove('has-sample');
+            }
+        }
+
+        // ============================================================
+        // UPDATE STEP - WITH BEGINNER-FRIENDLY CONTENT
+        // ============================================================
+        function updateStep() {
+            const desc = stepDescriptions[currentStep];
+            const data = steps[currentStep - 1];
+            
+            // Reset actionDone when step changes
+            actionDone = false;
+
+            stepLabel.textContent = `Step ${currentStep} of 6`;
+            const pct = Math.round(((currentStep - 1) / 6) * 100);
+            progressPercent.textContent = pct + '%';
+            progressFill.style.width = pct + '%';
+            stepBadge.textContent = `STEP ${currentStep}`;
+            stepTitle.textContent = desc.title;
+            
+            instructionBox.innerHTML = desc.instruction;
+            equipmentList.innerHTML = `<strong>🔧 Equipment:</strong><br>${desc.equipment}`;
+            
+            // Check if action is already done for this step
+            updateNextButtonState();
+            
+            statusBox.className = 'status-box';
+            statusBox.innerHTML = desc.statusTip;
+            mistakesDisplay.textContent = `❌ Mistakes: ${mistakes}`;
+            scoreDisplay.textContent = `⭐ Score: ${score}%`;
+
+            resetStepStates();
+            highlightDropZones();
+            initDragDrop();
+            updateEquipmentStates();
+        }
+
+        // ============================================================
+        // UPDATE NEXT BUTTON STATE - FIXED!
+        // ============================================================
+        function updateNextButtonState() {
+            let shouldEnable = false;
+            
+            switch(currentStep) {
+                case 1:
+                    shouldEnable = samplePlaced;
+                    break;
+                case 2:
+                    shouldEnable = lysisAdded && enzymeAdded && beadsAdded;
+                    break;
+                case 3:
+                    shouldEnable = beadBeatingDone;
+                    break;
+                case 4:
+                    shouldEnable = primersAdded && masterMixAdded;
+                    break;
+                case 5:
+                    shouldEnable = pcrComplete;
+                    break;
+                case 6:
+                    // Step 6 is the LAST step - no "Next Step" needed!
+                    shouldEnable = false;
+                    nextBtn.textContent = '✅ Complete!';
+                    nextBtn.style.background = '#27ae60';
+                    break;
+                default:
+                    shouldEnable = false;
+            }
+            
+            // Only enable if we're not on step 6
+            if (currentStep < 6) {
+                nextBtn.disabled = !shouldEnable;
+                if (shouldEnable) {
+                    nextBtn.style.background = '#1a8bc0';
+                    nextBtn.textContent = '➜ Next Step';
+                } else {
+                    nextBtn.style.background = '#aab8c1';
+                    nextBtn.textContent = '➜ Next Step';
+                }
+            }
+        }
+
+        // ============================================================
+        // STEP DATA
+        // ============================================================
+        const steps = [
+            { action: 'sample', needsThermalCycler: false, needsGel: false },
+            { action: 'lysis', needsThermalCycler: false, needsGel: false },
+            { action: 'beadBeat', needsThermalCycler: false, needsGel: false },
+            { action: 'pcrSetup', needsThermalCycler: false, needsGel: false },
+            { action: 'pcr', needsThermalCycler: true, needsGel: false },
+            { action: 'gel', needsThermalCycler: false, needsGel: true }
+        ];
+
+        function resetStepStates() {
+            if (currentStep === 1) samplePlaced = false;
+            else if (currentStep === 2) { lysisAdded = false; enzymeAdded = false; beadsAdded = false; }
+            else if (currentStep === 3) beadBeatingDone = false;
+            else if (currentStep === 4) { primersAdded = false; masterMixAdded = false; }
+            else if (currentStep === 5) pcrComplete = false;
+            else if (currentStep === 6) gelRun = false;
+        }
+
+        function highlightDropZones() {
+            document.querySelectorAll('.drop-zone').forEach(z => z.classList.remove('active'));
+            if (currentStep === 1) {
+                document.getElementById('dropZoneRack').classList.add('active');
+            } else if (currentStep <= 4 && currentStep !== 3) {
+                document.getElementById('dropZoneTube').classList.add('active');
+            }
+        }
+
+        // ============================================================
+        // UPDATE EQUIPMENT STATES
+        // ============================================================
+        function updateEquipmentStates() {
+            const data = steps[currentStep - 1];
+
+            // Thermal Cycler
+            thermalCycler.classList.remove('ready', 'disabled', 'running');
+            if (data.needsThermalCycler) {
+                if (currentStep === 5 && !pcrComplete && !isCycling) {
+                    thermalCycler.classList.add('ready');
+                } else {
+                    thermalCycler.classList.add('disabled');
+                }
+            } else {
+                thermalCycler.classList.add('disabled');
+            }
+
+            // Gel Box
+            gelBox.classList.remove('ready', 'disabled', 'running');
+            if (data.needsGel) {
+                if (currentStep === 6 && pcrComplete && !gelRun && !isGelRunning) {
+                    gelBox.classList.add('ready');
+                } else {
+                    gelBox.classList.add('disabled');
+                }
+            } else {
+                gelBox.classList.add('disabled');
+            }
+        }
+
+        // ============================================================
+        // DRAG & DROP
+        // ============================================================
+        function initDragDrop() {
+            const draggables = document.querySelectorAll('[draggable="true"]');
+
+            draggables.forEach(el => {
+                const clone = el.cloneNode(true);
+                el.parentNode.replaceChild(clone, el);
+            });
+
+            const newDraggables = document.querySelectorAll('[draggable="true"]');
+            newDraggables.forEach(el => {
+                el.addEventListener('dragstart', onDragStart);
+                el.addEventListener('dragend', onDragEnd);
+                el.style.cursor = 'grab';
+            });
+
+            const dropZones = document.querySelectorAll('.drop-zone');
+            dropZones.forEach(zone => {
+                zone.addEventListener('dragover', onDragOver);
+                zone.addEventListener('dragenter', onDragEnter);
+                zone.addEventListener('dragleave', onDragLeave);
+                zone.addEventListener('drop', onDrop);
+            });
+
+            document.getElementById('sampleStation').addEventListener('dragover', onDragOver);
+            document.getElementById('sampleStation').addEventListener('dragenter', onDragEnter);
+            document.getElementById('sampleStation').addEventListener('dragleave', onDragLeave);
+            document.getElementById('sampleStation').addEventListener('drop', onDrop);
+
+            document.getElementById('rackStation').addEventListener('dragover', onDragOver);
+            document.getElementById('rackStation').addEventListener('dragenter', onDragEnter);
+            document.getElementById('rackStation').addEventListener('dragleave', onDragLeave);
+            document.getElementById('rackStation').addEventListener('drop', onDrop);
+
+            // Bead Beating - click to start
+            document.getElementById('beadBottle').addEventListener('click', function() {
+                if (currentStep === 3 && !beadBeatingDone && !actionDone) {
+                    startBeadBeating();
+                } else if (currentStep === 3 && beadBeatingDone) {
+                    showError('Bead beating already done!');
+                } else if (currentStep === 3) {
+                    if (!lysisAdded || !enzymeAdded || !beadsAdded) {
+                        showError('Add Lysis Buffer, Lyticase, and Glass Beads first!');
+                    }
+                } else {
+                    showError('Bead beating not needed at this step.');
+                }
+            });
+
+            // Thermal Cycler click
+            document.getElementById('thermalCycler').addEventListener('click', function() {
+                if (isCycling) return;
+                runPCR();
+            });
+
+            // Gel click
+            document.getElementById('gelBox').addEventListener('click', function() {
+                if (isGelRunning) return;
+                runGel();
+            });
+        }
+
+        function onDragStart(e) {
+            const type = this.dataset.type;
+            if (!type) return;
+
+            const valid = getValidItems();
+            if (!valid.includes(type)) {
+                e.preventDefault();
+                const name = this.querySelector('.equipment-name')?.textContent || type;
+                showError(`"${name}" is not needed at this step.`);
+                return;
+            }
+
+            this.classList.add('dragging');
+            e.dataTransfer.setData('text/plain', this.id);
+            e.dataTransfer.effectAllowed = 'move';
+            document.querySelectorAll('.drop-zone').forEach(z => z.classList.add('active'));
+        }
+
+        function onDragEnd(e) {
+            this.classList.remove('dragging');
+            document.querySelectorAll('.drop-zone').forEach(z => {
+                z.classList.remove('active', 'highlight');
+            });
+        }
+
+        function onDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            this.classList.add('highlight');
+        }
+
+        function onDragEnter(e) {
+            e.preventDefault();
+            this.classList.add('highlight');
+        }
+
+        function onDragLeave(e) {
+            this.classList.remove('highlight');
+        }
+
+        function onDrop(e) {
+            e.preventDefault();
+            this.classList.remove('highlight');
+            document.querySelectorAll('.drop-zone').forEach(z => {
+                z.classList.remove('active', 'highlight');
+            });
+
+            const id = e.dataTransfer.getData('text/plain');
+            if (!id) return;
+
+            const dragged = document.getElementById(id);
+            if (!dragged) return;
+
+            const sourceType = dragged.dataset.type;
+
+            const target = this;
+            const targetId = target.id;
+            let targetType = '';
+
+            if (targetId === 'dropZoneRack' || target.closest('#rackStation') || targetId === 'rackStation') {
+                targetType = 'rack';
+            } else if (targetId === 'dropZoneTube' || target.closest('#sampleStation') || targetId === 'sampleStation') {
+                targetType = 'tube';
+            }
+
+            processDrop(sourceType, targetType, dragged);
+        }
+
+        function getValidItems() {
+            if (currentStep === 1) return ['sample'];
+            if (currentStep === 2) return ['lysis', 'enzyme', 'beads'];
+            if (currentStep === 3) return [];
+            if (currentStep === 4) return ['primers', 'masterMix'];
+            if (currentStep === 5) return [];
+            if (currentStep === 6) return [];
+            return [];
+        }
+
+        // ============================================================
+        // PROCESS DROP
+        // ============================================================
+        function processDrop(sourceType, targetType, draggedEl) {
+            console.log(`Drop: ${sourceType} → ${targetType}`);
+
+            if (currentStep === 1) {
+                if (sourceType === 'sample' && targetType === 'rack') {
+                    if (!samplePlaced) {
+                        samplePlaced = true;
+                        updateTubeVisual('sample-loaded', '🧫 Fungal Sample');
+                        sampleStation.classList.add('placed');
+                        rackHole1.classList.add('has-sample');
+                        setTimeout(() => {
+                            actionDone = true;
+                            updateNextButtonState();
+                            statusBox.className = 'status-box success';
+                            statusBox.innerHTML = '✅ Sample placed! Now add lysis reagents.';
+                            statusBox.classList.add('success-flash');
+                            setTimeout(() => statusBox.classList.remove('success-flash'), 500);
+                        }, 300);
+                    }
+                } else {
+                    showError('Place Sample Tube on the Tube Rack.');
+                }
+                return;
+            }
+
+            if (currentStep === 2) {
+                if (sourceType === 'lysis' && targetType === 'tube') {
+                    if (!lysisAdded) {
+                        lysisAdded = true;
+                        updateTubeVisual('lysis-added', '🧫 Lysis Buffer added');
+                        document.getElementById('lysisBottleInner').classList.add('used');
+                        statusBox.className = 'status-box success';
+                        statusBox.innerHTML = '✅ Lysis Buffer added! Now add Lyticase enzyme.';
+                        statusBox.classList.add('success-flash');
+                        setTimeout(() => statusBox.classList.remove('success-flash'), 500);
+                        checkLysisStep2();
+                    } else {
+                        showError('Lysis Buffer already added.');
+                    }
+                } else if (sourceType === 'enzyme' && targetType === 'tube') {
+                    if (!enzymeAdded) {
+                        enzymeAdded = true;
+                        updateTubeVisual('lysis-added', '🧫 Lyticase added');
+                        document.getElementById('enzymeBottleInner').classList.add('used');
+                        statusBox.className = 'status-box success';
+                        statusBox.innerHTML = '✅ Lyticase added! Now add Glass Beads.';
+                        statusBox.classList.add('success-flash');
+                        setTimeout(() => statusBox.classList.remove('success-flash'), 500);
+                        checkLysisStep2();
+                    } else {
+                        showError('Lyticase already added.');
+                    }
+                } else if (sourceType === 'beads' && targetType === 'tube') {
+                    if (!beadsAdded) {
+                        beadsAdded = true;
+                        updateTubeVisual('lysis-added', '🔮 Glass Beads added');
+                        document.getElementById('beadBottleInner').classList.add('used');
+                        statusBox.className = 'status-box success';
+                        statusBox.innerHTML = '✅ Glass Beads added! Click the beads to start bead beating!';
+                        statusBox.classList.add('success-flash');
+                        setTimeout(() => statusBox.classList.remove('success-flash'), 500);
+                        checkLysisStep2();
+                    } else {
+                        showError('Glass Beads already added.');
+                    }
+                } else {
+                    showError('Drag Lysis Buffer, Lyticase, or Glass Beads to the Sample Tube.');
+                }
+                return;
+            }
+
+            if (currentStep === 4) {
+                if (sourceType === 'primers' && targetType === 'tube') {
+                    if (!primersAdded) {
+                        primersAdded = true;
+                        document.getElementById('primerBottleInner').classList.add('used');
+                        statusBox.className = 'status-box success';
+                        statusBox.innerHTML = '✅ ITS Primers added! Now add Master Mix.';
+                        statusBox.classList.add('success-flash');
+                        setTimeout(() => statusBox.classList.remove('success-flash'), 500);
+                        checkPCRSetup();
+                    } else {
+                        showError('Primers already added.');
+                    }
+                } else if (sourceType === 'masterMix' && targetType === 'tube') {
+                    if (!masterMixAdded) {
+                        masterMixAdded = true;
+                        updateTubeVisual('pcr-mix-added', '🧬 PCR Master Mix added');
+                        document.getElementById('masterMixBottleInner').classList.add('used');
+                        statusBox.className = 'status-box success';
+                        statusBox.innerHTML = '✅ PCR Master Mix added! PCR setup complete!';
+                        statusBox.classList.add('success-flash');
+                        setTimeout(() => statusBox.classList.remove('success-flash'), 500);
+                        checkPCRSetup();
+                    } else {
+                        showError('Master Mix already added.');
+                    }
+                } else {
+                    showError('Drag ITS Primers or Master Mix to the Sample Tube.');
+                }
+                return;
+            }
+        }
+
+        function checkLysisStep2() {
+            if (lysisAdded && enzymeAdded && beadsAdded) {
+                statusBox.className = 'status-box success';
+                statusBox.innerHTML = '✅ All lysis reagents added! Click the Glass Beads to start bead beating! 🔮';
+                statusBox.classList.add('success-flash');
+                setTimeout(() => statusBox.classList.remove('success-flash'), 500);
+                document.getElementById('beadBottle').style.cursor = 'pointer';
+                document.getElementById('beadBottle').style.filter = 'brightness(1.1)';
+                
+                // Enable Next Step button for Step 2
+                actionDone = true;
+                updateNextButtonState();
+                
+                // AUTO-NAVIGATE TO STEP 3 AFTER 2 SECONDS
+                if (!autoNavStep2) {
+                    autoNavStep2 = true;
+                    setTimeout(() => {
+                        if (currentStep === 2 && lysisAdded && enzymeAdded && beadsAdded) {
+                            console.log('🔄 Auto-navigating to Step 3...');
+                            currentStep = 3;
+                            autoNavStep2 = false;
+                            updateStep();
+                        }
+                    }, 2000);
+                }
+            }
+        }
+
+        // ============================================================
+        // BEAD BEATING
+        // ============================================================
+        function startBeadBeating() {
+            if (beadBeatingDone) return;
+
+            if (!lysisAdded || !enzymeAdded || !beadsAdded) {
+                showError('Add Lysis Buffer, Lyticase, and Glass Beads first!');
+                return;
+            }
+
+            statusBox.className = 'status-box';
+            statusBox.innerHTML = '🔮 Bead beating in progress... Shaking cells!';
+
+            updateTubeVisual('bead-beating', '🔮 Bead beating!');
+
+            let shakes = 0;
+            const shakeInterval = setInterval(() => {
+                shakes++;
+                if (shakes >= 20) {
+                    clearInterval(shakeInterval);
+                    completeBeadBeating();
+                }
+            }, 150);
+
+            function completeBeadBeating() {
+                beadBeatingDone = true;
+                updateTubeVisual('enz-lysis', '✅ Fungal cells lysed! DNA released');
+                document.getElementById('beadBottle').style.cursor = 'default';
+                document.getElementById('beadBottle').style.filter = 'none';
+
+                statusBox.className = 'status-box success';
+                statusBox.innerHTML = '✅ Bead beating complete! Fungal cells are broken open. DNA is released!';
+                statusBox.classList.add('success-flash');
+                setTimeout(() => statusBox.classList.remove('success-flash'), 500);
+
+                // Enable Next Step for Step 3
+                actionDone = true;
+                updateNextButtonState();
+                updateEquipmentStates();
+                
+                console.log('✅ Bead beating complete! Next Step should be enabled.');
+            }
+        }
+
+        // ============================================================
+        // CHECK PCR SETUP
+        // ============================================================
+        function checkPCRSetup() {
+            if (primersAdded && masterMixAdded) {
+                statusBox.className = 'status-box success';
+                statusBox.innerHTML = '✅ PCR setup complete! Click the Thermal Cycler to start amplification.';
+                statusBox.classList.add('success-flash');
+                setTimeout(() => statusBox.classList.remove('success-flash'), 500);
+                
+                // Enable Next Step for Step 4
+                actionDone = true;
+                updateNextButtonState();
+                updateEquipmentStates();
+            }
+        }
+
+        // ============================================================
+        // PCR - THERMAL CYCLING - ULTRA FAST!
+        // ============================================================
+        function runPCR() {
+            if (isCycling) return;
+            if (currentStep !== 5) {
+                showError('PCR not needed at this step.');
+                return;
+            }
+            if (!primersAdded || !masterMixAdded) {
+                showError('Add ITS primers and master mix to the sample first!');
+                return;
+            }
+
+            isCycling = true;
+            thermalCycler.classList.add('running');
+            thermalCycler.classList.remove('ready');
+
+            let cycles = 0;
+            const totalCycles = 30;
+            const temps = [
+                { label: 'Denaturation', temp: 94, time: 30 },
+                { label: 'Annealing', temp: 58, time: 30 },
+                { label: 'Extension', temp: 72, time: 60 }
+            ];
+            let currentPhase = 0;
+            let phaseTime = 0;
+
+            cyclerDisplay.textContent = `🔄 Starting PCR...`;
+            statusBox.className = 'status-box';
+            statusBox.innerHTML = '🔄 PCR running... (Ultra Fast!)';
+
+            // ============================================================
+            // ⚡ ULTRA FAST PCR - Changed to 20 milliseconds!
+            // ============================================================
+            const cycleInterval = setInterval(() => {
+                const phase = temps[currentPhase];
+                phaseTime += 0.5;
+
+                if (phaseTime >= phase.time) {
+                    phaseTime = 0;
+                    currentPhase++;
+
+                    if (currentPhase >= temps.length) {
+                        currentPhase = 0;
+                        cycles++;
+
+                        if (cycles >= totalCycles) {
+                            clearInterval(cycleInterval);
+                            completePCR();
+                            return;
+                        }
+
+                        cyclerDisplay.textContent = `🔬 Cycle ${cycles + 1}/${totalCycles}`;
+                        statusBox.innerHTML = `🔄 PCR in progress... Cycle ${cycles + 1}/${totalCycles}`;
+                    } else {
+                        cyclerDisplay.textContent = `🌡️ ${phase.label} - ${phase.temp}°C (${Math.round(phaseTime)}s/${phase.time}s)`;
+                    }
+                } else {
+                    cyclerDisplay.textContent = `🌡️ ${phase.label} - ${phase.temp}°C (${Math.round(phaseTime)}s/${phase.time}s)`;
+                }
+            }, 20);  // ← CHANGED FROM 350 TO 20 FOR ULTRA FAST PCR!
+
+            function completePCR() {
+                isCycling = false;
+                pcrComplete = true;
+                thermalCycler.classList.remove('running');
+                cyclerDisplay.textContent = `✅ PCR Complete! (30 cycles)`;
+
+                updateTubeVisual('pcr-complete', '🧬 PCR Complete! Fungal DNA amplified');
+
+                statusBox.className = 'status-box success';
+                statusBox.innerHTML = '✅ PCR amplification complete! Click "Next Step" to run gel electrophoresis.';
+                statusBox.classList.add('success-flash');
+                setTimeout(() => statusBox.classList.remove('success-flash'), 500);
+
+                // Enable Next Step for Step 5
+                actionDone = true;
+                updateNextButtonState();
+                updateEquipmentStates();
+                
+                console.log('✅ PCR complete! Next Step should be enabled.');
+            }
+        }
+
+        // ============================================================
+        // GEL ELECTROPHORESIS
+        // ============================================================
+        function runGel() {
+            if (isGelRunning) return;
+            if (currentStep !== 6) {
+                showError('Gel electrophoresis not needed at this step.');
+                return;
+            }
+            if (!pcrComplete) {
+                showError('Run PCR first!');
+                return;
+            }
+
+            isGelRunning = true;
+            gelBox.classList.add('running');
+            gelBox.classList.remove('ready');
+            gelResult.textContent = '⚡ Running gel...';
+            statusBox.className = 'status-box';
+            statusBox.innerHTML = '⚡ Gel running... Please wait.';
+
+            let progress = 0;
+            const gelInterval = setInterval(() => {
+                progress += 5;
+                if (progress >= 100) {
+                    clearInterval(gelInterval);
+                    completeGel();
+                }
+            }, 150);
+
+            function completeGel() {
+                isGelRunning = false;
+                gelBox.classList.remove('running');
+                gelResult.textContent = '🧬 Results:';
+
+                // Randomly determine result
+                detectionResult = Math.random() > 0.2 ? 'positive' : 'negative';
+
+                if (detectionResult === 'positive') {
+                    band1.classList.add('visible', 'positive');
+                    band2.classList.add('visible', 'positive');
+                    band3.classList.add('visible', 'positive');
+                    band4.classList.add('visible', 'positive');
+                    gelResult.textContent = '🧬 Fungal DNA Detected! ✅';
+                    gelResult.className = 'result-label positive';
+                    statusBox.className = 'status-box success';
+                    statusBox.innerHTML = '✅ Fungal DNA detected! ITS region amplified successfully.';
+                    document.getElementById('resultTitle').textContent = '✅ Fungal DNA Detected!';
+                    document.getElementById('resultMessage').textContent = 'The ITS PCR product was successfully amplified and visualized on the gel. Fungal DNA is present in the sample.';
+                } else {
+                    band1.classList.add('visible', 'negative');
+                    band2.classList.add('visible', 'negative');
+                    band3.classList.add('visible', 'negative');
+                    band4.classList.add('visible', 'negative');
+                    gelResult.textContent = '❌ No Fungal DNA Detected';
+                    gelResult.className = 'result-label negative';
+                    statusBox.className = 'status-box error';
+                    statusBox.innerHTML = '❌ No fungal DNA detected. The sample may not contain fungi or PCR failed.';
+                    document.getElementById('resultTitle').textContent = '❌ No Fungal DNA Detected';
+                    document.getElementById('resultMessage').textContent = 'No amplification was observed. The sample may not contain fungal DNA, or the PCR reaction may have failed.';
+                }
+
+                gelRun = true;
+                actionDone = true;
+                updateNextButtonState();
+                updateEquipmentStates();
+
+                // Save results to localStorage
+                saveResultsToLocalStorage();
+
+                setTimeout(() => {
+                    document.getElementById('finalScore').textContent = score + '%';
+                    document.getElementById('finalMistakes').textContent = mistakes;
+                    document.getElementById('result').classList.add('show');
+                    document.querySelector('.lab-grid').style.display = 'none';
+                }, 1500);
+            }
+        }
+
+        // ============================================================
+        // SAVE RESULTS TO LOCALSTORAGE
+        // ============================================================
+        function saveResultsToLocalStorage() {
+            try {
+                const now = new Date();
+                const dateString = now.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+
+                const resultsData = {
+                    experimentId: 'fungal-pcr',
+                    title: 'Fungal DNA Detection - PCR',
+                    score: score,
+                    stepsCompleted: 6,
+                    totalSteps: 6,
+                    timeSpent: '30-40 min',
+                    accuracy: score + '%',
+                    
+                    details: {
+                        experiment: 'Fungal DNA Detection',
+                        voltage: '100 V',
+                        time: '40 minutes',
+                        stain: 'GelRed',
+                        image: 'Yes',
+                        date: dateString,
+                        detection: detectionResult
+                    },
+                    
+                    bands: [
+                        { sample: 'Ladder', result: '5 bands visible', status: 'success', statusText: 'Good' },
+                        { sample: 'Positive Control', result: '2 bands visible - PCR successful ✓', status: 'success', statusText: 'Valid' },
+                        { sample: 'Sample 1', result: detectionResult === 'positive' ? '2 bands visible - Fungal DNA detected ✓' : 'No bands visible - No detection ❌', status: detectionResult === 'positive' ? 'success' : 'error', statusText: detectionResult === 'positive' ? 'Detected' : 'Not Detected' },
+                        { sample: 'Sample 2', result: detectionResult === 'positive' ? '2 bands visible - Fungal DNA detected ✓' : 'No bands visible - No detection ❌', status: detectionResult === 'positive' ? 'success' : 'error', statusText: detectionResult === 'positive' ? 'Detected' : 'Not Detected' },
+                        { sample: 'Negative Control', result: 'No bands visible - Control valid ✓', status: 'success', statusText: 'Valid' }
+                    ],
+                    
+                    interpretation: detectionResult === 'positive' ? 
+                        '✅ Fungal DNA detected in samples. ITS region was successfully amplified.' :
+                        '⚠️ No fungal DNA detected in samples. The ITS region was not amplified.',
+                    
+                    recommendations: detectionResult === 'positive' ? [
+                        { text: 'Good fungal DNA extraction and PCR technique', type: 'good' },
+                        { text: `Score: ${score}% with ${mistakes} mistake(s)`, type: mistakes > 0 ? 'warning' : 'good' },
+                        { text: 'All controls are valid', type: 'good' }
+                    ] : [
+                        { text: 'PCR worked (positive control shows amplification)', type: 'good' },
+                        { text: `Score: ${score}% with ${mistakes} mistake(s)`, type: mistakes > 0 ? 'warning' : 'good' },
+                        { text: 'Samples show no fungal DNA - check sample source', type: 'warning' }
+                    ],
+                    
+                    rawData: {
+                        score: score,
+                        mistakes: mistakes,
+                        detectionResult: detectionResult,
+                        beadBeatingDone: beadBeatingDone,
+                        completionDate: new Date().toISOString()
+                    }
+                };
+
+                localStorage.setItem('fungalPcrResults', JSON.stringify(resultsData));
+                console.log('💾 Fungal PCR results saved to localStorage');
+                console.log('📊 Score:', score, '%');
+                console.log('🧬 Detection:', detectionResult);
+
+            } catch(e) {
+                console.error('Could not save results:', e);
+            }
+        }
+
+        // ============================================================
+        // HELPERS
+        // ============================================================
+        function completeAction(msg) {
+            actionDone = true;
+            updateNextButtonState();
+            statusBox.className = 'status-box success';
+            statusBox.innerHTML = msg + ' ✅';
+            const pct = Math.round((currentStep / 6) * 100);
+            progressFill.style.width = pct + '%';
+            progressPercent.textContent = pct + '%';
+            updateEquipmentStates();
+        }
+
+        function showError(msg) {
+            mistakes++;
+            score = Math.max(0, score - 5);
+            mistakesDisplay.textContent = `❌ Mistakes: ${mistakes}`;
+            scoreDisplay.textContent = `⭐ Score: ${score}%`;
+            statusBox.className = 'status-box error';
+            statusBox.innerHTML = `❌ ${msg}`;
+            statusBox.classList.add('success-flash');
+            setTimeout(() => statusBox.classList.remove('success-flash'), 500);
+        }
+
+        // ============================================================
+        // NEXT STEP - FIXED!
+        // ============================================================
+        function nextStep() {
+            if (!actionDone) {
+                showError('Complete the required action first!');
+                return;
+            }
+
+            if (currentStep >= 6) {
+                showError('You are on the last step! Click the Gel box to complete the experiment.');
+                return;
+            }
+
+            // Move to next step
+            currentStep++;
+            autoNavStep2 = false;
+            autoNavStep3 = false;
+            updateStep();
+        }
+
+        // ============================================================
+        // REPEAT / RESET
+        // ============================================================
+        function repeatCurrentStep() {
+            const stepData = steps[currentStep - 1];
+
+            if (mistakes > 0) {
+                mistakes--;
+                score = Math.min(100, score + 5);
+                mistakesDisplay.textContent = `❌ Mistakes: ${mistakes}`;
+                scoreDisplay.textContent = `⭐ Score: ${score}%`;
+            }
+
+            if (stepData.action === 'sample') {
+                samplePlaced = false;
+                sampleStation.classList.remove('placed');
+                rackHole1.classList.remove('has-sample');
+                updateTubeVisual('empty', '⚪ Empty');
+                document.getElementById('sampleStation').style.opacity = '1';
+                document.getElementById('sampleStation').style.pointerEvents = 'auto';
+            } else if (stepData.action === 'lysis') {
+                lysisAdded = false;
+                enzymeAdded = false;
+                beadsAdded = false;
+                document.getElementById('lysisBottleInner').classList.remove('used');
+                document.getElementById('enzymeBottleInner').classList.remove('used');
+                document.getElementById('beadBottleInner').classList.remove('used');
+                updateTubeVisual('empty', '⚪ Empty');
+                document.getElementById('beadBottle').style.cursor = 'default';
+                document.getElementById('beadBottle').style.filter = 'none';
+            } else if (stepData.action === 'beadBeat') {
+                beadBeatingDone = false;
+                updateTubeVisual('empty', '⚪ Empty');
+                document.getElementById('beadBottle').style.cursor = 'pointer';
+                document.getElementById('beadBottle').style.filter = 'brightness(1.1)';
+            } else if (stepData.action === 'pcrSetup') {
+                primersAdded = false;
+                masterMixAdded = false;
+                document.getElementById('primerBottleInner').classList.remove('used');
+                document.getElementById('masterMixBottleInner').classList.remove('used');
+                updateTubeVisual('empty', '⚪ Empty');
+            } else if (stepData.action === 'pcr') {
+                pcrComplete = false;
+                isCycling = false;
+                thermalCycler.classList.remove('running');
+                cyclerDisplay.textContent = '⏸ Idle - 25°C';
+                updateTubeVisual('empty', '⚪ Empty');
+            } else if (stepData.action === 'gel') {
+                gelRun = false;
+                isGelRunning = false;
+                gelBox.classList.remove('running');
+                document.getElementById('band1').className = 'band';
+                document.getElementById('band2').className = 'band';
+                document.getElementById('band3').className = 'band';
+                document.getElementById('band4').className = 'band';
+                gelResult.textContent = 'Waiting for sample...';
+                gelResult.className = 'result-label';
+                document.getElementById('result').classList.remove('show');
+                document.querySelector('.lab-grid').style.display = 'grid';
+            }
+
+            actionDone = false;
+            autoNavStep2 = false;
+            autoNavStep3 = false;
+            nextBtn.disabled = true;
+            statusBox.className = 'status-box';
+            statusBox.innerHTML = `💡 ${stepDescriptions[currentStep].statusTip}`;
+            updateEquipmentStates();
+            initDragDrop();
+            updateNextButtonState();
+        }
+
+        function resetSimulation() {
+            currentStep = 1;
+            score = 100;
+            mistakes = 0;
+            samplePlaced = false;
+            lysisAdded = false;
+            enzymeAdded = false;
+            beadsAdded = false;
+            beadBeatingDone = false;
+            primersAdded = false;
+            masterMixAdded = false;
+            pcrComplete = false;
+            gelRun = false;
+            isCycling = false;
+            isGelRunning = false;
+            autoNavStep2 = false;
+            autoNavStep3 = false;
+            actionDone = false;
+
+            thermalCycler.classList.remove('running');
+            cyclerDisplay.textContent = '⏸ Idle - 25°C';
+            gelBox.classList.remove('running');
+            document.getElementById('band1').className = 'band';
+            document.getElementById('band2').className = 'band';
+            document.getElementById('band3').className = 'band';
+            document.getElementById('band4').className = 'band';
+            gelResult.textContent = 'Waiting for sample...';
+            gelResult.className = 'result-label';
+            document.getElementById('result').classList.remove('show');
+            document.querySelector('.lab-grid').style.display = 'grid';
+
+            document.getElementById('lysisBottleInner').classList.remove('used');
+            document.getElementById('enzymeBottleInner').classList.remove('used');
+            document.getElementById('beadBottleInner').classList.remove('used');
+            document.getElementById('primerBottleInner').classList.remove('used');
+            document.getElementById('masterMixBottleInner').classList.remove('used');
+
+            document.getElementById('beadBottle').style.cursor = 'default';
+            document.getElementById('beadBottle').style.filter = 'none';
+
+            sampleStation.classList.remove('placed');
+            sampleStation.style.opacity = '1';
+            sampleStation.style.pointerEvents = 'auto';
+            rackHole1.classList.remove('has-sample');
+            updateTubeVisual('empty', '⚪ Empty');
+
+            updateStep();
+        }
+
+        // ============================================================
+        // INIT
+        // ============================================================
+        updateTubeVisual('empty', '⚪ Empty');
+        updateStep();
+
+        document.getElementById('nextBtn').addEventListener('click', nextStep);
+        document.getElementById('repeatBtn').addEventListener('click', repeatCurrentStep);
+        document.getElementById('resetBtn').addEventListener('click', resetSimulation);
+
+        console.log('🧫 PCR - Fungal DNA Detection Simulation Loaded!');
+        console.log('📌 BEGINNER GUIDE:');
+        console.log('   Step 1: Drag Sample Tube → Tube Rack');
+        console.log('   Step 2: Drag 3 reagents (Lysis Buffer, Lyticase, Glass Beads)');
+        console.log('   Step 3: Click Glass Beads for bead beating');
+        console.log('   Step 4: Drag ITS Primers + Master Mix');
+        console.log('   Step 5: Click Thermal Cycler (ULTRA FAST - ~0.6 seconds!)');
+        console.log('   Step 6: Click Gel Electrophoresis');
+        console.log('💡 PCR is now ULTRA FAST! Only ~0.6 seconds total!');
+        console.log('💡 After PCR completes, "Next Step" will turn BLUE and be clickable!');
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Equipment Reference | MoleBio Lab</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f0f4f8;
+            color: #173f5f;
+            min-height: 100vh;
+        }
+
+        .ref-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        .ref-header {
+            background: white;
+            border-radius: 12px;
+            padding: 25px 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .ref-header h1 {
+            font-size: 28px;
+            color: #173f5f;
+        }
+
+        .ref-header .subtitle {
+            color: #65788a;
+            font-size: 15px;
+        }
+
+        .back-btn {
+            text-decoration: none;
+            color: #4a90e2;
+            font-weight: 600;
+            padding: 8px 20px;
+            border-radius: 8px;
+            background: #e8f4fc;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: #d0e8f8;
+            transform: translateX(-3px);
+        }
+
+        .ref-body {
+            background: white;
+            border-radius: 12px;
+            padding: 35px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        .ref-body h2 {
+            font-size: 22px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e8f4fc;
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .search-bar input {
+            flex: 1;
+            padding: 12px 18px;
+            border: 2px solid #e0e8f0;
+            border-radius: 8px;
+            font-size: 15px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .search-bar input:focus {
+            border-color: #4a90e2;
+        }
+
+        .search-bar select {
+            padding: 12px 18px;
+            border: 2px solid #e0e8f0;
+            border-radius: 8px;
+            font-size: 15px;
+            outline: none;
+            background: white;
+            cursor: pointer;
+        }
+
+        .equipment-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .equipment-card {
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 20px;
+            border: 1px solid #e8edf2;
+            transition: all 0.3s ease;
+        }
+
+        .equipment-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            border-color: #4a90e2;
+        }
+
+        .equipment-card .icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .equipment-card .name {
+            font-size: 17px;
+            font-weight: 600;
+            color: #173f5f;
+            margin-bottom: 5px;
+        }
+
+        .equipment-card .use {
+            font-size: 14px;
+            color: #65788a;
+            line-height: 1.5;
+        }
+
+        .equipment-card .category {
+            display: inline-block;
+            padding: 2px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            background: #e8f4fc;
+            color: #4a90e2;
+            margin-top: 8px;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: #65788a;
+        }
+
+        .no-results .icon {
+            font-size: 48px;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .ref-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .search-bar {
+                flex-direction: column;
+            }
+
+            .equipment-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .ref-container {
+                padding: 15px 10px;
+            }
+
+            .ref-body {
+                padding: 20px;
+            }
+        }
+
+        @media print {
+            .back-btn,
+            .search-bar {
+                display: none !important;
+            }
+
+            .ref-body {
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }
+
+            .equipment-card {
+                break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="ref-container">
+
+    <header class="ref-header">
+        <div>
+            <h1>🔬 Equipment Reference</h1>
+            <p class="subtitle">Complete list of molecular biology equipment and their uses</p>
+        </div>
+        <a href="experiments.html" class="back-btn">← Back to Experiments</a>
+    </header>
+
+    <div class="ref-body">
+
+        <h2>🧪 Laboratory Equipment</h2>
+
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="🔍 Search equipment..." oninput="filterEquipment()" />
+            <select id="categoryFilter" onchange="filterEquipment()">
+                <option value="all">All Categories</option>
+                <option value="pcr">PCR & Amplification</option>
+                <option value="electrophoresis">Electrophoresis</option>
+                <option value="centrifugation">Centrifugation</option>
+                <option value="incubation">Incubation & Heating</option>
+                <option value="sterilization">Sterilization</option>
+                <option value="storage">Storage</option>
+                <option value="measurement">Measurement</option>
+                <option value="mixing">Mixing</option>
+                <option value="pipetting">Pipetting</option>
+                <option value="safety">Safety</option>
+            </select>
+        </div>
+
+        <div class="equipment-grid" id="equipmentGrid">
+            <!-- Equipment loaded from JavaScript -->
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+    // ============================================================
+    // EQUIPMENT DATA
+    // ============================================================
+    const equipmentData = [
+        { id: 1, name: "Thermal Cycler (PCR Machine)", use: "Amplifies specific DNA or RNA sequences using Polymerase Chain Reaction (PCR).", icon: "🔥", category: "pcr" },
+        { id: 2, name: "Real-Time PCR (qPCR) Machine", use: "Quantifies DNA/RNA in real time and measures gene expression.", icon: "📊", category: "pcr" },
+        { id: 3, name: "Gel Electrophoresis System", use: "Separates DNA, RNA, or proteins based on size using an electric field.", icon: "🧬", category: "electrophoresis" },
+        { id: 4, name: "Power Supply Unit", use: "Provides electrical current for gel electrophoresis.", icon: "⚡", category: "electrophoresis" },
+        { id: 5, name: "UV/Blue Light Transilluminator", use: "Visualizes DNA or RNA bands in agarose gels.", icon: "💡", category: "electrophoresis" },
+        { id: 6, name: "Gel Documentation System", use: "Captures and stores images of electrophoresis gels.", icon: "📸", category: "electrophoresis" },
+        { id: 7, name: "Microcentrifuge", use: "Spins small liquid volumes to separate components by density.", icon: "🌀", category: "centrifugation" },
+        { id: 8, name: "Laminar Flow Hood", use: "Maintains a clean, contamination-free workspace for sensitive work.", icon: "💨", category: "safety" },
+        { id: 9, name: "Water Bath", use: "Maintains samples at a constant temperature.", icon: "🛁", category: "incubation" },
+        { id: 10, name: "Autoclave", use: "Sterilizes media, glassware, and waste using steam under pressure.", icon: "♨️", category: "sterilization" },
+        { id: 11, name: "Incubator", use: "Maintains controlled temperature for cell culture or enzymatic reactions.", icon: "🌡️", category: "incubation" },
+        { id: 12, name: "Shaking Incubator", use: "Incubates samples while mixing (e.g., bacterial cultures).", icon: "🔄", category: "incubation" },
+        { id: 13, name: "Refrigerator (4°C)", use: "Stores short-term reagents and samples.", icon: "❄️", category: "storage" },
+        { id: 14, name: "Freezer (-20°C / -80°C)", use: "Stores enzymes, DNA, RNA, and long-term samples.", icon: "🧊", category: "storage" },
+        { id: 15, name: "Spectrophotometer / NanoDrop", use: "Measures DNA, RNA, and protein concentration and purity.", icon: "📈", category: "measurement" },
+        { id: 16, name: "Vortex Mixer", use: "Mixes samples quickly and uniformly.", icon: "🌀", category: "mixing" },
+        { id: 17, name: "Magnetic Stirrer / Hot Plate", use: "Mixes and heats solutions.", icon: "🔥", category: "mixing" },
+        { id: 18, name: "Micropipettes", use: "Accurately measure and transfer small liquid volumes.", icon: "🧫", category: "pipetting" },
+        { id: 19, name: "Pipette Tips (Sterile / Filtered)", use: "Used with micropipettes to prevent contamination.", icon: "💧", category: "pipetting" },
+        { id: 20, name: "Microcentrifuge Tubes", use: "Hold samples for reactions and storage (0.2 ml, 0.5 ml, 1.5 ml, 2 ml).", icon: "🧪", category: "storage" },
+        { id: 21, name: "PCR Tubes / PCR Plates", use: "Hold samples during PCR reactions.", icon: "🧪", category: "pcr" },
+        { id: 22, name: "Tube Racks", use: "Hold tubes upright during experiments.", icon: "📦", category: "storage" },
+        { id: 23, name: "Forceps and Spatulas", use: "Handle gels, membranes, and solid reagents.", icon: "🛠️", category: "misc" },
+        { id: 24, name: "Eye Wash Station", use: "Emergency eye cleaning after chemical exposure.", icon: "👁️", category: "safety" },
+        { id: 25, name: "Fire Extinguisher", use: "Fire safety.", icon: "🧯", category: "safety" },
+        { id: 26, name: "Biohazard Bags", use: "Disposal of contaminated materials.", icon: "☣️", category: "safety" },
+        { id: 27, name: "First Aid Kit", use: "Immediate treatment of minor injuries.", icon: "🏥", category: "safety" },
+        { id: 28, name: "Tissue Homogenizer", use: "Breaks down tissues for DNA/RNA extraction.", icon: "🔨", category: "misc" }
+    ];
+
+    // ============================================================
+    // RENDER EQUIPMENT
+    // ============================================================
+    function renderEquipment(data) {
+        const grid = document.getElementById('equipmentGrid');
+        grid.innerHTML = '';
+
+        if (data.length === 0) {
+            grid.innerHTML = `
+                <div class="no-results" style="grid-column: 1 / -1;">
+                    <span class="icon">🔍</span>
+                    <p>No equipment found matching your search.</p>
+                </div>
+            `;
+            return;
+        }
+
+        data.forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'equipment-card';
+            div.innerHTML = `
+                <div class="icon">${item.icon}</div>
+                <div class="name">${item.name}</div>
+                <div class="use">${item.use}</div>
+                <span class="category">${item.category}</span>
+            `;
+            grid.appendChild(div);
+        });
+    }
+
+    // ============================================================
+    // FILTER EQUIPMENT
+    // ============================================================
+    function filterEquipment() {
+        const search = document.getElementById('searchInput').value.toLowerCase();
+        const category = document.getElementById('categoryFilter').value;
+
+        let filtered = equipmentData;
+
+        if (search) {
+            filtered = filtered.filter(item =>
+                item.name.toLowerCase().includes(search) ||
+                item.use.toLowerCase().includes(search)
+            );
+        }
+
+        if (category !== 'all') {
+            filtered = filtered.filter(item => item.category === category);
+        }
+
+        renderEquipment(filtered);
+    }
+
+    // ============================================================
+    // INIT
+    // ============================================================
+    renderEquipment(equipmentData);
+
+    console.log('🔬 Equipment Reference Page Loaded!');
+    console.log(`📋 ${equipmentData.length} equipment items displayed`);
+</script>
+
+</body>
+</html>
