@@ -1,96 +1,25 @@
-const CACHE_NAME = "molebio-lab-v2";
-
-const BASE_PATH = "/molecular-biology-simulation/";
-
-const FILES_TO_CACHE = [
-BASE_PATH,
-BASE_PATH + "index.html",
-BASE_PATH + "manifest.json",
-
-BASE_PATH + "css/style.css",
-
-BASE_PATH + "js/app.js",
-BASE_PATH + "js/practical-overview.js",
-
-BASE_PATH + "pages/practical-overview.html",
-BASE_PATH + "pages/student-dashboard.html",
-BASE_PATH + "pages/results.html",
-BASE_PATH + "pages/report.html"
-];
-
-
-self.addEventListener("install", function (event) {
-
-event.waitUntil(
-
-caches.open(CACHE_NAME)
-
-.then(function (cache) {
-
-return cache.addAll(FILES_TO_CACHE);
-
-})
-
-);
-
-self.skipWaiting();
-
-});
-
-
-self.addEventListener("activate", function (event) {
-
-event.waitUntil(
-
-caches.keys()
-
-.then(function (cacheNames) {
-
-return Promise.all(
-
-cacheNames
-
-.filter(function (name) {
-
-return name !== CACHE_NAME;
-
-})
-
-.map(function (name) {
-
-return caches.delete(name);
-
-})
-
-);
-
-})
-
-);
-
-self.clients.claim();
-
-});
-
-
-self.addEventListener("fetch", function (event) {
-
-event.respondWith(
-
-caches.match(event.request)
-
-.then(function (response) {
-
-if (response) {
-
-return response;
-
+{
+    "name": "MoleBio Lab - Virtual Molecular Biology Laboratory",
+    "short_name": "MoleBio Lab",
+    "description": "Interactive Virtual Molecular Biology Laboratory for students.",
+    "start_url": "./index.html",
+    "scope": "./",
+    "display": "standalone",
+    "background_color": "#f5f9fc",
+    "theme_color": "#087fbe",
+    "orientation": "landscape",
+    "icons": [
+        {
+            "src": "./assets/icons/molebio-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "./assets/icons/molebio-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ]
 }
-
-return fetch(event.request);
-
-})
-
-);
-
-});
