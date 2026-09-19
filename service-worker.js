@@ -1,104 +1,65 @@
-const CACHE_NAME =
-    "molebio-lab-v1";
+const CACHE_NAME = "molebio-lab-v3";
 
+const BASE_PATH = "/molecular-biology-simulation/";
 
 const FILES_TO_CACHE = [
-
-    "/",
-
-    "/index.html",
-
-    "/css/style.css",
-
-    "/js/app.js",
-
-    "/js/practical-overview.js",
-
-    "/pages/practical-overview.html",
-
-    "/pages/student-dashboard.html",
-
-    "/pages/results.html",
-
-    "/pages/report.html"
-
+    BASE_PATH,
+    BASE_PATH + "index.html",
+    BASE_PATH + "manifest.json",
+    BASE_PATH + "css/style.css",
+    BASE_PATH + "js/app.js"
 ];
 
+self.addEventListener("install", event => {
 
-self.addEventListener(
-    "install",
-    function (event) {
+    event.waitUntil(
 
-        event.waitUntil(
+        caches.open(CACHE_NAME).then(cache => {
 
-            caches.open(CACHE_NAME)
+            return cache.addAll(FILES_TO_CACHE);
 
-                .then(function (cache) {
+        })
 
-                    return cache.addAll(
-                        FILES_TO_CACHE
-                    );
+    );
 
-                })
+    self.skipWaiting();
 
-        );
-
-        self.skipWaiting();
-
-    }
-);
+});
 
 
-self.addEventListener(
-    "activate",
-    function (event) {
+self.addEventListener("activate", event => {
 
-        event.waitUntil(
+    event.waitUntil(
 
-            caches.keys()
+        caches.keys().then(cacheNames => {
 
-                .then(function (cacheNames) {
+            return Promise.all(
 
-                    return Promise.all(
+                cacheNames
+                    .filter(name => name !== CACHE_NAME)
+                    .map(name => caches.delete(name))
 
-                        cacheNames
-                            .filter(
-                                name =>
-                                    name !== CACHE_NAME
-                            )
-                            .map(
-                                name =>
-                                    caches.delete(name)
-                            )
+            );
 
-                    );
+        })
 
-                })
+    );
 
-        );
+    self.clients.claim();
 
-        self.clients.claim();
-
-    }
-);
+});
 
 
-self.addEventListener(
-    "fetch",
-    function (event) {
+self.addEventListener("fetch", event => {
 
-        event.respondWith(
+    event.respondWith(
 
-            caches.match(event.request)
+        caches.match(event.request).then(response => {
 
-                .then(function (response) {
+            return response || fetch(event.request);
 
-                    return response ||
-                        fetch(event.request);
+        })
 
-                })
+    );
 
-        );
-
-    }
-);
+});
