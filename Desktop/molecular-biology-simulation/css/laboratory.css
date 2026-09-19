@@ -1,0 +1,364 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+body {
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    background: #f4f7fb;
+
+    color: #172033;
+
+}
+
+
+.lab-header {
+
+    height: 70px;
+
+    background: #12395b;
+
+    color: white;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 0 7%;
+
+}
+
+
+.lab-logo {
+
+    font-size: 21px;
+
+    font-weight: bold;
+
+}
+
+
+.back-button {
+
+    color: white;
+
+    padding: 10px 16px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.4);
+
+    border-radius: 7px;
+
+}
+
+
+.overview-container {
+
+    width: min(1100px, 92%);
+
+    margin: 40px auto 80px;
+
+}
+
+
+.overview-hero {
+
+    background:
+        linear-gradient(
+            135deg,
+            #1769aa,
+            #12395b
+        );
+
+    color: white;
+
+    padding: 45px;
+
+    border-radius: 18px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 30px;
+
+    margin-bottom: 25px;
+
+}
+
+
+.overview-icon {
+
+    width: 110px;
+
+    height: 110px;
+
+    background: white;
+
+    border-radius: 20px;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    font-size: 60px;
+
+}
+
+
+.overview-category {
+
+    font-size: 12px;
+
+    font-weight: bold;
+
+    letter-spacing: 1px;
+
+}
+
+
+.overview-hero h1 {
+
+    font-size: 38px;
+
+    margin: 10px 0;
+
+}
+
+
+.overview-hero p {
+
+    color: #dceeff;
+
+    line-height: 1.6;
+
+}
+
+
+.overview-meta {
+
+    display: flex;
+
+    gap: 15px;
+
+    margin-top: 18px;
+
+}
+
+
+.overview-meta span {
+
+    background:
+        rgba(255,255,255,.15);
+
+    padding: 8px 13px;
+
+    border-radius: 20px;
+
+    font-size: 13px;
+
+}
+
+
+.info-card {
+
+    background: white;
+
+    border-radius: 15px;
+
+    padding: 30px;
+
+    margin-bottom: 22px;
+
+    box-shadow:
+        0 5px 20px
+        rgba(0,0,0,.04);
+
+}
+
+
+.info-card h2 {
+
+    margin-bottom: 18px;
+
+    color: #12395b;
+
+}
+
+
+.info-card p {
+
+    color: #637184;
+
+    line-height: 1.8;
+
+}
+
+
+.info-card ul {
+
+    padding-left: 22px;
+
+}
+
+
+.info-card li {
+
+    margin-bottom: 10px;
+
+    color: #637184;
+
+    line-height: 1.5;
+
+}
+
+
+.two-column {
+
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 22px;
+
+}
+
+
+.procedure-step {
+
+    display: flex;
+
+    gap: 18px;
+
+    padding: 18px 0;
+
+    border-bottom:
+        1px solid #e8edf2;
+
+}
+
+
+.step-number {
+
+    width: 35px;
+
+    height: 35px;
+
+    flex-shrink: 0;
+
+    background: #1769aa;
+
+    color: white;
+
+    border-radius: 50%;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    font-weight: bold;
+
+}
+
+
+.procedure-step p {
+
+    margin-top: 5px;
+
+}
+
+
+.start-area {
+
+    text-align: center;
+
+    padding: 45px;
+
+    background: #eaf6ff;
+
+    border-radius: 18px;
+
+}
+
+
+.start-area h2 {
+
+    margin-bottom: 10px;
+
+}
+
+
+.start-area p {
+
+    color: #657184;
+
+    margin-bottom: 25px;
+
+}
+
+
+.simulation-button {
+
+    border: none;
+
+    background: #1769aa;
+
+    color: white;
+
+    padding: 16px 30px;
+
+    border-radius: 9px;
+
+    font-size: 16px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+}
+
+
+.simulation-button:hover {
+
+    background: #0d4f85;
+
+}
+
+
+@media(max-width: 700px) {
+
+    .overview-hero {
+
+        flex-direction: column;
+
+        text-align: center;
+
+    }
+
+    .overview-hero h1 {
+
+        font-size: 28px;
+
+    }
+
+    .two-column {
+
+        grid-template-columns: 1fr;
+
+    }
+
+}

@@ -1,0 +1,404 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+body {
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    background:
+        linear-gradient(
+            135deg,
+            #eef7ff,
+            #ffffff
+        );
+
+    color: #172033;
+
+}
+
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+
+/* ==============================
+   LANDING PAGE
+============================== */
+
+.landing-page {
+
+    min-height: 100vh;
+
+}
+
+
+/* ==============================
+   NAVBAR
+============================== */
+
+.navbar {
+
+    height: 75px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 0 7%;
+
+    background: white;
+
+    border-bottom: 1px solid #e5eaf0;
+
+}
+
+
+.logo {
+
+    font-size: 22px;
+
+    font-weight: 700;
+
+    color: #1769aa;
+
+}
+
+
+.nav-links {
+
+    display: flex;
+
+    gap: 35px;
+
+}
+
+
+.nav-links a {
+
+    color: #536174;
+
+    font-weight: 500;
+
+}
+
+
+.nav-links a:hover {
+
+    color: #1769aa;
+
+}
+
+
+/* ==============================
+   HERO
+============================== */
+
+.hero {
+
+    min-height: 620px;
+
+    display: grid;
+
+    grid-template-columns:
+        1fr
+        1fr;
+
+    align-items: center;
+
+    gap: 50px;
+
+    padding: 70px 8%;
+
+}
+
+
+.hero-content {
+
+    max-width: 650px;
+
+}
+
+
+.badge {
+
+    display: inline-block;
+
+    padding: 9px 15px;
+
+    border-radius: 30px;
+
+    background: #e4f2ff;
+
+    color: #1769aa;
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    letter-spacing: 1px;
+
+    margin-bottom: 20px;
+
+}
+
+
+.hero h1 {
+
+    font-size: 58px;
+
+    line-height: 1.05;
+
+    margin-bottom: 25px;
+
+}
+
+
+.hero h1 span {
+
+    display: block;
+
+    color: #1769aa;
+
+}
+
+
+.hero p {
+
+    color: #617084;
+
+    font-size: 18px;
+
+    line-height: 1.8;
+
+    margin-bottom: 35px;
+
+}
+
+
+.start-btn {
+
+    border: none;
+
+    background: #1769aa;
+
+    color: white;
+
+    padding: 16px 28px;
+
+    border-radius: 10px;
+
+    font-size: 16px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: 0.3s;
+
+}
+
+
+.start-btn:hover {
+
+    background: #0d4f85;
+
+    transform: translateY(-2px);
+
+}
+
+
+/* ==============================
+   HERO VISUAL
+============================== */
+
+.hero-visual {
+
+    min-height: 430px;
+
+    position: relative;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+}
+
+
+.dna-animation {
+
+    width: 280px;
+
+    height: 350px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 170px;
+
+    animation: floatDNA 4s ease-in-out infinite;
+
+}
+
+
+@keyframes floatDNA {
+
+    0%,
+    100% {
+
+        transform:
+            translateY(0)
+            rotate(-3deg);
+
+    }
+
+    50% {
+
+        transform:
+            translateY(-20px)
+            rotate(3deg);
+
+    }
+
+}
+
+
+.floating-card {
+
+    position: absolute;
+
+    padding: 15px 20px;
+
+    background: white;
+
+    border-radius: 12px;
+
+    box-shadow:
+        0 15px 35px
+        rgba(0, 0, 0, 0.08);
+
+    font-weight: 600;
+
+}
+
+
+.card-one {
+
+    top: 40px;
+    left: 5%;
+
+}
+
+
+.card-two {
+
+    right: 5%;
+    top: 45%;
+
+}
+
+
+.card-three {
+
+    bottom: 30px;
+    left: 20%;
+
+}
+
+
+/* ==============================
+   INFO
+============================== */
+
+.landing-info {
+
+    padding: 70px 10%;
+
+    text-align: center;
+
+    background: white;
+
+}
+
+
+.landing-info h2 {
+
+    margin-bottom: 15px;
+
+}
+
+
+.landing-info p {
+
+    max-width: 750px;
+
+    margin: auto;
+
+    color: #657184;
+
+    line-height: 1.8;
+
+}
+
+
+/* ==============================
+   FOOTER
+============================== */
+
+footer {
+
+    text-align: center;
+
+    padding: 30px;
+
+    background: #111827;
+
+    color: white;
+
+    line-height: 1.8;
+
+}
+
+
+/* ==============================
+   MOBILE
+============================== */
+
+@media(max-width: 800px) {
+
+    .hero {
+
+        grid-template-columns: 1fr;
+
+        text-align: center;
+
+    }
+
+    .hero h1 {
+
+        font-size: 42px;
+
+    }
+
+    .nav-links {
+
+        display: none;
+
+    }
+
+}
