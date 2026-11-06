@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -7,18 +8,11 @@
 
     <meta
         name="viewport"
-        content="width=device-width, initial-scale=1.0">
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
-    <title>MoleBio Lab | Virtual Molecular Biology Laboratory</title>
-
-    <link
-        rel="stylesheet"
-        href="css/style.css">
-
-    <!-- PWA INSTALL -->
-    <link
-        rel="manifest"
-        href="manifest.json">
+    <meta
+        name="description"
+        content="MoleBio Lab - Interactive Virtual Molecular Biology Laboratory for students.">
 
     <meta
         name="theme-color"
@@ -32,16 +26,81 @@
         name="apple-mobile-web-app-capable"
         content="yes">
 
-    <!-- PWA ICONS -->
+    <meta
+        name="apple-mobile-web-app-status-bar-style"
+        content="default">
+
+    <title>MoleBio Lab | Virtual Molecular Biology Laboratory</title>
+
+    <!-- MAIN CSS -->
+    <link
+        rel="stylesheet"
+        href="./css/style.css">
+
+    <!-- PWA MANIFEST -->
+    <link
+        rel="manifest"
+        href="./manifest.json">
+
+    <!-- APPLICATION ICONS -->
     <link
         rel="icon"
         type="image/png"
         sizes="192x192"
-        href="assets/icons/molebio-192.png">
+        href="./assets/icons/molebio-192.png">
+
+    <link
+        rel="icon"
+        type="image/png"
+        sizes="512x512"
+        href="./assets/icons/molebio-512.png">
 
     <link
         rel="apple-touch-icon"
-        href="assets/icons/molebio-192.png">
+        href="./assets/icons/molebio-192.png">
+
+    <!-- INSTALL BUTTON STYLES -->
+    <style>
+
+        .pwa-install-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 16px;
+            padding: 13px 24px;
+            border: 2px solid #087fbe;
+            border-radius: 10px;
+            background: #087fbe;
+            color: #ffffff;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .pwa-install-btn:hover {
+            background: #05669a;
+            border-color: #05669a;
+            transform: translateY(-2px);
+        }
+
+        .pwa-install-btn[hidden] {
+            display: none;
+        }
+
+        .install-message {
+            margin-top: 10px;
+            font-size: 13px;
+            line-height: 1.6;
+            color: #087fbe;
+        }
+
+        .install-message:empty {
+            display: none;
+        }
+
+    </style>
 
 </head>
 
@@ -62,7 +121,7 @@
 
         <div class="nav-links">
 
-            <a href="index.html">
+            <a href="./index.html">
                 Home
             </a>
 
@@ -79,8 +138,7 @@
     </nav>
 
 
-
-    <!-- HERO -->
+    <!-- HERO SECTION -->
 
     <main class="hero">
 
@@ -112,6 +170,8 @@
             </p>
 
 
+            <!-- START SIMULATION -->
+
             <button
                 class="start-btn"
                 onclick="startSimulation()">
@@ -119,6 +179,29 @@
                 Start Simulation →
 
             </button>
+
+
+            <!-- INSTALL APPLICATION -->
+
+            <button
+                id="installAppBtn"
+                class="pwa-install-btn"
+                type="button">
+
+                📲 Install MoleBio Lab
+
+            </button>
+
+
+            <!-- INSTALL STATUS -->
+
+            <p
+                id="installMessage"
+                class="install-message"
+                role="status"
+                aria-live="polite">
+
+            </p>
 
         </div>
 
@@ -184,6 +267,28 @@
 
 
 
+    <!-- HELP -->
+
+    <section
+        class="landing-info"
+        id="help">
+
+        <h2>
+            Application Help
+        </h2>
+
+        <p>
+
+            Start Simulation to access the laboratory dashboard.
+            On supported mobile devices, select Install MoleBio Lab
+            to add the application to your home screen.
+
+        </p>
+
+    </section>
+
+
+
     <!-- FOOTER -->
 
     <footer>
@@ -196,38 +301,214 @@
             Based on the MUST Molecular Biology Practical Manual
         </p>
 
+        <p>
+            © 2026 MoleBio Lab
+        </p>
+
     </footer>
 
 
 </div>
 
 
-<script src="js/app.js"></script>
+
+<!-- MAIN JAVASCRIPT -->
+
+<script src="./js/app.js"></script>
 
 
-<!-- SERVICE WORKER -->
+
+<!-- SERVICE WORKER REGISTRATION -->
 
 <script>
+    if ("serviceWorker" in navigator) {
+
+        window.addEventListener("load", async function () {
+
+            try {
+
+                const registration =
+                    await navigator.serviceWorker.register(
+                        "./service-worker.js",
+                        { scope: "./" }
+                    );
+
+                console.log(
+                    "MoleBio Lab Service Worker registered:",
+                    registration.scope
+                );
+
+            } catch (error) {
+
+                console.error(
+                    "Service Worker registration failed:",
+                    error
+                );
+
+            }
+
+        });
+
+    }
+</script>
+
+
+    // CHECK WHETHER APP IS ALREADY INSTALLED
+
+    function isAppInstalled() {
+
+        return (
+            window.matchMedia("(display-mode: standalone)").matches ||
+            window.navigator.standalone === true
+        );
+
+    }
+
+
+    // HIDE INSTALL BUTTON IF ALREADY INSTALLED
+
+    if (isAppInstalled()) {
+
+        installButton.hidden = true;
+
+    }
+
+
+    // LISTEN FOR INSTALLATION AVAILABILITY
+
+    window.addEventListener(
+        "beforeinstallprompt",
+        function(event) {
+
+            event.preventDefault();
+
+            deferredInstallPrompt = event;
+
+            installButton.hidden = false;
+
+            installMessage.textContent =
+                "MoleBio Lab is ready to be installed.";
+
+            console.log(
+                "MoleBio Lab installation is available."
+            );
+
+        }
+    );
+
+
+    // INSTALL APPLICATION
+
+    installButton.addEventListener(
+        "click",
+        async function() {
+
+            if (isAppInstalled()) {
+
+                installButton.hidden = true;
+
+                installMessage.textContent =
+                    "MoleBio Lab is already installed.";
+
+                return;
+
+            }
+
+
+            // BROWSER SUPPORTS INSTALL PROMPT
+
+            if (deferredInstallPrompt) {
+
+                deferredInstallPrompt.prompt();
+
+                const result =
+                    await deferredInstallPrompt.userChoice;
+
+                if (result.outcome === "accepted") {
+
+                    installMessage.textContent =
+                        "Installation accepted. Welcome to MoleBio Lab!";
+
+                } else {
+
+                    installMessage.textContent =
+                        "Installation cancelled. You can install later.";
+
+                }
+
+                deferredInstallPrompt = null;
+
+                installButton.hidden = true;
+
+                return;
+
+            }
+
+
+            // MANUAL INSTALLATION INSTRUCTIONS
+
+            if (
+                /iphone|ipad|ipod/i.test(navigator.userAgent)
+            ) {
+
+                installMessage.textContent =
+                    "To install: Open the Share menu in Safari and select Add to Home Screen.";
+
+            } else {
+
+                installMessage.textContent =
+                    "Automatic installation is not currently available. Open this website in Chrome and use the browser menu to select Install app or Add to Home screen.";
+
+            }
+
+        }
+    );
+
+
+    // DETECT SUCCESSFUL INSTALLATION
+
+    window.addEventListener(
+        "appinstalled",
+        function() {
+
+            console.log(
+                "MoleBio Lab installed successfully."
+            );
+
+            installButton.hidden = true;
+
+            installMessage.textContent =
+                "MoleBio Lab has been installed successfully!";
+
+        }
+    );
+
+
+    // SERVICE WORKER REGISTRATION
 
     if ("serviceWorker" in navigator) {
 
-        window.addEventListener("load", function () {
+        window.addEventListener("load", function() {
 
             navigator.serviceWorker.register(
-                "service-worker.js"
+                "./service-worker.js",
+                {
+                    scope: "./"
+                }
             )
 
-            .then(function (registration) {
+            .then(function(registration) {
 
                 console.log(
-                    "MoleBio Lab Service Worker registered successfully."
+                    "MoleBio Lab Service Worker registered successfully.",
+                    registration.scope
                 );
 
             })
 
-            .catch(function (error) {
+            .catch(function(error) {
 
-                console.log(
+                console.error(
                     "Service Worker registration failed:",
                     error
                 );
